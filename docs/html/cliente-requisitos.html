@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brief del cliente — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-contexto-y-objetivos">1. Contexto y objetivos</a></li><li><a href="#2-usuarios-y-actores-conocidos">2. Usuarios y actores conocidos</a></li><li><a href="#3-stack-tecnol-gico">3. Stack tecnológico</a></li><li><a href="#4-restricciones-no-negociables">4. Restricciones no negociables</a></li><li><a href="#5-documentaci-n-c-digo-y-datos-aportados">5. Documentación, código y datos aportados</a></li><li><a href="#6-riesgos-y-ambig-edades">6. Riesgos y ambigüedades</a></li><li><a href="#7-preguntas-clave-abiertas">7. Preguntas clave abiertas</a></li><li><a href="#8-informaci-n-adicional-necesaria-del-cliente">8. Información adicional necesaria del cliente</a></li><li><a href="#9-estructura-inicial-propuesta">9. Estructura inicial propuesta</a></li><li><a href="#10-decisiones-tomadas-en-fase-0">10. Decisiones tomadas en Fase 0</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="brief-del-cliente-servicio-web-de-env-o-de-email-aidd-training">Brief del cliente — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Brief del cliente</span> <span class="badge badge-soft">Fase 0</span> <span class="dot">&middot;</span> Vista generada el 2026-07-09 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p></header>
+<blockquote>Documento de Fase 0 (AIDD). Borrador colaborativo humano + IA.<br>Entrada para la Fase 1 (AI Architect). <strong>Aprobado (2026-07-09).</strong></blockquote>
+<section class="doc-section" id="1-contexto-y-objetivos">
+<h2><a class="anchor" href="#1-contexto-y-objetivos" aria-label="Enlace">#</a>1. Contexto y objetivos</h2>
+<ul>
+<li><strong>Descripción del proyecto:</strong> aplicación web con interfaz de usuario que permite componer y enviar un correo electrónico desde un formulario. El usuario redacta el mensaje (con formato enriquecido), define destinatarios y, opcionalmente, adjunta un documento; el backend realiza el envío real vía SMTP.</li>
+<li><strong>Problema que resuelve:</strong> ofrecer una vía sencilla y guiada para enviar correos con formato y adjunto sin depender de un cliente de correo instalado, con la lógica de envío centralizada en un servicio propio.</li>
+<li><strong>Naturaleza del proyecto:</strong> <strong>proyecto de formación / práctica</strong> (repositorio <code>aidd-training</code>). El objetivo es ejercitar el flujo AIDD de extremo a extremo sobre una funcionalidad acotada y realista; no es un producto destinado a producción pública.</li>
+<li><strong>Dominio funcional:</strong> mensajería / correo electrónico transaccional iniciado por el usuario.</li>
+</ul>
+</section>
+<section class="doc-section" id="2-usuarios-y-actores-conocidos">
+<h2><a class="anchor" href="#2-usuarios-y-actores-conocidos" aria-label="Enlace">#</a>2. Usuarios y actores conocidos</h2>
+<ul>
+<li><strong>Remitente (usuario final):</strong> persona que abre la web, rellena el formulario de email y lo envía. Es el único rol identificado.</li>
+<li><strong>Sistema de correo saliente (SMTP):</strong> actor externo que recibe el correo del backend y lo entrega. No es un usuario, pero es una dependencia clave.</li>
+</ul>
+<p>No hay roles administrativos ni de gestión: el acceso es abierto (ver sección 4).</p>
+</section>
+<section class="doc-section" id="3-stack-tecnol-gico">
+<h2><a class="anchor" href="#3-stack-tecnol-gico" aria-label="Enlace">#</a>3. Stack tecnológico</h2>
+<p><strong>Decidido:</strong></p>
+<ul>
+<li><strong>Frontend:</strong> React.</li>
+<li><strong>Backend:</strong> Node.js + Express.</li>
+<li><strong>Monorepo:</strong> Turborepo (workspaces para frontend, backend y, previsiblemente, paquetes compartidos).</li>
+<li><strong>Envío de correo:</strong> Nodemailer contra <strong>SMTP real configurable</strong> mediante variables de entorno.</li>
+<li><strong>Editor de texto enriquecido:</strong> <strong>React Quill</strong> (confirmado), con salida HTML.</li>
+<li><strong>Despliegue:</strong> <strong>solo local con Docker</strong> (Docker Compose para levantar frontend + backend en local). Sin entorno cloud ni PaaS.</li>
+<li><strong>Idioma de la interfaz:</strong> <strong>español</strong>.</li>
+<li><strong>Gestor de paquetes del monorepo:</strong> <strong>pnpm</strong> (workspaces + Turborepo).</li>
+<li><strong>Lenguaje:</strong> <strong>TypeScript</strong> (frontend y backend).</li>
+<li><strong>Estrategia de estilos del frontend:</strong> <strong>Tailwind CSS</strong>.</li>
+</ul>
+<p><strong>Por decidir:</strong></p>
+<ul>
+<li>Nada pendiente a nivel de stack. Cerrado.</li>
+</ul>
+</section>
+<section class="doc-section" id="4-restricciones-no-negociables">
+<h2><a class="anchor" href="#4-restricciones-no-negociables" aria-label="Enlace">#</a>4. Restricciones no negociables</h2>
+<p><strong>Funcionales / de producto (confirmadas):</strong></p>
+<ul>
+<li>Formulario de email con: <strong>destinatario principal (Para)</strong>, <strong>asunto</strong> y <strong>cuerpo</strong>.</li>
+<li>Soporte de destinatarios en <strong>CC</strong> y <strong>CCO (BCC)</strong>.</li>
+<li><strong>Cuerpo con formato enriquecido</strong> (rich text / HTML), no solo texto plano.</li>
+<li><strong>Un único adjunto</strong> por email (no múltiples).</li>
+<li>Límite del adjunto: <strong>tipos comunes</strong> (PDF, imágenes, ofimática — docx/xlsx/pptx…) y <strong>máximo 10 MB</strong>. No se exige límite de tamaño total adicional del email.</li>
+</ul>
+<p><strong>Acceso / seguridad:</strong></p>
+<ul>
+<li><strong>Sin autenticación:</strong> el formulario es de acceso abierto.</li>
+<li><strong>Sin medidas anti-abuso</strong> (rate limiting, captcha) — aceptable por ser un proyecto de formación en despliegue local, no expuesto públicamente.</li>
+<li>Las <strong>credenciales SMTP</strong> se gestionan por <strong>variables de entorno</strong>, nunca en el código ni expuestas al frontend.</li>
+<li>El <strong>HTML del cuerpo debe sanitizarse en el backend</strong> antes del envío para evitar inyección/XSS.</li>
+<li>Validación de tipo y tamaño del adjunto en backend (no confiar solo en el frontend).</li>
+</ul>
+<p><strong>Persistencia:</strong></p>
+<ul>
+<li><strong>Sin base de datos.</strong> El envío es <em>fire-and-forget</em>; <strong>solo se registra en logs</strong> del servidor el resultado (éxito/error, destinatarios, asunto, timestamp). No se guarda el contenido para consulta posterior.</li>
+</ul>
+<p><strong>Legales / RGPD:</strong></p>
+<ul>
+<li><strong>Sin requisitos legales/RGPD específicos</strong> aplicables (proyecto de formación, sin datos reales de terceros ni retención de contenido).</li>
+</ul>
+</section>
+<section class="doc-section" id="5-documentaci-n-c-digo-y-datos-aportados">
+<h2><a class="anchor" href="#5-documentaci-n-c-digo-y-datos-aportados" aria-label="Enlace">#</a>5. Documentación, código y datos aportados</h2>
+<ul>
+<li><strong>Ninguno a fecha de hoy.</strong> El repositorio solo contenía <code>.claude/settings.local.json</code>; no había <code>docs/</code> previo, <code>README.md</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code> ni código.</li>
+<li>Todo el contexto proviene de la descripción verbal del usuario recogida en este brief.</li>
+</ul>
+</section>
+<section class="doc-section" id="6-riesgos-y-ambig-edades">
+<h2><a class="anchor" href="#6-riesgos-y-ambig-edades" aria-label="Enlace">#</a>6. Riesgos y ambigüedades</h2>
+<ul>
+<li><strong>Entregabilidad del correo (SMTP real):</strong> proveedores como Gmail/Outlook aplican políticas estrictas (contraseñas de aplicación, SPF/DKIM, límites de envío). Riesgo de que los correos se marquen como spam o sean rechazados. <em>Impacto: bajo en formación con SMTP de pruebas; a tener en cuenta si se usa un SMTP real.</em></li>
+<li><strong>Seguridad del HTML enriquecido:</strong> sin sanitización el cuerpo es un vector de XSS y de inyección en el correo. Mitigado por la decisión de sanitizar en backend.</li>
+<li><strong>Formulario abierto sin anti-abuso:</strong> riesgo teórico de uso como <em>open relay</em> / envío no autorizado. <strong>Aceptado</strong> dado el alcance de formación y el despliegue local no expuesto; a revisar si alguna vez se publica.</li>
+<li><strong>Adjuntos maliciosos:</strong> aunque se limite tipo y tamaño, un adjunto puede contener malware. El servicio no lo analiza; se asume responsabilidad del remitente.</li>
+<li><strong>Ausencia de persistencia:</strong> sin historial en BD no hay trazabilidad más allá de los logs; no se puede reintentar ni auditar el contenido enviado. <em>Aceptado por alcance.</em></li>
+</ul>
+</section>
+<section class="doc-section" id="7-preguntas-clave-abiertas">
+<h2><a class="anchor" href="#7-preguntas-clave-abiertas" aria-label="Enlace">#</a>7. Preguntas clave abiertas</h2>
+<p>Todas las preguntas clave de la Fase 0 han quedado resueltas (ver sección 10). No hay preguntas bloqueantes pendientes para arrancar la Fase 1.</p>
+</section>
+<section class="doc-section" id="8-informaci-n-adicional-necesaria-del-cliente">
+<h2><a class="anchor" href="#8-informaci-n-adicional-necesaria-del-cliente" aria-label="Enlace">#</a>8. Información adicional necesaria del cliente</h2>
+<p>Para el arranque de Fase 1 no hay información bloqueante pendiente. Quedan por confirmar en fases posteriores (no bloqueantes):</p>
+<ul>
+<li>Datos/credenciales del <strong>servidor SMTP</strong> de referencia (host, puerto, TLS, usuario) o uso de un SMTP de pruebas (Mailtrap/Ethereal) durante el desarrollo.</li>
+<li>Preferencia definitiva de <strong>TypeScript vs JavaScript</strong> y <strong>gestor de paquetes</strong> para el monorepo.</li>
+<li>Cualquier <strong>guía de marca/estilo</strong> o requisito visual para la UI (colores, logotipo, tipografía).</li>
+</ul>
+</section>
+<section class="doc-section" id="9-estructura-inicial-propuesta">
+<h2><a class="anchor" href="#9-estructura-inicial-propuesta" aria-label="Enlace">#</a>9. Estructura inicial propuesta</h2>
+<p>Monorepo Turborepo con separación front/back y paquete compartido, orquestado en local con Docker:</p>
+<pre><code>aidd-training/
+├── apps/
+│   ├── web/            # Frontend React (formulario de email, editor React Quill)
+│   └── api/            # Backend Node + Express (endpoint de envío, Nodemailer, sanitización)
+├── packages/
+│   ├── shared/         # Tipos/validaciones compartidas (esquema del email, límites de adjunto)
+│   └── config/         # Config compartida (eslint, tsconfig) — opcional
+├── docs/               # Documentación AIDD (este brief y los de fases siguientes)
+│   └── html/           # Vistas HTML complementarias (booster-docs)
+├── docker-compose.yml  # Levanta web + api en local
+├── turbo.json
+├── package.json        # Workspaces
+└── .env.example        # Variables SMTP (sin secretos reales)</code></pre>
+</section>
+<section class="doc-section" id="10-decisiones-tomadas-en-fase-0">
+<h2><a class="anchor" href="#10-decisiones-tomadas-en-fase-0" aria-label="Enlace">#</a>10. Decisiones tomadas en Fase 0</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Mecanismo de envío de email</td><td>Sandbox / SMTP real configurable / Proveedor API</td><td><strong>SMTP real configurable (Nodemailer + env vars)</strong></td><td>usuario</td><td>El usuario opta por envío real parametrizable por entorno.</td></tr><tr><td>2</td><td>Control de acceso</td><td>Sin auth / Login básico / SSO-OAuth</td><td><strong>Sin autenticación (formulario abierto)</strong></td><td>usuario</td><td>Simplicidad; alcance de formación.</td></tr><tr><td>3</td><td>Límites del adjunto</td><td>Comunes 10 MB / Cualquiera límite alto / Solo PDF</td><td><strong>Tipos comunes, máx 10 MB</strong></td><td>usuario</td><td>Equilibrio entre flexibilidad y seguridad; 10 MB bastan.</td></tr><tr><td>4</td><td>Persistencia de enviados</td><td>Sin persistencia / Historial en BD / Solo logs</td><td><strong>Solo logs</strong></td><td>usuario</td><td>Trazabilidad operativa mínima sin introducir base de datos.</td></tr><tr><td>5</td><td>Editor de texto enriquecido</td><td>React Quill / TipTap / Lexical</td><td><strong>React Quill (salida HTML)</strong></td><td>usuario</td><td>Confirmado por el usuario; integración sencilla con React.</td></tr><tr><td>6</td><td>Tratamiento del HTML del cuerpo</td><td>Sanitizar en backend / No sanitizar</td><td><strong>Sanitizar en backend antes de enviar</strong></td><td>default</td><td>Requisito de seguridad para evitar XSS/inyección.</td></tr><tr><td>7</td><td>Naturaleza del proyecto</td><td>Formación / Uso real</td><td><strong>Proyecto de formación</strong></td><td>usuario</td><td>Repositorio <code>aidd-training</code>; ejercicio del flujo AIDD.</td></tr><tr><td>8</td><td>Modelo de despliegue</td><td>Local con Docker / Contenedores en cloud / PaaS</td><td><strong>Solo local con Docker</strong></td><td>usuario</td><td>Suficiente para el alcance de formación.</td></tr><tr><td>9</td><td>Requisitos legales / RGPD</td><td>Sí / No</td><td><strong>Ninguno aplicable</strong></td><td>usuario</td><td>Sin datos reales ni retención de contenido.</td></tr><tr><td>10</td><td>Límite de tamaño total del email</td><td>Sí / No (solo adjunto)</td><td><strong>Solo el límite de 10 MB del adjunto</strong></td><td>usuario</td><td>No se requiere límite total adicional.</td></tr><tr><td>11</td><td>Idioma de la interfaz</td><td>Español / Inglés / Otro</td><td><strong>Español</strong></td><td>usuario</td><td>Indicado por el usuario.</td></tr><tr><td>12</td><td>Medidas anti-abuso</td><td>Sí (rate limiting/captcha) / No</td><td><strong>Ninguna</strong></td><td>usuario</td><td>Despliegue local no expuesto; alcance de formación.</td></tr><tr><td>13</td><td>Gestor de paquetes del monorepo</td><td>npm / pnpm / yarn</td><td><strong>pnpm</strong></td><td>usuario</td><td>Buena afinidad con Turborepo y workspaces.</td></tr><tr><td>14</td><td>Lenguaje</td><td>JavaScript / TypeScript</td><td><strong>TypeScript</strong></td><td>usuario</td><td>Tipado en frontend y backend.</td></tr><tr><td>15</td><td>Estrategia de estilos del frontend</td><td>CSS Modules / Tailwind / Librería de componentes</td><td><strong>Tailwind CSS</strong></td><td>usuario</td><td>Elegido por el usuario.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

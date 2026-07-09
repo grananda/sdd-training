@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arquitectura base — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-objetivo-y-alcance">1. Objetivo y alcance</a></li><li><a href="#2-principios-y-decisiones-arquitect-nicas">2. Principios y decisiones arquitectónicas</a></li><li><a href="#3-estructura-de-la-soluci-n-rbol-de-carpetas-real">3. Estructura de la solución (árbol de carpetas real)</a></li><li><a href="#4-descomposici-n-por-m-dulos-dominios">4. Descomposición por módulos / dominios</a></li><li><a href="#5-capas-y-responsabilidades">5. Capas y responsabilidades</a></li><li><a href="#6-componentes-base-y-relaciones">6. Componentes base y relaciones</a></li><li><a href="#7-flujos-principales-de-informaci-n">7. Flujos principales de información</a></li><li><a href="#8-gesti-n-de-estado">8. Gestión de estado</a></li><li><a href="#9-navegaci-n-y-organizaci-n-de-pantallas-endpoints">9. Navegación y organización de pantallas / endpoints</a></li><li><a href="#10-integraci-n-con-apis-y-servicios-externos">10. Integración con APIs y servicios externos</a></li><li><a href="#11-seguridad-accesibilidad-observabilidad-y-rendimiento">11. Seguridad, accesibilidad, observabilidad y rendimiento</a></li><li><a href="#12-escalabilidad-mantenibilidad-y-extensibilidad">12. Escalabilidad, mantenibilidad y extensibilidad</a></li><li><a href="#13-riesgos-t-cnicos-supuestos-y-decisiones-pendientes">13. Riesgos técnicos, supuestos y decisiones pendientes</a></li><li><a href="#14-decisiones-tomadas-en-el-paso-2-4">14. Decisiones tomadas en el paso 2.4</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="arquitectura-base-servicio-web-de-env-o-de-email-aidd-training">Arquitectura base — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Arquitectura base</span> <span class="badge badge-soft">Fase 2 · 2.4</span> <span class="dot">&middot;</span> Vista generada el 2026-07-08 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">2</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">5</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">13</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div></div></header>
+<blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-08 12:58 CEST<br>Documento de Fase 2 (AIDD · paso 2.4). Generado por <code>aidd architecture</code>.<br>Fuentes de verdad: detalle-historias-usuario.md, propuesta-arquitectura-base.md, guia-estilos.md.<br>Insumo principal del roadmap. <strong>Aprobado (2026-07-08). Cierra la Fase 2.</strong><br><br>Consolida la arquitectura <strong>definitiva e implementable</strong>. No contradice las fuentes de entrada; el único punto abierto (proveedor SMTP) se documenta como decisión pendiente (§13). El prototipo (2.2) fue aprobado; su validación con cliente y el feedback se incorporarían a <code>cliente-requisitos.md</code> antes de construir.</blockquote>
+<section class="doc-section section-scope" id="1-objetivo-y-alcance">
+<h2><a class="anchor" href="#1-objetivo-y-alcance" aria-label="Enlace">#</a>1. Objetivo y alcance</h2>
+<p>Aplicación web de <strong>una sola pantalla</strong> para <strong>componer y enviar un correo</strong> (Para/CC/CCO, asunto, cuerpo enriquecido y un adjunto único) con <strong>envío real vía SMTP</strong>. Proyecto de formación; despliegue <strong>solo local con Docker</strong>; <strong>sin persistencia</strong>.</p>
+<p><strong>Dentro:</strong> formulario de composición, validación cliente y servidor, saneamiento del cuerpo, envío con Nodemailer, feedback de resultado, logs. <strong>Fuera:</strong> autenticación, anti-abuso, persistencia/historial/reintentos, múltiples adjuntos, cloud (ver <code>requisitos.md</code> §6).</p>
+<p>Cubre las 18 HU (F0–F4). Este documento es consumible directamente para fasear el roadmap.</p>
+</section>
+<section class="doc-section" id="2-principios-y-decisiones-arquitect-nicas">
+<h2><a class="anchor" href="#2-principios-y-decisiones-arquitect-nicas" aria-label="Enlace">#</a>2. Principios y decisiones arquitectónicas</h2>
+<ul>
+<li><strong>Contrato único compartido.</strong> El esquema del email (campos, reglas, límites) vive una sola vez en <code>packages/shared</code> (Zod) y lo consumen cliente y servidor. Evita divergencia cliente/servidor (<span class="chip chip-nfr">NFR-11</span>, <span class="chip chip-us">HU-18</span>).</li>
+<li><strong>El servidor es la autoridad.</strong> La validación de cliente es conveniencia/UX; la validación autoritativa y el saneamiento del HTML ocurren en el backend (<span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>). El frontend no es de fiar.</li>
+<li><strong>Sin estado ni persistencia.</strong> Envío <em>fire-and-forget</em>; la única traza es el log de servidor (<span class="chip chip-nfr">NFR-06</span>). No hay BD, sesión ni store global.</li>
+<li><strong>Configurable, no acoplado.</strong> El SMTP se define por variables de entorno; el código no se ata a un proveedor (<span class="chip chip-rf">RF-13</span>, <span class="chip chip-nfr">NFR-03</span>/09).</li>
+<li><strong>Seguridad por defecto.</strong> Secretos solo por env; saneamiento con whitelist; límites aplicados también en servidor.</li>
+<li><strong>Accesible por defecto (WCAG 2.1 AA).</strong> Tokens y componentes de <code>guia-estilos.md</code>: foco visible, hit targets ≥44px, semántica, <code>aria-live</code>.</li>
+<li><strong>Simplicidad proporcional al alcance.</strong> Una pantalla, un endpoint, sin capas innecesarias (sin SSR, sin Redux, sin colas).</li>
+</ul>
+<p><strong>Conflictos entre fuentes:</strong> no se detectaron. La guía de estilos, la propuesta y el detalle de historias son coherentes (misma estructura de una pantalla, mismo whitelist de saneamiento, mismos límites de adjunto).</p>
+</section>
+<section class="doc-section" id="3-estructura-de-la-soluci-n-rbol-de-carpetas-real">
+<h2><a class="anchor" href="#3-estructura-de-la-soluci-n-rbol-de-carpetas-real" aria-label="Enlace">#</a>3. Estructura de la solución (árbol de carpetas real)</h2>
+<pre><code>aidd-training/
+├── apps/
+│   ├── web/                          # Frontend React + Vite + TS + Tailwind
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── EmailForm.tsx          # Orquesta el formulario (RHF)
+│   │   │   │   ├── RecipientChips.tsx      # Para/CC/CCO con chips
+│   │   │   │   ├── SubjectField.tsx        # Asunto (una línea)
+│   │   │   │   ├── BodyEditor.tsx          # React Quill (B/I/listas)
+│   │   │   │   ├── AttachmentField.tsx     # Adjunto único + validación cliente
+│   │   │   │   ├── SubmitBar.tsx           # Botón Enviar + estado enviando
+│   │   │   │   └── FeedbackBanner.tsx      # Éxito/error (aria-live)
+│   │   │   ├── hooks/
+│   │   │   │   └── useSendEmail.ts         # fetch FormData + estado envío
+│   │   │   ├── lib/
+│   │   │   │   ├── apiClient.ts            # POST /api/send
+│   │   │   │   └── errorMap.ts             # code -&gt; mensaje UI (es)
+│   │   │   ├── styles/
+│   │   │   │   └── tokens.css              # design tokens de guia-estilos.md
+│   │   │   ├── App.tsx
+│   │   │   └── main.tsx
+│   │   ├── index.html
+│   │   ├── tailwind.config.ts              # tokens NTT DATA
+│   │   ├── vite.config.ts
+│   │   └── Dockerfile
+│   └── api/                          # Backend Express + TS
+│       ├── src/
+│       │   ├── routes/
+│       │   │   └── send.route.ts          # POST /api/send
+│       │   ├── controllers/
+│       │   │   └── send.controller.ts      # orquesta validar→sanear→enviar→log
+│       │   ├── services/
+│       │   │   ├── mailer.ts               # Nodemailer transporter + send
+│       │   │   ├── sanitizer.ts            # sanitize-html (whitelist)
+│       │   │   └── attachment.ts           # file-type (MIME real) + límites
+│       │   ├── middleware/
+│       │   │   ├── upload.ts               # Multer memoryStorage (1 fichero)
+│       │   │   ├── validate.ts             # Zod (esquema shared)
+│       │   │   ├── cors.ts                 # origen WEB_ORIGIN
+│       │   │   └── errorHandler.ts         # contrato de error uniforme
+│       │   ├── config/
+│       │   │   └── env.ts                  # carga + valida env (Zod)
+│       │   ├── logger.ts                   # pino
+│       │   ├── app.ts                      # Express app
+│       │   └── server.ts                   # arranque (PORT)
+│       └── Dockerfile
+├── packages/
+│   └── shared/
+│       └── src/
+│           ├── email.schema.ts            # emailSchema (Zod): campos + reglas
+│           ├── attachment.rules.ts        # tipos permitidos + MAX 10 MiB
+│           └── index.ts                    # exports (tipos + esquemas)
+├── docker-compose.yml                # web + api + mailpit (dev)
+├── turbo.json
+├── package.json                      # workspaces (pnpm)
+├── pnpm-workspace.yaml
+├── .env.example                      # SMTP_*, MAIL_FROM, MAX_ATTACHMENT_SIZE_MB, PORT, WEB_ORIGIN
+└── docs/                             # documentación AIDD (fuente de verdad)</code></pre>
+</section>
+<section class="doc-section" id="4-descomposici-n-por-m-dulos-dominios">
+<h2><a class="anchor" href="#4-descomposici-n-por-m-dulos-dominios" aria-label="Enlace">#</a>4. Descomposición por módulos / dominios</h2>
+<div class="table-wrap"><table><thead><tr><th>Módulo</th><th>Ubicación</th><th>Responsabilidad</th><th>HU</th></tr></thead><tbody><tr><td><strong>Contrato de email</strong></td><td><code>packages/shared</code></td><td>Esquema Zod, tipos, límites y lista de tipos permitidos. Fuente única.</td><td><span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-12</span>–14, <span class="chip chip-us">HU-18</span></td></tr><tr><td><strong>Composición (UI)</strong></td><td><code>apps/web/components</code></td><td>Formulario y campos: chips, asunto, editor, adjunto, envío, feedback.</td><td><span class="chip chip-us">HU-05</span>–16</td></tr><tr><td><strong>Cliente de envío</strong></td><td><code>apps/web/hooks</code> + <code>lib</code></td><td>Construye FormData, llama al backend, mapea resultado/errores.</td><td><span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span></td></tr><tr><td><strong>Endpoint de envío</strong></td><td><code>apps/api/routes</code> + <code>controllers</code></td><td>Recibe la petición y orquesta el pipeline.</td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-18</span></td></tr><tr><td><strong>Saneamiento</strong></td><td><code>apps/api/services/sanitizer</code></td><td>Limpia el HTML del cuerpo con whitelist.</td><td><span class="chip chip-us">HU-17</span></td></tr><tr><td><strong>Adjunto</strong></td><td><code>apps/api/services/attachment</code> + <code>middleware/upload</code></td><td>Parsea, valida tipo (MIME real) y tamaño.</td><td><span class="chip chip-us">HU-11</span>–13</td></tr><tr><td><strong>Mailer</strong></td><td><code>apps/api/services/mailer</code></td><td>Transporter Nodemailer y envío SMTP.</td><td><span class="chip chip-us">HU-03</span></td></tr><tr><td><strong>Config y observabilidad</strong></td><td><code>apps/api/config</code> + <code>logger</code></td><td>Carga/valida env; log del resultado sin secretos.</td><td><span class="chip chip-us">HU-04</span></td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="5-capas-y-responsabilidades">
+<h2><a class="anchor" href="#5-capas-y-responsabilidades" aria-label="Enlace">#</a>5. Capas y responsabilidades</h2>
+<p><strong>Frontend (por responsabilidad, no por framework):</strong></p>
+<ol>
+<li><strong>Presentación</strong> — componentes de <code>guia-estilos.md</code> (tokens, AA). Sin lógica de negocio.</li>
+<li><strong>Estado de formulario</strong> — React Hook Form + resolver Zod (esquema de <code>shared</code>).</li>
+<li><strong>Acceso a datos</strong> — <code>useSendEmail</code> + <code>apiClient</code> (fetch, FormData, mapeo de errores).</li>
+</ol>
+<p><strong>Backend (pipeline de <code>POST /api/send</code>):</strong></p>
+<ol>
+<li><strong>Ruta</strong> → 2. <strong>Upload</strong> (Multer memoria, 1 fichero) → 3. <strong>Validación</strong> (Zod + <code>file-type</code> para MIME real) → 4. <strong>Saneamiento</strong> (<code>sanitize-html</code>) → 5. <strong>Mailer</strong> (Nodemailer) → 6. <strong>Logger</strong> (pino) → 7. <strong>Error handler</strong> (respuesta uniforme sin filtrar secretos).</li>
+</ol>
+<p><strong>Compartida:</strong> <code>packages/shared</code> no depende de web ni de api; ambos dependen de ella.</p>
+</section>
+<section class="doc-section" id="6-componentes-base-y-relaciones">
+<h2><a class="anchor" href="#6-componentes-base-y-relaciones" aria-label="Enlace">#</a>6. Componentes base y relaciones</h2>
+<ul>
+<li><code>EmailForm</code> (contenedor RHF) compone <code>RecipientChips</code> ×3 (To/CC/CCO), <code>SubjectField</code>, <code>BodyEditor</code>, <code>AttachmentField</code>, <code>SubmitBar</code> y <code>FeedbackBanner</code>.</li>
+<li><code>EmailForm</code> → <code>useSendEmail</code> → <code>apiClient</code> → <code>POST /api/send</code>.</li>
+<li><code>apiClient</code> traduce la respuesta <code>{ ok, code, message }</code> con <code>errorMap</code> para el <code>FeedbackBanner</code>.</li>
+<li>Backend: <code>send.route</code> → <code>upload</code> → <code>validate</code> → <code>send.controller</code> → (<code>sanitizer</code>, <code>attachment</code>, <code>mailer</code>, <code>logger</code>) → <code>errorHandler</code>.</li>
+<li>Todos los componentes de UI aplican los <strong>design tokens</strong> (<code>styles/tokens.css</code> + <code>tailwind.config</code>) y las reglas de accesibilidad de la guía.</li>
+</ul>
+</section>
+<section class="doc-section" id="7-flujos-principales-de-informaci-n">
+<h2><a class="anchor" href="#7-flujos-principales-de-informaci-n" aria-label="Enlace">#</a>7. Flujos principales de información</h2>
+<p><strong>Envío con éxito (happy path):</strong></p>
+<ol>
+<li>Usuario compone; RHF valida en cliente con el esquema de <code>shared</code> (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span>).</li>
+<li>Al pulsar Enviar, <code>useSendEmail</code> deshabilita el botón y monta <code>FormData</code> (campos + adjunto) (<span class="chip chip-us">HU-15</span>).</li>
+<li><code>POST /api/send</code> → upload → validación autoritativa (obligatorios, emails, tipo+tamaño+MIME real) → saneamiento del cuerpo → Nodemailer entrega al SMTP (<span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>).</li>
+<li>Log del resultado (sin contenido ni secretos) (<span class="chip chip-us">HU-04</span>).</li>
+<li>Respuesta <code>{ ok: true }</code> → <code>FeedbackBanner</code> de éxito → formulario se limpia (<span class="chip chip-us">HU-16</span>).</li>
+</ol>
+<p><strong>Rutas de error:</strong></p>
+<ul>
+<li>Validación de cliente falla → no se envía; se marcan campos (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span>).</li>
+<li>Validación de servidor falla (petición que burla el cliente) → <code>4xx { ok:false, code }</code> → banner de error; datos conservados (<span class="chip chip-us">HU-16</span>, <span class="chip chip-us">HU-18</span>).</li>
+<li>Adjunto no permitido / &gt;10 MiB → rechazo con aviso (<span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>).</li>
+<li>Fallo SMTP → <code>5xx</code> controlado sin filtrar credenciales → banner de error; datos conservados (<span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-16</span>).</li>
+</ul>
+</section>
+<section class="doc-section" id="8-gesti-n-de-estado">
+<h2><a class="anchor" href="#8-gesti-n-de-estado" aria-label="Enlace">#</a>8. Gestión de estado</h2>
+<ul>
+<li><strong>Local a la pantalla</strong>, con React Hook Form. Sin store global (Redux/Zustand/Context de app): no hay estado compartido entre vistas (una sola pantalla, sin sesión, sin persistencia — <span class="chip chip-nfr">NFR-06</span>).</li>
+<li><strong>Chips</strong> (Para/CC/CCO): estado interno de <code>RecipientChips</code>, expuesto a RHF como arrays de direcciones.</li>
+<li><strong>Adjunto:</strong> un único <code>File</code> en el estado del formulario.</li>
+<li><strong>Estado de envío:</strong> <code>idle | sending | success | error</code> en <code>useSendEmail</code>, que gobierna botón, spinner y banner.</li>
+<li><strong>Backend sin estado</strong> entre peticiones (salvo el <code>transporter</code> reutilizable).</li>
+</ul>
+</section>
+<section class="doc-section" id="9-navegaci-n-y-organizaci-n-de-pantallas-endpoints">
+<h2><a class="anchor" href="#9-navegaci-n-y-organizaci-n-de-pantallas-endpoints" aria-label="Enlace">#</a>9. Navegación y organización de pantallas / endpoints</h2>
+<ul>
+<li><strong>Frontend:</strong> una sola ruta (<code>/</code>), sin router de múltiples vistas. Layout: cabecera → hoja de composición (Para → CC/CCO → Asunto → Cuerpo → Adjunto) → barra de acción (feedback + Enviar). El panel de estados del prototipo <strong>no</strong> forma parte del producto.</li>
+<li><strong>Backend (API):</strong></li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Método</th><th>Ruta</th><th>Cuerpo</th><th>Respuesta</th><th>HU</th></tr></thead><tbody><tr><td><code>POST</code></td><td><code>/api/send</code></td><td><code>multipart/form-data</code>: <code>to[]</code>, <code>cc[]</code>, <code>bcc[]</code>, <code>subject</code>, <code>body</code> (HTML), <code>attachment?</code></td><td><code>200 { ok:true, message }</code> / `4xx</td><td>5xx { ok:false, code, message }`</td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-16</span>, <span class="chip chip-us">HU-18</span></td></tr><tr><td><code>GET</code></td><td><code>/api/health</code></td><td>—</td><td><code>200 { status:&quot;ok&quot; }</code></td><td><span class="chip chip-us">HU-01</span> (health-check)</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="10-integraci-n-con-apis-y-servicios-externos">
+<h2><a class="anchor" href="#10-integraci-n-con-apis-y-servicios-externos" aria-label="Enlace">#</a>10. Integración con APIs y servicios externos</h2>
+<ul>
+<li><strong>Único integrante externo: servidor SMTP</strong> vía Nodemailer. Configurado por <code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_SECURE</code>, <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>MAIL_FROM</code>. El <code>transporter</code> se crea una vez y se reutiliza.</li>
+<li><strong>Desarrollo:</strong> servicio <strong>Mailpit</strong> (<code>axllent/mailpit</code>) en <code>docker-compose.yml</code>, SMTP en <code>1025</code> y UI web en <code>8025</code>, para probar el envío sin proveedor real y previsualizar HTML + adjuntos.</li>
+<li><strong>Producción/formación real:</strong> proveedor SMTP configurable por env; el código no cambia. <strong>Proveedor y credenciales concretos: pendientes</strong> (§13).</li>
+<li>Sin otras integraciones (ni BD, ni auth externa, ni antivirus de adjuntos — fuera de alcance).</li>
+</ul>
+</section>
+<section class="doc-section" id="11-seguridad-accesibilidad-observabilidad-y-rendimiento">
+<h2><a class="anchor" href="#11-seguridad-accesibilidad-observabilidad-y-rendimiento" aria-label="Enlace">#</a>11. Seguridad, accesibilidad, observabilidad y rendimiento</h2>
+<p><strong>Seguridad</strong></p>
+<ul>
+<li>Saneamiento del cuerpo en servidor con whitelist (<code>b/strong</code>, <code>i/em</code>, <code>ul</code>, <code>ol</code>, <code>li</code>, <code>p</code>, <code>br</code>); se eliminan <code>&lt;script&gt;</code>, <code>on*</code>, iframes, enlaces e imágenes (<span class="chip chip-us">HU-17</span>, <span class="chip chip-nfr">NFR-02</span>).</li>
+<li>Validación autoritativa en servidor de todo lo del cliente (<span class="chip chip-us">HU-18</span>, <span class="chip chip-nfr">NFR-11</span>).</li>
+<li>Tipo de adjunto por <strong>MIME real</strong> (<code>file-type</code>) además de la extensión (<span class="chip chip-us">HU-12</span>).</li>
+<li>Secretos solo por env; <code>.env.example</code> sin secretos; logs sin credenciales ni contenido (<span class="chip chip-nfr">NFR-03</span>/06).</li>
+<li>Límite de 10 MiB también en Multer (no cargar adjuntos gigantes en memoria).</li>
+<li>CORS restringido a <code>WEB_ORIGIN</code>.</li>
+<li>Aceptado por alcance: sin auth ni anti-abuso (<span class="chip chip-nfr">NFR-04</span>/05); sin antivirus de adjuntos.</li>
+</ul>
+<p><strong>Accesibilidad (WCAG 2.1 AA)</strong> — de <code>guia-estilos.md</code>: contraste AA, <code>:focus-visible</code>, hit targets ≥44px, semántica (<code>header/main/aside/footer</code>, labels), teclado (Enter envía, Esc descarta, chips borrables), <code>aria-live</code> en feedback, estado nunca solo por color, <code>prefers-reduced-motion</code>.</p>
+<p><strong>Observabilidad</strong> — pino registra por envío: resultado, destinatarios, asunto y timestamp (<span class="chip chip-us">HU-04</span>, <span class="chip chip-rf">RF-15</span>). Sin contenido del correo ni del adjunto (<span class="chip chip-nfr">NFR-06</span>).</p>
+<p><strong>Rendimiento</strong> — SPA ligera (Vite); <code>transporter</code> reutilizado; adjunto en memoria acotado a 10 MiB; sin trabajo pesado en el hilo de la petición más allá del envío.</p>
+</section>
+<section class="doc-section" id="12-escalabilidad-mantenibilidad-y-extensibilidad">
+<h2><a class="anchor" href="#12-escalabilidad-mantenibilidad-y-extensibilidad" aria-label="Enlace">#</a>12. Escalabilidad, mantenibilidad y extensibilidad</h2>
+<ul>
+<li><strong>Escalabilidad:</strong> backend sin estado → escalado horizontal trivial si algún día se necesitara; hoy basta una instancia en Compose. El punto de I/O es el SMTP.</li>
+<li><strong>Mantenibilidad:</strong> contrato único en <code>shared</code>; capas con responsabilidad clara; contrato de error uniforme; tokens de diseño centralizados.</li>
+<li><strong>Extensibilidad (puntos naturales, hoy fuera de alcance):</strong> cola + reintentos delante del envío; persistencia/historial añadiendo una capa de repositorio; múltiples adjuntos ampliando <code>attachment.rules</code> y el <code>upload</code>; auth como middleware. Ninguno se implementa ahora.</li>
+</ul>
+</section>
+<section class="doc-section" id="13-riesgos-t-cnicos-supuestos-y-decisiones-pendientes">
+<h2><a class="anchor" href="#13-riesgos-t-cnicos-supuestos-y-decisiones-pendientes" aria-label="Enlace">#</a>13. Riesgos técnicos, supuestos y decisiones pendientes</h2>
+<p><strong>Decisiones pendientes</strong></p>
+<ul>
+<li><strong>Proveedor y credenciales SMTP definitivos</strong> (<code>requisitos.md</code> §7/§8): no bloqueante; el SMTP es configurable y en dev se usa MailHog/Mailpit. <strong>[Pendiente, no bloqueante]</strong></li>
+</ul>
+<p><strong>Supuestos</strong></p>
+<ul>
+<li>El prototipo (2.2) se valida con cliente y el feedback se incorpora a <code>cliente-requisitos.md</code> antes de construir; esta arquitectura asume el alcance actual sin cambios mayores.</li>
+<li>Whitelist de saneamiento y lista de tipos de adjunto son las fijadas en el detalle de historias.</li>
+</ul>
+<p><strong>Riesgos</strong></p>
+<ul>
+<li><strong>Entregabilidad SMTP real</strong> (SPF/DKIM, spam) si se usa un proveedor real: mitigado en dev con Mailpit; a vigilar en real.</li>
+<li><strong>Adjuntos maliciosos:</strong> no se analizan (sin antivirus); riesgo aceptado por alcance.</li>
+<li><strong>Formulario abierto</strong> sin anti-abuso: aceptado por despliegue local no expuesto.</li>
+</ul>
+</section>
+<section class="doc-section" id="14-decisiones-tomadas-en-el-paso-2-4">
+<h2><a class="anchor" href="#14-decisiones-tomadas-en-el-paso-2-4" aria-label="Enlace">#</a>14. Decisiones tomadas en el paso 2.4</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Conflictos entre fuentes de entrada</td><td>Resolver / —</td><td><strong>Sin conflictos</strong></td><td>default</td><td>Detalle, propuesta y guía de estilos son coherentes; no hay contradicciones que resolver.</td></tr><tr><td>2</td><td>Router en el frontend</td><td>Añadir router / <strong>Una sola ruta</strong></td><td><strong>Una sola ruta (<code>/</code>)</strong></td><td>default</td><td>Producto de una sola pantalla; un router añadiría complejidad sin valor (<span class="chip chip-us">HU-05</span>).</td></tr><tr><td>3</td><td>Contrato del endpoint</td><td><code>multipart/form-data</code> / JSON+base64</td><td><strong><code>multipart/form-data</code></strong></td><td>default</td><td>El adjunto binario viaja de forma natural; evita inflar el payload (<span class="chip chip-us">HU-11</span>).</td></tr><tr><td>4</td><td>Health-check</td><td>Incluir <code>/api/health</code> / No</td><td><strong>Incluir <code>/api/health</code></strong></td><td>default</td><td>Facilita orquestación en Docker y verificación del walking skeleton (<span class="chip chip-us">HU-01</span>).</td></tr><tr><td>5</td><td>Proveedor SMTP definitivo</td><td>Fijar ahora / <strong>Dejar pendiente (configurable)</strong></td><td><strong>Pendiente, configurable por env; Mailpit en dev</strong></td><td>usuario (heredado)</td><td>El usuario aplazó el proveedor; el requisito estable es SMTP configurable (§13).</td></tr><tr><td>6</td><td>Capturador de correo en dev</td><td><strong>Mailpit</strong> / MailHog</td><td><strong>Mailpit</strong> (<code>axllent/mailpit</code>, puertos 1025/8025)</td><td>usuario</td><td>Mantenido y con mejor vista de HTML y adjuntos; drop-in sobre los puertos de MailHog (relevante porque se envía cuerpo HTML + adjunto).</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

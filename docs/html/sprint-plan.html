@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan de sprints — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-par-metros-de-planificaci-n">1. Parámetros de planificación</a></li><li><a href="#2-unidades-de-trabajo">2. Unidades de trabajo</a></li><li><a href="#3-mapa-de-dependencias-y-prerequisitos">3. Mapa de dependencias y prerequisitos</a></li><li><a href="#4-distribuci-n-en-sprints">4. Distribución en sprints</a></li><li><a href="#5-hitos-y-entregables">5. Hitos y entregables</a></li><li><a href="#6-riesgos-de-planificaci-n-y-supuestos">6. Riesgos de planificación y supuestos</a></li><li><a href="#7-decisiones-tomadas">7. Decisiones tomadas</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="plan-de-sprints-servicio-web-de-env-o-de-email-aidd-training">Plan de sprints — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Plan de sprints</span> <span class="badge badge-soft">Fase 3.5 · 3.5.2</span> <span class="dot">&middot;</span> Vista generada el 2026-07-09 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-essential"><span class="kpi-value">2</span><span class="kpi-label">Imprescindibles</span></div></div></header>
+<blockquote><strong>Versión 2</strong> · <strong>Generado:</strong> 2026-07-09 10:55 CEST<br>Documento de Planificación de entrega (AIDD · paso 3.5.2). Generado por <code>aidd sprint-planning</code>.<br>Fuentes: docs/planificacion-proyecto.md, docs/detalle-historias-usuario.md, docs/plan-revision-hu.md, docs/mapa-historias-usuario.md.<br><strong>Aprobado (2026-07-09).</strong> Volcado a Jira el 2026-07-09 (proyecto <code>AT</code>, board 34): Sprint 1 = <code>AT-1</code>…<code>AT-11</code>, Sprint 2 = <code>AT-12</code>…<code>AT-18</code>.<br><br><strong>Aviso (modo degradado):</strong> no existe <code>docs/roadmap.md</code>. El faseado por presupuesto de contexto lo produce el AI Lead con <code>native-ai roadmap</code> (Fase 3), que no se ha ejecutado. Este plan usa como unidades de trabajo las <strong>18 HU</strong> del mapa/detalle (fases F0–F4) y no respeta un faseado por contexto de modelo. La unidad rastreable de entrega es la <strong>HU</strong> (Story); los <strong>changes</strong> (sub-tareas de ejecución) los abrirá después el AI Lead.</blockquote>
+<section class="doc-section" id="1-par-metros-de-planificaci-n">
+<h2><a class="anchor" href="#1-par-metros-de-planificaci-n" aria-label="Enlace">#</a>1. Parámetros de planificación</h2>
+<div class="table-wrap"><table><thead><tr><th>Parámetro</th><th>Valor</th></tr></thead><tbody><tr><td>Equipo / capacidad</td><td><strong>1 dev full-stack + IA</strong> (Claude Code), del plan de recursos. ~5 días-persona reales por sprint de 1 semana.</td></tr><tr><td>Velocity</td><td><strong>Esfuerzo real con IA</strong> (comprimido). La IA genera; el coste no comprimible es dirigir, revisar y validar.</td></tr><tr><td>Duración de sprint</td><td><strong>1 semana</strong> (5 días laborables). Derivada de la <strong>carga real</strong>, no fija.</td></tr><tr><td>Nº de ciclos</td><td><strong>2 sprints</strong>. Lo marca el <strong>gate del MVP</strong> (F1 demoable) y la separación núcleo/endurecimiento, <strong>no</strong> la suma de tallas.</td></tr><tr><td>Carga total</td><td><strong>~6,1 días-persona reales con IA</strong> (24,5 d bruto humano de referencia).</td></tr><tr><td>Gate de entrada</td><td><strong>Revisión entrelazada</strong>: cada sprint revisa/valida sus HU en las 2 reuniones de su inicio (lun/mar) y construye el resto de la semana (ver §4 y <code>plan-revision-hu.md</code>).</td></tr><tr><td>Inicio</td><td><strong>Sprint 1: 10-ago-2026</strong> · <strong>Sprint 2: 17-ago-2026</strong>. Semana previa (3–7 ago): arranque (kickoff, revisión doc. cliente, setup).</td></tr></tbody></table></div>
+<p><strong>Por qué esta forma:</strong> la carga real es muy pequeña (~6 d-persona). No se hace &quot;un change = un sprint&quot;: se agrupan las HU en <strong>2 sprints</strong> porque hay <strong>un corte duro natural</strong> —el <strong>MVP de composición y envío (F1)</strong>, demoable/validable— que separa el núcleo del endurecimiento (F2–F4). La duración de 1 semana llena razonablemente la capacidad de 1 persona (Sprint 1 ≈ 3,6 d reales; Sprint 2 ≈ 2,5 d reales), sin relleno ni sobrecarga.</p>
+</section>
+<section class="doc-section" id="2-unidades-de-trabajo">
+<h2><a class="anchor" href="#2-unidades-de-trabajo" aria-label="Enlace">#</a>2. Unidades de trabajo</h2>
+<p>Esfuerzo <strong>real con IA</strong> (planificación) y <strong>bruto humano</strong> (referencia). Perfil único: full-stack dev; validación con la persona/rol de la revisión (TI para F0/F4, negocio para F1–F3).</p>
+<div class="table-wrap"><table><thead><tr><th>HU</th><th>Descripción</th><th>Fase</th><th>Real IA</th><th>Bruto</th><th>Talla</th><th>Perfil / validación</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-01</span></td><td>Monorepo Turborepo+pnpm</td><td>F0</td><td>0,2 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / TI</td></tr><tr><td><span class="chip chip-us">HU-02</span></td><td>Docker Compose (+ Mailpit)</td><td>F0</td><td>0,2 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / TI</td></tr><tr><td><span class="chip chip-us">HU-03</span></td><td>Endpoint Nodemailer/SMTP</td><td>F0</td><td>0,8 d</td><td>3 d</td><td><span class="chip chip-eff-m">M</span></td><td>Full-stack / TI</td></tr><tr><td><span class="chip chip-us">HU-04</span></td><td>Logs del envío</td><td>F0</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / TI</td></tr><tr><td><span class="chip chip-us">HU-05</span></td><td>Formulario de composición</td><td>F1</td><td>0,4 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-06</span></td><td>Chips Para</td><td>F1</td><td>0,8 d</td><td>3 d</td><td><span class="chip chip-eff-m">M</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-07</span></td><td>CC/CCO (reutiliza chips)</td><td>F1</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-09</span></td><td>Asunto</td><td>F1</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-10</span></td><td>Cuerpo React Quill</td><td>F1</td><td>0,4 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-15</span></td><td>Envío directo</td><td>F1</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-16</span></td><td>Feedback de resultado</td><td>F1</td><td>0,4 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-08</span></td><td>Validación de formato (direcciones)</td><td>F2</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio+TI</td></tr><tr><td><span class="chip chip-us">HU-14</span></td><td>Campos obligatorios</td><td>F2</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio</td></tr><tr><td><span class="chip chip-us">HU-11</span></td><td>Adjuntar documento</td><td>F3</td><td>0,4 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / negocio+TI</td></tr><tr><td><span class="chip chip-us">HU-12</span></td><td>Validación de tipo (MIME real)</td><td>F3</td><td>0,5 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / negocio+TI</td></tr><tr><td><span class="chip chip-us">HU-13</span></td><td>Validación de tamaño</td><td>F3</td><td>0,1 d</td><td>0,5 d</td><td><span class="chip chip-eff-xs">XS</span></td><td>Full-stack / negocio+TI</td></tr><tr><td><span class="chip chip-us">HU-17</span></td><td>Saneamiento HTML (backend)</td><td>F4</td><td>0,8 d</td><td>3 d</td><td><span class="chip chip-eff-m">M</span></td><td>Full-stack / seguridad (TI)</td></tr><tr><td><span class="chip chip-us">HU-18</span></td><td>Validación en servidor (autoritativa)</td><td>F4</td><td>0,5 d</td><td>1,5 d</td><td><span class="chip chip-eff-s">S</span></td><td>Full-stack / seguridad (TI)</td></tr><tr><td></td><td><strong>Total</strong></td><td></td><td><strong>6,1 d</strong></td><td><strong>24,5 d</strong></td><td></td><td></td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="3-mapa-de-dependencias-y-prerequisitos">
+<h2><a class="anchor" href="#3-mapa-de-dependencias-y-prerequisitos" aria-label="Enlace">#</a>3. Mapa de dependencias y prerequisitos</h2>
+<ul>
+<li><strong>Cadena F0 (secuencial):</strong> <span class="chip chip-us">HU-01</span> → <span class="chip chip-us">HU-02</span> → <span class="chip chip-us">HU-03</span> → <span class="chip chip-us">HU-04</span>. <span class="chip chip-us">HU-03</span> necesita Mailpit (<span class="chip chip-us">HU-02</span>) para envío en dev.</li>
+<li><strong>F1 sobre F0:</strong> <span class="chip chip-us">HU-05</span> (← <span class="chip chip-us">HU-01</span>); <span class="chip chip-us">HU-06</span> (← <span class="chip chip-us">HU-05</span>); <span class="chip chip-us">HU-07</span> (← <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>); <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span> (← <span class="chip chip-us">HU-05</span>); <span class="chip chip-us">HU-15</span> (← <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-03</span>); <span class="chip chip-us">HU-16</span> (← <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-15</span>).</li>
+<li><strong>F2 sobre F1:</strong> <span class="chip chip-us">HU-08</span> (← <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>); <span class="chip chip-us">HU-14</span> (← <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>).</li>
+<li><strong>F3 sobre F0/F1:</strong> <span class="chip chip-us">HU-11</span> (← <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-03</span>); <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span> (← <span class="chip chip-us">HU-11</span>).</li>
+<li><strong>F4 sobre F0/F1/F3:</strong> <span class="chip chip-us">HU-17</span> (← <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-10</span>); <span class="chip chip-us">HU-18</span> (← <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-11</span>).</li>
+<li><strong>Revisión entrelazada:</strong> cada HU se revisa/cierra en la reunión de inicio de su sprint (lun/mar) antes de construirse esa misma semana; no hay campaña previa. Ver §4 y <code>plan-revision-hu.md</code>.</li>
+<li><strong>No bloqueante:</strong> proveedor SMTP de producción sin definir; dev usa Mailpit.</li>
+</ul>
+<p>Con 1 dev, la cadena es intrínsecamente secuencial: no hay paralelización real; el orden de arriba marca el calendario dentro de cada sprint.</p>
+</section>
+<section class="doc-section" id="4-distribuci-n-en-sprints">
+<h2><a class="anchor" href="#4-distribuci-n-en-sprints" aria-label="Enlace">#</a>4. Distribución en sprints</h2>
+<h3 id="sprint-1-n-cleo-foundation-mvp-de-composici-n-y-env-o-f0-f1">Sprint 1 — Núcleo: Foundation + MVP de composición y envío (F0 + F1)</h3>
+<ul>
+<li><strong>Fechas:</strong> 10-ago → 14-ago-2026 (1 semana).</li>
+<li><strong>Revisión (inicio de sprint):</strong> lun 10-ago técnica de F0 (<span class="chip chip-us">HU-01</span>, 02, 03, 04); mar 11-ago funcional de F1 (<span class="chip chip-us">HU-05</span>, 06, 07, 09, 10, 15, 16). Build mié–vie.</li>
+<li><strong>Objetivo:</strong> desde la UI se puede <strong>componer y enviar</strong> un correo con formato (Para/CC/CCO, asunto, cuerpo enriquecido) sobre la base técnica (monorepo, Docker, endpoint SMTP), con feedback de resultado. <strong>MVP demoable.</strong></li>
+<li><strong>Unidades:</strong> <span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>, <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span> (F0) · <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span> (F1).</li>
+<li><strong>Carga real vs capacidad:</strong> <strong>3,6 d reales</strong> frente a ~5 d de capacidad (1 dev × 1 semana). Holgado; absorbe las reuniones de inicio, la integración y la demo.</li>
+<li><strong>Asignación:</strong> full-stack dev (todas); validación funcional con negocio y técnica con TI en las reuniones de inicio.</li>
+<li><strong>Definition of Done:</strong> criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de F0 y F1 cumplidos; <code>docker compose up</code> levanta web+api+Mailpit; envío real a Mailpit visible; interfaz en español; tests unit (shared) + componentes (RTL) + integración del endpoint (Supertest) en verde; demo del happy path E1→E2→E6 el vie 14-ago.</li>
+</ul>
+<h3 id="sprint-2-endurecimiento-validaci-n-adjunto-seguridad-f2-f3-f4">Sprint 2 — Endurecimiento: validación + adjunto + seguridad (F2 + F3 + F4)</h3>
+<ul>
+<li><strong>Fechas:</strong> 17-ago → 21-ago-2026 (1 semana).</li>
+<li><strong>Revisión (inicio de sprint):</strong> lun 17-ago funcional de F2+F3 (<span class="chip chip-us">HU-14</span>, 08, 11, 12, 13); mar 18-ago técnica de F2/F3/F4 (<span class="chip chip-us">HU-08</span>, 11, 12, 13, 18, 17). Build mié–vie.</li>
+<li><strong>Objetivo:</strong> el producto queda <strong>completo y endurecido</strong>: validación de entradas (cliente), adjunto único con límites, y <strong>saneamiento + validación autoritativa en servidor</strong>. Recorrido E1–E7 completo.</li>
+<li><strong>Unidades:</strong> <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span> (F2) · <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span> (F3) · <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span> (F4).</li>
+<li><strong>Carga real vs capacidad:</strong> <strong>2,5 d reales</strong> frente a ~5 d de capacidad. Por debajo de capacidad, pero el ciclo se justifica por el <strong>gate del MVP</strong> (no se rellena estirando la duración; deja margen para el endurecimiento de seguridad, que exige revisión cuidadosa).</li>
+<li><strong>Asignación:</strong> full-stack dev; validación de seguridad (<span class="chip chip-us">HU-17</span>/<span class="chip chip-us">HU-18</span>) con el rol de seguridad (TI).</li>
+<li><strong>Definition of Done:</strong> criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de F2–F4 cumplidos; validación de cliente y <strong>autoritativa en servidor</strong> operativas; adjunto con tipo (MIME real) y tamaño (10 MiB); saneamiento del cuerpo con whitelist; e2e del recorrido E1–E7 (Playwright, opcional) sobre Mailpit; accesibilidad AA verificada.</li>
+</ul>
+</section>
+<section class="doc-section" id="5-hitos-y-entregables">
+<h2><a class="anchor" href="#5-hitos-y-entregables" aria-label="Enlace">#</a>5. Hitos y entregables</h2>
+<div class="table-wrap"><table><thead><tr><th>Hito</th><th>Cuándo</th><th>Entregable / validación</th></tr></thead><tbody><tr><td><strong>MVP F1 listo</strong></td><td>Fin Sprint 1 (14-ago)</td><td>Componer y enviar un correo con formato desde la UI (happy path), sobre Docker + SMTP. Demo al cliente.</td></tr><tr><td><strong>Producto endurecido</strong></td><td>Fin Sprint 2 (21-ago)</td><td>Validación cliente+servidor, adjunto con límites, saneamiento y validación autoritativa. Recorrido E1–E7 completo.</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="6-riesgos-de-planificaci-n-y-supuestos">
+<h2><a class="anchor" href="#6-riesgos-de-planificaci-n-y-supuestos" aria-label="Enlace">#</a>6. Riesgos de planificación y supuestos</h2>
+<p><strong>Riesgos</strong></p>
+<ul>
+<li><strong>Revisión entrelazada (riesgo de agenda):</strong> cada sprint revisa sus HU en las reuniones de inicio (lun/mar) y construye la misma semana. Exige disponibilidad de negocio y TI el <strong>10–11 ago</strong> y el <strong>17–18 ago</strong>; <strong>si esas sesiones se caen, se retrasa solo ese sprint</strong>, no toda una campaña. Blindar esas fechas en agosto (vacaciones).</li>
+<li><strong>Roadmap ausente (modo degradado):</strong> sin faseado por contexto del AI Lead; si al generar el roadmap los cortes de change difieren, habría que reconciliar este plan.</li>
+<li><strong>Equipo de 1 persona:</strong> cadena secuencial sin paralelización; cualquier ausencia detiene el sprint (bus factor). Mitiga la IA.</li>
+<li><strong>Proveedor SMTP de producción sin definir:</strong> no bloquea dev (Mailpit); bloquearía un envío real en un despliegue real.</li>
+<li><strong>Estimación real con IA = hipótesis:</strong> si la compresión no se cumple (código que hay que rehacer, seguridad más costosa), la carga sube hacia el bruto; hay margen de capacidad en ambos sprints para absorberlo.</li>
+</ul>
+<p><strong>Supuestos</strong></p>
+<ul>
+<li>Duración de sprint 1 semana y capacidad ~5 d/persona, derivadas de la carga real.</li>
+<li>Fechas: arranque 3–7 ago; Sprint 1 10–14 ago; Sprint 2 17–21 ago (revisión al inicio de cada sprint).</li>
+<li>Unidades = HU completas; no se parten entre sprints.</li>
+</ul>
+</section>
+<section class="doc-section" id="7-decisiones-tomadas">
+<h2><a class="anchor" href="#7-decisiones-tomadas" aria-label="Enlace">#</a>7. Decisiones tomadas</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Base de velocity</td><td><strong>Real con IA</strong> / Bruto humano / Ambas</td><td><strong>Real con IA (~6,1 d)</strong></td><td>usuario</td><td>Coherente con el modelo híbrido (IA como recurso) del plan de proyecto.</td></tr><tr><td>2</td><td>Nº de ciclos</td><td><strong>2 sprints (MVP + endurecimiento)</strong> / 3 por bloque / 1 con checkpoint</td><td><strong>2 sprints</strong></td><td>usuario</td><td>El corte es el gate del MVP (F1), no la suma de tallas; F0 solo quedaría muy por debajo de capacidad.</td></tr><tr><td>3</td><td>Encaje con la revisión de HU</td><td>Dev tras campaña previa / <strong>Revisión entrelazada por sprint</strong></td><td><strong>Revisión entrelazada: cada sprint valida sus HU al inicio</strong></td><td>usuario</td><td>Evita el waterfall de una campaña previa de 4 semanas para un build de ~6 días; se revisa just-in-time lo que cada sprint construye.</td></tr><tr><td>4</td><td>Duración de sprint</td><td>Fija 2 semanas / <strong>1 semana (derivada de carga)</strong></td><td><strong>1 semana</strong></td><td>default</td><td>Sprint 1 ≈ 3,6 d y Sprint 2 ≈ 2,5 d reales llenan razonablemente 1 semana de 1 dev; 2 semanas dejarían ociosa la capacidad.</td></tr><tr><td>5</td><td>Faseado sin roadmap</td><td><strong>Modo degradado (mapa+detalle)</strong> / Parar hasta roadmap</td><td><strong>Modo degradado</strong></td><td>default</td><td>Permite planificar ya; se avisa de que no hay faseado por contexto del AI Lead y habrá que reconciliar si se genera el roadmap.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

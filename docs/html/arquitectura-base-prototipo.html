@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arquitectura del prototipo — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-objetivo-de-la-demo">1. Objetivo de la demo</a></li><li><a href="#2-stack-m-nimo">2. Stack mínimo</a></li><li><a href="#3-componentes-y-m-dulos">3. Componentes y módulos</a></li><li><a href="#4-pantallas-o-estados-m-nimos">4. Pantallas o estados mínimos</a></li><li><a href="#5-estrategia-de-mocks">5. Estrategia de mocks</a></li><li><a href="#6-datos-de-ejemplo">6. Datos de ejemplo</a></li><li><a href="#7-supuestos-y-exclusiones">7. Supuestos y exclusiones</a></li><li><a href="#8-pasos-m-nimos-de-implementaci-n">8. Pasos mínimos de implementación</a></li><li><a href="#9-decisiones-tomadas-en-el-paso-2-1">9. Decisiones tomadas en el paso 2.1</a></li><li><a href="#10-estado-de-implementaci-n-paso-2-2-aidd-prototype">10. Estado de implementación (paso 2.2 · `aidd prototype`)</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="arquitectura-del-prototipo-servicio-web-de-env-o-de-email-aidd-training">Arquitectura del prototipo — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Arquitectura del prototipo</span> <span class="badge badge-soft">Fase 2 · 2.1</span> <span class="dot">&middot;</span> Vista generada el 2026-07-08 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-nfr"><span class="kpi-value">1</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">15</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div></div></header>
+<blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-08 11:24 CEST<br>Documento de Fase 2 (AIDD · paso 2.1). Generado por <code>aidd prototype-architecture</code>.<br>Entradas: docs/mapa-historias-usuario.md, docs/detalle-historias-usuario.md.<br>Demo 100% mockeada para validación con cliente. <strong>Aprobado (2026-07-08).</strong></blockquote>
+<section class="doc-section" id="1-objetivo-de-la-demo">
+<h2><a class="anchor" href="#1-objetivo-de-la-demo" aria-label="Enlace">#</a>1. Objetivo de la demo</h2>
+<p>Validar con el cliente, <strong>antes de construir nada real</strong>, que el formulario de composición y envío de email cubre el alcance acordado y que el flujo se entiende de un vistazo. La demo es un <strong>wireframe navegable</strong> (baja fidelidad, sin marca ni color; <span class="chip chip-nfr">NFR-12</span> pendiente) que permite recorrer de punta a punta:</p>
+<ul>
+<li>Componer un email: destinatarios <strong>Para/CC/CCO</strong> (chips), <strong>Asunto</strong> y <strong>Cuerpo</strong> enriquecido (negrita, cursiva, listas).</li>
+<li>Adjuntar <strong>un único documento</strong> con sus límites de tipo y tamaño.</li>
+<li>Ver la <strong>validación de entradas</strong> (obligatorios y formato de email) bloqueando el envío.</li>
+<li>Pulsar <strong>Enviar</strong> y ver el resultado: <strong>éxito</strong> (con limpieza del formulario) o <strong>error</strong> (conservando los datos).</li>
+</ul>
+<p>Todo el envío es <strong>simulado</strong>: no hay SMTP, ni backend, ni saneamiento real. La demo valida <strong>UX, campos y flujo</strong>, no la implementación. Cubre el recorrido funcional de las fases F1–F4 del mapa; los habilitadores de F0 (monorepo, Docker, endpoint) quedan fuera por ser internos y no validables por el cliente.</p>
+</section>
+<section class="doc-section" id="2-stack-m-nimo">
+<h2><a class="anchor" href="#2-stack-m-nimo" aria-label="Enlace">#</a>2. Stack mínimo</h2>
+<div class="table-wrap"><table><thead><tr><th>Elemento</th><th>Elección</th><th>Justificación</th></tr></thead><tbody><tr><td>Formato</td><td><strong>HTML + CSS + JS vanilla</strong>, autocontenido (un fichero por pantalla/estado)</td><td>Sin build ni backend; se abre con doble clic. Máxima velocidad para iterar en la demo.</td></tr><tr><td>Generación</td><td><strong>booster-ux</strong> (paso 2.2)</td><td>Produce las pantallas wireframe navegables a partir de este documento.</td></tr><tr><td>Estilo</td><td><strong>Wireframe</strong> (grises, bordes, sin color de marca)</td><td>Fidelidad baja pedida por el usuario: valida estructura y campos, no estética.</td></tr><tr><td>Editor de cuerpo</td><td>Simulado (área de texto con botones B / I / • / 1.)</td><td>React Quill se mockea con un toolbar falso; no se integra la librería real.</td></tr><tr><td>Envío</td><td><strong>Mock en JS</strong> (setTimeout + estado predefinido)</td><td>Simula éxito/error sin red. Un control de la demo permite forzar cada resultado.</td></tr></tbody></table></div>
+<blockquote>No se usa React/Vite/Tailwind/Nodemailer en el prototipo. El stack real (definido en <code>requisitos.md</code> §5) se materializa en la arquitectura definitiva (paso 2.4), no aquí.</blockquote>
+</section>
+<section class="doc-section" id="3-componentes-y-m-dulos">
+<h2><a class="anchor" href="#3-componentes-y-m-dulos" aria-label="Enlace">#</a>3. Componentes y módulos</h2>
+<p>La demo es de <strong>una sola pantalla</strong> (el compositor) con varios <strong>estados</strong> visualizables. Módulos lógicos del wireframe:</p>
+<ul>
+<li><strong>Cabecera / título</strong> — identifica la pantalla; zona reservada para marca (pendiente <span class="chip chip-nfr">NFR-12</span>).</li>
+<li><strong>Campos de destinatarios</strong> — tres campos con <strong>chips</strong>: Para (obligatorio), CC y CCO (opcionales).</li>
+<li><strong>Asunto</strong> — input de una línea.</li>
+<li><strong>Cuerpo</strong> — editor simulado con toolbar minimalista (negrita, cursiva, lista ordenada y no ordenada).</li>
+<li><strong>Adjunto</strong> — selector de un único fichero con nombre + tamaño y botón de quitar.</li>
+<li><strong>Barra de acción</strong> — botón <strong>Enviar</strong> (con estado deshabilitado/progreso).</li>
+<li><strong>Zona de feedback</strong> — banner/toast de éxito o error.</li>
+<li><strong>Panel de control de la demo</strong> (solo prototipo) — conmutadores para forzar: resultado del envío (éxito/error), y precargar un caso inválido. No forma parte del producto.</li>
+</ul>
+</section>
+<section class="doc-section" id="4-pantallas-o-estados-m-nimos">
+<h2><a class="anchor" href="#4-pantallas-o-estados-m-nimos" aria-label="Enlace">#</a>4. Pantallas o estados mínimos</h2>
+<p>Una pantalla, recorrible en estos estados (cada uno es una vista del wireframe):</p>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Estado</th><th>Qué muestra</th><th>HU validadas</th></tr></thead><tbody><tr><td>E1</td><td><strong>Formulario vacío</strong></td><td>Todos los campos; CC/CCO/Adjunto marcados como opcionales; interfaz en español.</td><td><span class="chip chip-us">HU-05</span></td></tr><tr><td>E2</td><td><strong>Compuesto (con datos)</strong></td><td>Chips en Para/CC/CCO, asunto, cuerpo con formato, adjunto seleccionado (nombre + tamaño).</td><td><span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-11</span></td></tr><tr><td>E3</td><td><strong>Errores de validación</strong></td><td>Para vacío / email con formato inválido / obligatorio faltante señalados junto al campo; Enviar bloqueado.</td><td><span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span></td></tr><tr><td>E4</td><td><strong>Adjunto rechazado</strong></td><td>Aviso de tipo no permitido y de tamaño &gt; 10 MB.</td><td><span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span></td></tr><tr><td>E5</td><td><strong>Enviando</strong></td><td>Botón Enviar deshabilitado con indicador de progreso (anti doble envío).</td><td><span class="chip chip-us">HU-15</span></td></tr><tr><td>E6</td><td><strong>Éxito</strong></td><td>Banner de éxito; formulario <strong>limpio</strong> listo para otro correo.</td><td><span class="chip chip-us">HU-16</span></td></tr><tr><td>E7</td><td><strong>Error de envío</strong></td><td>Banner de error claro (sin detalles técnicos); datos conservados para reintentar.</td><td><span class="chip chip-us">HU-16</span></td></tr></tbody></table></div>
+<p>Con E1→E7 el cliente recorre el alcance funcional completo sin bloqueos.</p>
+</section>
+<section class="doc-section" id="5-estrategia-de-mocks">
+<h2><a class="anchor" href="#5-estrategia-de-mocks" aria-label="Enlace">#</a>5. Estrategia de mocks</h2>
+<p>Todo lo externo o de servidor se <strong>simula</strong>:</p>
+<ul>
+<li><strong>Envío SMTP / Nodemailer</strong> → función <code>mockSend()</code> en JS que espera ~1 s (setTimeout) y devuelve un resultado predefinido (éxito o error) según el panel de control de la demo. No hay red ni credenciales.</li>
+<li><strong>Saneamiento del HTML del cuerpo (<span class="chip chip-us">HU-17</span>)</strong> → <strong>no se ejecuta</strong>; se representa como nota/anotación (&quot;en el producto, el backend sanea el cuerpo&quot;). No es validable visualmente por el cliente.</li>
+<li><strong>Validación autoritativa en servidor (<span class="chip chip-us">HU-18</span>)</strong> → <strong>no se ejecuta</strong>; la demo solo muestra la validación de <strong>cliente</strong> (E3/E4). Se anota que el servidor la repite.</li>
+<li><strong>Editor React Quill</strong> → toolbar falso; el formato es cosmético (no genera HTML real).</li>
+<li><strong>Adjunto</strong> → no se sube ni se lee el fichero real; se simulan nombre y tamaño para disparar los avisos de tipo/tamaño.</li>
+<li><strong>Logs (<span class="chip chip-us">HU-04</span>)</strong> → fuera de la demo (traza de servidor, no visible en UI).</li>
+</ul>
+</section>
+<section class="doc-section" id="6-datos-de-ejemplo">
+<h2><a class="anchor" href="#6-datos-de-ejemplo" aria-label="Enlace">#</a>6. Datos de ejemplo</h2>
+<p>Coherentes con el dominio de correo, para poblar los estados:</p>
+<ul>
+<li><strong>Para:</strong> <code>ana.lopez@empresa.com</code>, <code>soporte@cliente.es</code></li>
+<li><strong>CC:</strong> <code>jefe.proyecto@empresa.com</code>  · <strong>CCO:</strong> <code>auditoria@empresa.com</code></li>
+<li><strong>Email inválido de prueba (E3):</strong> <code>ana.lopez@</code> , <code>correo-sin-arroba</code></li>
+<li><strong>Asunto:</strong> <code>Propuesta de colaboración — revisión</code></li>
+<li><strong>Cuerpo:</strong> párrafo con una palabra en <strong>negrita</strong>, otra en <em>cursiva</em> y una lista de 3 ítems.</li>
+<li><strong>Adjunto válido:</strong> <code>propuesta.pdf</code> (2,4 MB) · <strong>Tipo no permitido (E4):</strong> <code>script.exe</code> · <strong>Tamaño excedido (E4):</strong> <code>video.mp4</code> (18 MB).</li>
+</ul>
+</section>
+<section class="doc-section" id="7-supuestos-y-exclusiones">
+<h2><a class="anchor" href="#7-supuestos-y-exclusiones" aria-label="Enlace">#</a>7. Supuestos y exclusiones</h2>
+<p><strong>Supuestos</strong></p>
+<ul>
+<li>Fidelidad <strong>wireframe</strong>: sin paleta ni tipografía de marca (se decide en la guía de estilos, paso 2.3). La estructura y los campos sí son definitivos.</li>
+<li>La demo se entrega como HTML estático navegable (booster-ux); un panel de control propio de la demo permite forzar los estados de resultado.</li>
+</ul>
+<p><strong>Exclusiones (fuera de la demo)</strong></p>
+<ul>
+<li>Envío real, SMTP, Nodemailer y variables de entorno.</li>
+<li>Saneamiento de HTML (<span class="chip chip-us">HU-17</span>) y validación autoritativa en servidor (<span class="chip chip-us">HU-18</span>): se anotan, no se ejecutan.</li>
+<li>Habilitadores F0 (monorepo, Docker Compose, endpoint, logs): internos, no validables por el cliente.</li>
+<li>Persistencia, historial, reintentos, múltiples adjuntos, autenticación, anti-abuso (ya fuera de alcance en <code>requisitos.md</code> §6).</li>
+</ul>
+</section>
+<section class="doc-section" id="8-pasos-m-nimos-de-implementaci-n">
+<h2><a class="anchor" href="#8-pasos-m-nimos-de-implementaci-n" aria-label="Enlace">#</a>8. Pasos mínimos de implementación</h2>
+<ol>
+<li><strong>Aprobar</strong> este documento (gate humano).</li>
+<li>Ejecutar <strong><code>aidd prototype</code></strong> (paso 2.2), que redirige a <strong>booster-ux</strong> para maquetar la pantalla del compositor en <strong>wireframe</strong>.</li>
+<li>Generar la vista base <strong>E1 (formulario vacío)</strong> con los campos Para/CC/CCO (chips), Asunto, Cuerpo (toolbar simulado) y Adjunto; interfaz en español.</li>
+<li>Añadir los estados <strong>E2–E7</strong> como variantes navegables (datos de §6), incluyendo los avisos de validación (E3), rechazo de adjunto (E4), enviando (E5), éxito con limpieza (E6) y error con datos conservados (E7).</li>
+<li>Cablear el <strong>mock de envío</strong> en JS (<code>mockSend()</code> + panel de control de la demo) para alternar éxito/error.</li>
+<li>Revisar el recorrido <strong>E1→E7</strong> de punta a punta sin bloqueos.</li>
+<li><strong>Presentar al cliente</strong>, recoger feedback y <strong>actualizar <code>docs/cliente-requisitos.md</code></strong>. Si hay cambios significativos, volver al paso 1.1 (<code>aidd requirements</code>).</li>
+</ol>
+</section>
+<section class="doc-section" id="9-decisiones-tomadas-en-el-paso-2-1">
+<h2><a class="anchor" href="#9-decisiones-tomadas-en-el-paso-2-1" aria-label="Enlace">#</a>9. Decisiones tomadas en el paso 2.1</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Fidelidad visual de la demo</td><td>Alta (Tailwind) / Media / <strong>Baja (wireframe)</strong></td><td><strong>Baja (wireframe)</strong></td><td>usuario</td><td>Valida estructura y campos sin depender de la marca (pendiente <span class="chip chip-nfr">NFR-12</span>); itera rápido.</td></tr><tr><td>2</td><td>Flujos y estados a cubrir</td><td><strong>Completo</strong> / Happy path + adjunto / Solo happy path</td><td><strong>Completo (éxito + validación + error + adjunto)</strong></td><td>usuario</td><td>Recorre el alcance funcional F1–F4 y expone las validaciones al cliente.</td></tr><tr><td>3</td><td>Enfoque técnico del prototipo</td><td><strong>HTML/CSS estático (booster-ux)</strong> / React+Vite mock</td><td><strong>HTML/CSS estático (booster-ux)</strong></td><td>usuario</td><td>Sin build ni backend; la demo se abre con doble clic y es fácil de iterar.</td></tr><tr><td>4</td><td>Trato del saneamiento (<span class="chip chip-us">HU-17</span>) y validación servidor (<span class="chip chip-us">HU-18</span>)</td><td>Simular / <strong>Anotar sin ejecutar</strong></td><td><strong>Anotar sin ejecutar</strong></td><td>default</td><td>No son validables visualmente; se documentan como comportamiento del producto real.</td></tr><tr><td>5</td><td>Habilitadores F0 en la demo</td><td>Incluir / <strong>Excluir</strong></td><td><strong>Excluir</strong></td><td>default</td><td>Son internos (monorepo, Docker, endpoint, logs); no aportan a la validación con el cliente.</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="10-estado-de-implementaci-n-paso-2-2-aidd-prototype">
+<h2><a class="anchor" href="#10-estado-de-implementaci-n-paso-2-2-aidd-prototype" aria-label="Enlace">#</a>10. Estado de implementación (paso 2.2 · <code>aidd prototype</code>)</h2>
+<p>Prototipo implementado con <strong>booster-ux</strong> (2026-07-08). Una única pantalla (el compositor) con los estados E1–E7 accesibles vía panel de control de la demo.</p>
+<div class="table-wrap"><table><thead><tr><th>Pantalla</th><th>Estados</th><th>Estado</th><th>Entregables</th></tr></thead><tbody><tr><td>Compositor de email</td><td>E1–E7 (vacío, compuesto, validación, adjunto rechazado, enviando, éxito, error)</td><td>✅ Hecho</td><td><code>docs/prototipo/index-v1.html</code> + <code>preview-v1.png</code> (v1 editorial) · <code>docs/prototipo/index-v2.html</code> + <code>preview-v2.png</code> (v2 Web Interface Guidelines) · notas <code>notes-v1.md</code>, <code>notes-v2.md</code></td></tr></tbody></table></div>
+<p>Dos variantes en fidelidad <strong>wireframe</strong> (grises, sin marca — coherente con la decisión #1 y <span class="chip chip-nfr">NFR-12</span> pendiente), sin marca de agua. Envío mockeado en JS.</p>
+<p><strong>Prototipo aprobado (2026-07-08).</strong> La elección/síntesis de variante y la identidad visual definitiva se resuelven en <code>aidd style-guide</code> (paso 2.3); el prototipo se re-vestirá con esas pautas. Se conservan v1 y v2 como referencia (v2 aporta la línea base de accesibilidad/semántica).</p>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

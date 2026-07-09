@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redactar correo · wireframe de composición</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          // Neutros tintados en frío (OKLCH). Nunca #000 ni #fff puros.
+          paper:   'oklch(0.985 0.004 255)',   // fondo de la sala / lienzo
+          sheet:   'oklch(0.997 0.003 255)',   // hoja de composición
+          ink:     'oklch(0.285 0.012 262)',   // tinta principal
+          ink2:    'oklch(0.520 0.011 262)',   // tinta secundaria
+          ink3:    'oklch(0.640 0.010 262)',   // pistas / placeholder
+          line:    'oklch(0.885 0.006 262)',   // hairline
+          line2:   'oklch(0.820 0.008 262)',   // hairline marcada
+          fieldbg: 'oklch(0.978 0.004 258)',   // relleno campo
+          chipbg:  'oklch(0.945 0.006 258)',   // chip
+          primary: 'oklch(0.345 0.013 262)',   // único gris más oscuro (botón)
+          primaryink: 'oklch(0.985 0.004 255)',
+          danger:  'oklch(0.505 0.055 28)',    // aviso, gris muy apenas rojizo
+          dangerbg:'oklch(0.965 0.012 28)',
+          okline:  'oklch(0.470 0.028 200)',   // éxito, gris apenas frío
+          okbg:    'oklch(0.968 0.010 200)',
+        },
+        fontFamily: {
+          sys: ['ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial','sans-serif'],
+          mono: ['ui-monospace','SFMono-Regular','Menlo','Consolas','monospace'],
+        },
+        fontSize: {
+          'micro': ['0.6875rem', { lineHeight: '1.3', letterSpacing: '0.08em' }],
+          'meta':  ['0.8125rem', { lineHeight: '1.4' }],
+          'body':  ['1rem', { lineHeight: '1.5' }],
+          'lede':  ['1.25rem', { lineHeight: '1.45' }],  // ratio 1.25
+          'title': ['1.5625rem', { lineHeight: '1.2', letterSpacing: '-0.01em' }], // 1.25^2
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body { -webkit-font-smoothing: antialiased; }
+  [contenteditable]:focus { outline: none; }
+  /* punteo de hoja de composición: ruled hairlines, no cajas con sombra */
+  .rule { border-color: theme('colors.line'); }
+  .field-focus:focus-within { border-color: theme('colors.line2'); background: theme('colors.sheet'); }
+  ::selection { background: oklch(0.885 0.02 262); }
+  .num { font-variant-numeric: tabular-nums; }
+  /* barra de progreso indeterminada */
+  @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(300%)} }
+  .prog::after { content:''; position:absolute; inset:0; width:33%;
+    background: theme('colors.ink2'); animation: slide 0.9s linear infinite; }
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display:none; }
+</style>
+</head>
+<body class="min-h-screen bg-paper font-sys text-ink antialiased">
+
+<!-- ===================== PANEL DE CONTROL DE LA DEMO ===================== -->
+<aside id="panel"
+  class="fixed right-0 top-0 z-40 flex h-full w-[260px] flex-col border-l border-line2 bg-sheet">
+  <div class="border-b border-dashed border-line2 px-5 py-4">
+    <p class="text-micro font-semibold uppercase text-ink2">Control de la demo</p>
+    <p class="mt-1 text-meta text-ink3">No forma parte del producto. Fuerza cada estado de la pantalla.</p>
+  </div>
+  <div class="flex-1 overflow-y-auto px-3 py-3">
+    <div id="stateButtons" class="space-y-1"></div>
+    <div class="mt-5 border-t border-dashed border-line px-2 pt-4">
+      <p class="text-micro font-semibold uppercase text-ink3">Estado activo</p>
+      <p id="activeLabel" class="mt-1 text-meta text-ink">E1 · Vacío</p>
+    </div>
+    <button id="resetBtn"
+      class="mt-4 w-full rounded-sm border border-line2 px-3 py-2 text-meta text-ink2 hover:bg-fieldbg">
+      Reiniciar demo
+    </button>
+  </div>
+  <p class="border-t border-dashed border-line2 px-5 py-3 text-micro text-ink3">
+    Envío simulado en el navegador. Sin red, sin SMTP.
+  </p>
+</aside>
+
+<!-- ===================== HOJA DE COMPOSICIÓN ===================== -->
+<main class="mr-[260px]">
+  <div class="mx-auto max-w-[760px] px-6 pb-28 pt-10 sm:px-10">
+
+    <!-- 1 · Cabecera -->
+    <header class="mb-9 flex items-baseline justify-between border-b border-line2 pb-5">
+      <div>
+        <p class="mb-2 text-micro font-semibold uppercase text-ink3">Compositor de correo</p>
+        <h1 class="text-title font-semibold text-ink">Redactar correo</h1>
+      </div>
+      <p class="hidden text-meta text-ink3 sm:block">Borrador sin guardar</p>
+    </header>
+
+    <form id="composer" novalidate class="space-y-0">
+
+      <!-- 2 · Para -->
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-5">
+        <label for="input-para" class="pt-2 text-meta font-medium text-ink2">
+          Para
+          <span class="ml-1 text-danger" aria-hidden="true">*</span>
+        </label>
+        <div>
+          <div id="field-para"
+            class="field-focus flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-sm border border-line bg-fieldbg px-2.5 py-1.5"
+            data-chips>
+            <div class="chips flex flex-wrap gap-1.5"></div>
+            <input id="input-para" type="text" inputmode="email"
+              class="min-w-[120px] flex-1 bg-transparent px-1 py-1 text-body text-ink placeholder:text-ink3"
+              placeholder="Escribe un email y pulsa Intro">
+          </div>
+          <p class="mt-1.5 hidden text-meta text-danger" data-err="para"></p>
+        </div>
+      </section>
+
+      <!-- 3 · CC y CCO -->
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-5">
+        <label for="input-cc" class="pt-2 text-meta font-medium text-ink2">
+          CC
+          <span class="mt-0.5 block text-micro font-normal uppercase text-ink3">Opcional</span>
+        </label>
+        <div>
+          <div id="field-cc"
+            class="field-focus flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-sm border border-line bg-fieldbg px-2.5 py-1.5"
+            data-chips>
+            <div class="chips flex flex-wrap gap-1.5"></div>
+            <input id="input-cc" type="text" inputmode="email"
+              class="min-w-[120px] flex-1 bg-transparent px-1 py-1 text-body text-ink placeholder:text-ink3"
+              placeholder="Añadir en copia">
+          </div>
+          <p class="mt-1.5 hidden text-meta text-danger" data-err="cc"></p>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-5">
+        <label for="input-cco" class="pt-2 text-meta font-medium text-ink2">
+          CCO
+          <span class="mt-0.5 block text-micro font-normal uppercase text-ink3">Opcional</span>
+        </label>
+        <div>
+          <div id="field-cco"
+            class="field-focus flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-sm border border-line bg-fieldbg px-2.5 py-1.5"
+            data-chips>
+            <div class="chips flex flex-wrap gap-1.5"></div>
+            <input id="input-cco" type="text" inputmode="email"
+              class="min-w-[120px] flex-1 bg-transparent px-1 py-1 text-body text-ink placeholder:text-ink3"
+              placeholder="Copia oculta">
+          </div>
+          <p class="mt-1.5 hidden text-meta text-danger" data-err="cco"></p>
+        </div>
+      </section>
+
+      <!-- 4 · Asunto -->
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-5">
+        <label for="input-asunto" class="pt-2 text-meta font-medium text-ink2">
+          Asunto
+          <span class="ml-1 text-danger" aria-hidden="true">*</span>
+        </label>
+        <div>
+          <input id="input-asunto" type="text"
+            class="field-focus w-full rounded-sm border border-line bg-fieldbg px-3 py-2 text-lede text-ink placeholder:text-ink3 placeholder:text-body"
+            placeholder="Una línea que resuma el correo">
+          <p class="mt-1.5 hidden text-meta text-danger" data-err="asunto"></p>
+        </div>
+      </section>
+
+      <!-- 5 · Cuerpo -->
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-6">
+        <label for="input-cuerpo" class="pt-2 text-meta font-medium text-ink2">
+          Cuerpo
+          <span class="ml-1 text-danger" aria-hidden="true">*</span>
+        </label>
+        <div>
+          <!-- toolbar simulada -->
+          <div class="flex items-center gap-1 rounded-t-sm border border-b-0 border-line bg-chipbg px-2 py-1.5">
+            <button type="button" data-cmd="bold"
+              class="h-8 w-8 rounded-sm text-body font-bold text-ink2 hover:bg-sheet" title="Negrita" aria-label="Negrita">B</button>
+            <button type="button" data-cmd="italic"
+              class="h-8 w-8 rounded-sm text-body italic text-ink2 hover:bg-sheet" title="Cursiva" aria-label="Cursiva">I</button>
+            <span class="mx-1 h-5 w-px bg-line2"></span>
+            <button type="button" data-cmd="insertOrderedList"
+              class="h-8 w-8 rounded-sm text-ink2 hover:bg-sheet" title="Lista ordenada" aria-label="Lista ordenada">
+              <svg viewBox="0 0 20 20" class="mx-auto h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.4">
+                <text x="0" y="7" font-size="6" fill="currentColor" stroke="none">1</text>
+                <text x="0" y="15" font-size="6" fill="currentColor" stroke="none">2</text>
+                <line x1="7" y1="5" x2="18" y2="5"/><line x1="7" y1="13" x2="18" y2="13"/>
+              </svg>
+            </button>
+            <button type="button" data-cmd="insertUnorderedList"
+              class="h-8 w-8 rounded-sm text-ink2 hover:bg-sheet" title="Lista con viñetas" aria-label="Lista con viñetas">
+              <svg viewBox="0 0 20 20" class="mx-auto h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.4">
+                <circle cx="3" cy="5" r="1.3" fill="currentColor" stroke="none"/><circle cx="3" cy="13" r="1.3" fill="currentColor" stroke="none"/>
+                <line x1="7" y1="5" x2="18" y2="5"/><line x1="7" y1="13" x2="18" y2="13"/>
+              </svg>
+            </button>
+          </div>
+          <div id="input-cuerpo" contenteditable="true" role="textbox" aria-multiline="true"
+            data-placeholder="Redacta el mensaje. El formato de la barra es solo cosmético."
+            class="field-focus min-h-[168px] max-w-[68ch] rounded-b-sm border border-line bg-fieldbg px-3 py-3 text-body leading-relaxed text-ink [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6"></div>
+          <p class="mt-1.5 hidden text-meta text-danger" data-err="cuerpo"></p>
+        </div>
+      </section>
+
+      <!-- 6 · Adjunto -->
+      <section class="grid grid-cols-[92px_1fr] gap-x-5 border-b border-line py-5">
+        <label class="pt-2 text-meta font-medium text-ink2">
+          Adjunto
+          <span class="mt-0.5 block text-micro font-normal uppercase text-ink3">Opcional</span>
+        </label>
+        <div>
+          <!-- zona vacía -->
+          <button type="button" id="attachDrop"
+            class="flex w-full items-center justify-between rounded-sm border border-dashed border-line2 bg-fieldbg px-4 py-3 text-left hover:bg-chipbg">
+            <span class="text-meta text-ink2">Seleccionar un archivo</span>
+            <span class="text-micro uppercase text-ink3">Un solo fichero · máx. 10 MB</span>
+          </button>
+          <!-- fichero seleccionado -->
+          <div id="attachFile" class="hidden items-center justify-between gap-3 rounded-sm border border-line bg-sheet px-4 py-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm border border-line text-micro font-semibold text-ink2" id="attachExt">PDF</span>
+              <div class="min-w-0">
+                <p id="attachName" class="truncate text-meta font-medium text-ink">propuesta.pdf</p>
+                <p id="attachSize" class="text-micro num text-ink3">2,4 MB</p>
+              </div>
+            </div>
+            <button type="button" id="attachRemove" class="shrink-0 rounded-sm border border-line px-2.5 py-1 text-meta text-ink2 hover:bg-fieldbg">Quitar</button>
+          </div>
+          <!-- avisos de rechazo -->
+          <div id="attachErrors" class="mt-2 hidden space-y-1.5"></div>
+        </div>
+      </section>
+
+      <!-- 7 · Feedback + barra de acción -->
+      <div class="pt-6">
+        <!-- banner (éxito / error), sobre la barra -->
+        <div id="banner" class="mb-4 hidden rounded-sm border px-4 py-3 text-meta"></div>
+
+        <div class="flex items-center justify-between gap-4">
+          <p class="text-meta text-ink3">
+            Los campos con <span class="text-danger">*</span> son obligatorios.
+          </p>
+          <button type="submit" id="sendBtn"
+            class="inline-flex items-center gap-2.5 rounded-sm bg-primary px-6 py-2.5 text-body font-medium text-primaryink hover:opacity-90 disabled:opacity-45">
+            <span id="sendSpinner" class="hidden h-4 w-4 shrink-0 rounded-full border-2 border-primaryink/40 border-t-primaryink"></span>
+            <span id="sendLabel">Enviar</span>
+          </button>
+        </div>
+        <!-- barra de progreso (estado enviando) -->
+        <div id="progress" class="prog relative mt-3 hidden h-0.5 overflow-hidden rounded-full bg-line"></div>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<script>
+/* ============================================================
+   Datos y utilidades
+============================================================ */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+// Estado de chips por campo
+const chips = { para: [], cc: [], cco: [] };
+
+/* ---------- Chips ---------- */
+function renderChips(field) {
+  const wrap = $(`#field-${field} .chips`);
+  wrap.innerHTML = '';
+  chips[field].forEach((email, i) => {
+    const invalid = !EMAIL_RE.test(email);
+    const el = document.createElement('span');
+    el.className = 'inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 text-meta ' +
+      (invalid
+        ? 'border-danger bg-dangerbg text-danger'
+        : 'border-line2 bg-chipbg text-ink');
+    el.innerHTML =
+      (invalid ? '<span aria-hidden="true">⚠</span>' : '') +
+      `<span>${email}</span>` +
+      `<button type="button" aria-label="Quitar ${email}" data-rm="${i}" class="ml-0.5 text-ink3 hover:text-ink">×</button>`;
+    el.querySelector('[data-rm]').addEventListener('click', () => {
+      chips[field].splice(i, 1); renderChips(field);
+    });
+    wrap.appendChild(el);
+  });
+}
+function addChip(field, raw) {
+  raw.split(',').map(s => s.trim()).filter(Boolean).forEach(v => chips[field].push(v));
+  renderChips(field);
+}
+['para','cc','cco'].forEach(field => {
+  const input = $(`#input-${field}`);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      if (input.value.trim()) { addChip(field, input.value); input.value = ''; }
+    } else if (e.key === 'Backspace' && !input.value && chips[field].length) {
+      chips[field].pop(); renderChips(field);
+    }
+  });
+  input.addEventListener('blur', () => {
+    if (input.value.trim()) { addChip(field, input.value); input.value = ''; }
+  });
+});
+
+/* ---------- Cuerpo: placeholder + toolbar cosmética ---------- */
+const body = $('#input-cuerpo');
+function refreshBodyPlaceholder() {
+  const empty = body.textContent.trim() === '' && !body.querySelector('li,img');
+  body.classList.toggle('is-empty', empty);
+}
+body.addEventListener('input', refreshBodyPlaceholder);
+$$('[data-cmd]').forEach(b => b.addEventListener('mousedown', e => {
+  e.preventDefault();
+  body.focus();
+  document.execCommand(b.dataset.cmd, false, null);
+  refreshBodyPlaceholder();
+}));
+
+/* ---------- Adjunto ---------- */
+function showAttach(name, size, ext) {
+  $('#attachDrop').classList.add('hidden');
+  $('#attachFile').classList.remove('hidden');
+  $('#attachFile').classList.add('flex');
+  $('#attachName').textContent = name;
+  $('#attachSize').textContent = size;
+  $('#attachExt').textContent = ext;
+}
+function clearAttach() {
+  $('#attachFile').classList.add('hidden');
+  $('#attachFile').classList.remove('flex');
+  $('#attachDrop').classList.remove('hidden');
+}
+function setAttachErrors(list) {
+  const box = $('#attachErrors');
+  box.innerHTML = '';
+  if (!list.length) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  list.forEach(([file, msg]) => {
+    const el = document.createElement('div');
+    el.className = 'flex items-start gap-2 rounded-sm border border-danger bg-dangerbg px-3 py-2 text-meta text-danger';
+    el.innerHTML = `<span aria-hidden="true">⚠</span><span><span class="font-medium">${file}</span>: ${msg}</span>`;
+    box.appendChild(el);
+  });
+}
+$('#attachDrop').addEventListener('click', () => showAttach('propuesta.pdf', '2,4 MB', 'PDF'));
+$('#attachRemove').addEventListener('click', () => clearAttach());
+
+/* ---------- Banner ---------- */
+function banner(kind, text) {
+  const b = $('#banner');
+  if (!kind) { b.classList.add('hidden'); return; }
+  b.classList.remove('hidden');
+  if (kind === 'ok') {
+    b.className = 'mb-4 rounded-sm border px-4 py-3 text-meta border-okline bg-okbg text-ink';
+    b.innerHTML = `<span class="font-medium">Correo enviado.</span> ${text}`;
+  } else {
+    b.className = 'mb-4 rounded-sm border px-4 py-3 text-meta border-danger bg-dangerbg text-ink';
+    b.innerHTML = `<span class="font-medium text-danger">No se pudo enviar el correo.</span> ${text}`;
+  }
+}
+
+/* ---------- Errores de campo ---------- */
+function fieldError(name, msg) {
+  const p = $(`[data-err="${name}"]`);
+  const box = $(`#field-${name}`) || $(`#input-${name}`);
+  if (msg) {
+    p.textContent = msg; p.classList.remove('hidden');
+    if (box) box.classList.add('border-danger');
+  } else {
+    p.classList.add('hidden');
+    if (box) box.classList.remove('border-danger');
+  }
+}
+function clearAllErrors() {
+  ['para','cc','cco','asunto','cuerpo'].forEach(n => fieldError(n, ''));
+}
+
+/* ============================================================
+   Reset del formulario
+============================================================ */
+function resetForm() {
+  chips.para = []; chips.cc = []; chips.cco = [];
+  ['para','cc','cco'].forEach(renderChips);
+  $('#input-asunto').value = '';
+  body.innerHTML = '';
+  refreshBodyPlaceholder();
+  clearAttach();
+  setAttachErrors([]);
+  clearAllErrors();
+  banner(null);
+  setSending(false);
+}
+
+/* ============================================================
+   Estado enviando
+============================================================ */
+function setSending(on) {
+  $('#sendBtn').disabled = on;
+  $('#sendSpinner').classList.toggle('hidden', !on);
+  $('#sendLabel').textContent = on ? 'Enviando' : 'Enviar';
+  $('#progress').classList.toggle('hidden', !on);
+}
+
+/* ============================================================
+   Envío mockeado (setTimeout ~1s). El resultado lo decide
+   forceOutcome, que fija el panel de control.
+============================================================ */
+let forceOutcome = 'ok'; // 'ok' | 'error'
+$('#composer').addEventListener('submit', e => {
+  e.preventDefault();
+  clearAllErrors(); banner(null);
+
+  // Validación mínima en cliente
+  let bad = false;
+  if (!chips.para.length) { fieldError('para', 'Añade al menos un destinatario.'); bad = true; }
+  else if (chips.para.some(v => !EMAIL_RE.test(v))) { fieldError('para', 'Hay un email con formato no válido.'); bad = true; }
+  if (!$('#input-asunto').value.trim()) { fieldError('asunto', 'El asunto es obligatorio.'); bad = true; }
+  if (body.textContent.trim() === '') { fieldError('cuerpo', 'El cuerpo del mensaje es obligatorio.'); bad = true; }
+  if (bad) return;
+
+  setSending(true);
+  setTimeout(() => {
+    setSending(false);
+    if (forceOutcome === 'ok') {
+      resetForm();
+      banner('ok', 'El formulario queda limpio para redactar otro.');
+    } else {
+      banner('error', 'Vuelve a intentarlo en unos segundos. Los datos se conservan.');
+    }
+  }, 1000);
+});
+
+/* ============================================================
+   ESTADOS DE LA DEMO E1–E7
+============================================================ */
+const STATES = {
+  E1: { label:'E1 · Vacío', apply(){ forceOutcome='ok'; resetForm(); } },
+  E2: { label:'E2 · Compuesto', apply(){
+      resetForm();
+      chips.para = ['ana.lopez@empresa.com','soporte@cliente.es'];
+      chips.cc   = ['jefe.proyecto@empresa.com'];
+      chips.cco  = ['auditoria@empresa.com'];
+      ['para','cc','cco'].forEach(renderChips);
+      $('#input-asunto').value = 'Propuesta de colaboración: revisión';
+      body.innerHTML =
+        '<p>Hola equipo, adjunto la <b>propuesta</b> para vuestra <i>revisión</i>. Puntos a validar:</p>' +
+        '<ol><li>Alcance de la fase inicial.</li><li>Calendario y hitos.</li><li>Criterios de aceptación.</li></ol>';
+      refreshBodyPlaceholder();
+      showAttach('propuesta.pdf','2,4 MB','PDF');
+  }},
+  E3: { label:'E3 · Errores de validación', apply(){
+      resetForm();
+      chips.cc = ['correo-mal-escrito@'];
+      renderChips('cc');
+      fieldError('para', 'Añade al menos un destinatario.');
+      fieldError('cc', 'Hay un email con formato no válido: correo-mal-escrito@');
+      fieldError('asunto', 'El asunto es obligatorio.');
+      fieldError('cuerpo', 'El cuerpo del mensaje es obligatorio.');
+      $('#sendBtn').disabled = true;
+  }},
+  E4: { label:'E4 · Adjunto rechazado', apply(){
+      resetForm();
+      clearAttach();
+      setAttachErrors([
+        ['script.exe', 'tipo de archivo no permitido.'],
+        ['video.mp4 (18 MB)', 'supera el límite de 10 MB.'],
+      ]);
+  }},
+  E5: { label:'E5 · Enviando', apply(){
+      STATES.E2.apply();
+      banner(null);
+      setSending(true);
+  }},
+  E6: { label:'E6 · Éxito', apply(){
+      forceOutcome='ok'; resetForm();
+      banner('ok', 'El formulario queda limpio para redactar otro.');
+  }},
+  E7: { label:'E7 · Error de envío', apply(){
+      STATES.E2.apply();
+      setSending(false);
+      banner('error', 'Vuelve a intentarlo en unos segundos. Los datos se conservan.');
+      forceOutcome='error';
+  }},
+};
+
+// Construir botones del panel
+const order = ['E1','E2','E3','E4','E5','E6','E7'];
+const desc = {
+  E1:'Todos los campos vacíos',
+  E2:'Correo compuesto completo',
+  E3:'Validación con errores',
+  E4:'Adjunto rechazado',
+  E5:'Envío en progreso',
+  E6:'Enviado con éxito',
+  E7:'Error de envío',
+};
+const btnHost = $('#stateButtons');
+order.forEach(k => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.dataset.state = k;
+  b.className = 'flex w-full items-baseline gap-2 rounded-sm border border-transparent px-2.5 py-2 text-left hover:bg-fieldbg';
+  b.innerHTML = `<span class="w-6 shrink-0 text-meta font-semibold text-ink2">${k}</span>` +
+                `<span class="text-meta text-ink2">${desc[k]}</span>`;
+  b.addEventListener('click', () => activate(k));
+  btnHost.appendChild(b);
+});
+function activate(k) {
+  // set outcome por defecto según estado antes de aplicar
+  if (k !== 'E7') forceOutcome = 'ok';
+  STATES[k].apply();
+  $('#activeLabel').textContent = STATES[k].label;
+  $$('#stateButtons button').forEach(x =>
+    x.classList.toggle('border-line2', x.dataset.state === k));
+  $$('#stateButtons button').forEach(x =>
+    x.classList.toggle('bg-fieldbg', x.dataset.state === k));
+}
+$('#resetBtn').addEventListener('click', () => activate('E1'));
+
+/* placeholder del contenteditable via CSS ------------------ */
+const styleEl = document.createElement('style');
+styleEl.textContent =
+  '#input-cuerpo.is-empty::before{content:attr(data-placeholder);color:oklch(0.640 0.010 262);pointer-events:none;}';
+document.head.appendChild(styleEl);
+
+// Arranque en E1
+activate('E1');
+</script>
+</body>
+</html>

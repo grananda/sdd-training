@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guía de estilos — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-principios-de-dise-o-y-ux">1. Principios de diseño y UX</a></li><li><a href="#2-paleta-de-colores">2. Paleta de colores</a></li><li><a href="#3-tipograf-a-espaciado-e-iconograf-a">3. Tipografía, espaciado e iconografía</a></li><li><a href="#4-design-tokens-css">4. Design tokens CSS</a></li><li><a href="#5-componentes-base-y-pautas-de-uso">5. Componentes base y pautas de uso</a></li><li><a href="#6-responsive-y-accesibilidad">6. Responsive y accesibilidad</a></li><li><a href="#7-estructura-de-pantallas-y-navegaci-n">7. Estructura de pantallas y navegación</a></li><li><a href="#8-decisiones-tomadas-en-el-paso-2-3-estilos">8. Decisiones tomadas en el paso 2.3 (estilos)</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="gu-a-de-estilos-servicio-web-de-env-o-de-email-aidd-training">Guía de estilos — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Guia de estilos</span> <span class="badge badge-soft">Fase 2 · 2.3</span> <span class="dot">&middot;</span> Vista generada el 2026-07-08 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">1</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">2</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">1</span><span class="kpi-label">Historias de usuario</span></div></div></header>
+<blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-08 11:57 CEST<br>Documento de Fase 2 (AIDD · paso 2.3). Generado por <code>aidd style-guide</code>.<br>Entrada: docs/detalle-historias-usuario.md + identidad de marca <strong>NTT DATA</strong>.<br><strong>Aprobado (2026-07-08).</strong><br><br><strong>Identidad visual:</strong> corporativa <strong>NTT DATA</strong> (azul primario, rojo de acento, tipografía Inter). Resuelve el <span class="chip chip-nfr">NFR-12</span>, que quedaba pendiente de definir. <strong>Objetivo de accesibilidad:</strong> WCAG 2.1 AA. <strong>Responsive:</strong> desktop-first con adaptación a móvil.</blockquote>
+<section class="doc-section" id="1-principios-de-dise-o-y-ux">
+<h2><a class="anchor" href="#1-principios-de-dise-o-y-ux" aria-label="Enlace">#</a>1. Principios de diseño y UX</h2>
+<ul>
+<li><strong>Claridad ante todo.</strong> Es un formulario único; el usuario debe entender de un vistazo qué es obligatorio, qué es opcional y en qué estado está el envío. Jerarquía tipográfica y espaciado hacen el trabajo, no el color.</li>
+<li><strong>Sobrio y corporativo (NTT DATA).</strong> Superficies neutras, azul de marca reservado a acciones primarias, foco y enlaces; el rojo de marca solo para error/peligro. Nada de degradados decorativos ni adornos.</li>
+<li><strong>Feedback inmediato y honesto.</strong> Cada acción (validación, envío, éxito, error) tiene una respuesta visible y textual; los estados nunca se comunican solo con color (NFR de accesibilidad).</li>
+<li><strong>Interfaz en español</strong> (<span class="chip chip-nfr">NFR-01</span>), copy directo y sin tecnicismos de cara al remitente.</li>
+<li><strong>Accesible por defecto.</strong> Contraste AA, foco visible, semántica nativa y navegación por teclado en todos los controles (chips, toolbar, adjunto, enviar).</li>
+<li><strong>La guía manda sobre el prototipo.</strong> El wireframe (paso 2.2) fijó estructura; aquí se fija el vestido visual definitivo.</li>
+</ul>
+</section>
+<section class="doc-section" id="2-paleta-de-colores">
+<h2><a class="anchor" href="#2-paleta-de-colores" aria-label="Enlace">#</a>2. Paleta de colores</h2>
+<p><strong>Marca NTT DATA</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Rol</th><th>Valor</th><th>Uso</th></tr></thead><tbody><tr><td>Azul primario</td><td><code><span class="swatch" style="background:#0072CE"></span>#0072CE</code></td><td>Color de marca. Acentos, foco, enlaces, elementos activos.</td></tr><tr><td>Azul primario (acción)</td><td><code><span class="swatch" style="background:#005A9E"></span>#005A9E</code></td><td>Fondo de botones/acciones primarias (garantiza AA con texto blanco).</td></tr><tr><td>Azul oscuro (hover/pressed)</td><td><code><span class="swatch" style="background:#00457A"></span>#00457A</code></td><td>Estado hover/pressed de la acción primaria.</td></tr><tr><td>Rojo NTT DATA</td><td><code><span class="swatch" style="background:#DA291C"></span>#DA291C</code></td><td>Acento de marca; base del color de error/peligro.</td></tr></tbody></table></div>
+<p><strong>Neutros (superficies y texto)</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Rol</th><th>Valor</th><th>Uso</th></tr></thead><tbody><tr><td>Fondo app</td><td><code><span class="swatch" style="background:#F4F6F8"></span>#F4F6F8</code></td><td>Fondo general de la página.</td></tr><tr><td>Superficie</td><td><code><span class="swatch" style="background:#FFFFFF"></span>#FFFFFF</code></td><td>Tarjetas, campos, panel del formulario.</td></tr><tr><td>Borde</td><td><code><span class="swatch" style="background:#D5DCE3"></span>#D5DCE3</code></td><td>Bordes de inputs, separadores.</td></tr><tr><td>Borde fuerte</td><td><code><span class="swatch" style="background:#9AA7B4"></span>#9AA7B4</code></td><td>Bordes en foco/hover de inputs.</td></tr><tr><td>Texto principal</td><td><code><span class="swatch" style="background:#1F2933"></span>#1F2933</code></td><td>Cuerpo y titulares (≈13:1 sobre blanco).</td></tr><tr><td>Texto secundario</td><td><code><span class="swatch" style="background:#52606D"></span>#52606D</code></td><td>Etiquetas, ayudas, texto opcional (≈7:1 sobre blanco).</td></tr><tr><td>Texto deshabilitado</td><td><code><span class="swatch" style="background:#8A97A3"></span>#8A97A3</code></td><td>Placeholders, estados disabled.</td></tr></tbody></table></div>
+<p><strong>Estados semánticos</strong> (fondo tenue + texto/borde accesibles)</p>
+<div class="table-wrap"><table><thead><tr><th>Estado</th><th>Texto/Icono</th><th>Fondo</th><th>Borde</th></tr></thead><tbody><tr><td>Éxito</td><td><code><span class="swatch" style="background:#1E7A46"></span>#1E7A46</code></td><td><code><span class="swatch" style="background:#E7F4EC"></span>#E7F4EC</code></td><td><code><span class="swatch" style="background:#9AD5B4"></span>#9AD5B4</code></td></tr><tr><td>Error / peligro</td><td><code><span class="swatch" style="background:#C21B0E"></span>#C21B0E</code></td><td><code><span class="swatch" style="background:#FDECEA"></span>#FDECEA</code></td><td><code><span class="swatch" style="background:#F2B8B2"></span>#F2B8B2</code></td></tr><tr><td>Aviso</td><td><code><span class="swatch" style="background:#8A5A00"></span>#8A5A00</code></td><td><code><span class="swatch" style="background:#FDF3E2"></span>#FDF3E2</code></td><td><code><span class="swatch" style="background:#E9C88A"></span>#E9C88A</code></td></tr><tr><td>Información</td><td><code><span class="swatch" style="background:#005A9E"></span>#005A9E</code></td><td><code><span class="swatch" style="background:#E8F1FB"></span>#E8F1FB</code></td><td><code><span class="swatch" style="background:#A9CCEC"></span>#A9CCEC</code></td></tr></tbody></table></div>
+<blockquote>Todos los pares texto/fondo cumplen contraste AA (≥4.5:1 texto normal). El color nunca es el único indicador de estado: se acompaña de icono y texto.</blockquote>
+</section>
+<section class="doc-section" id="3-tipograf-a-espaciado-e-iconograf-a">
+<h2><a class="anchor" href="#3-tipograf-a-espaciado-e-iconograf-a" aria-label="Enlace">#</a>3. Tipografía, espaciado e iconografía</h2>
+<p><strong>Tipografía</strong></p>
+<ul>
+<li>Familia principal: <strong>Inter</strong> (marca NTT DATA), con fallback de sistema: <code>Inter, -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif</code>.</li>
+<li>Pesos: 400 (regular), 500 (medium), 600 (semibold para titulares y botones).</li>
+<li>Escala (ratio ≈1.25, base 16px):</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>Nivel</th><th>Tamaño</th><th>Line-height</th><th>Uso</th></tr></thead><tbody><tr><td>Display / H1</td><td>28px (1.75rem)</td><td>1.3</td><td>Título &quot;Redactar correo&quot;.</td></tr><tr><td>H2</td><td>22px (1.375rem)</td><td>1.35</td><td>Secciones.</td></tr><tr><td>H3</td><td>18px (1.125rem)</td><td>1.4</td><td>Sub-bloques.</td></tr><tr><td>Body</td><td>16px (1rem)</td><td>1.5</td><td>Texto e inputs.</td></tr><tr><td>Small</td><td>14px (0.875rem)</td><td>1.45</td><td>Ayudas, contadores, mensajes de campo.</td></tr><tr><td>Caption</td><td>12px (0.75rem)</td><td>1.4</td><td>Metadatos (tamaño de adjunto).</td></tr></tbody></table></div>
+<ul>
+<li>Longitud de línea en textos largos: 65–75ch. <code>tabular-nums</code> en tamaños/contadores.</li>
+</ul>
+<p><strong>Espaciado</strong> — escala base 4px:</p>
+<p><code>4, 8, 12, 16, 20, 24, 32, 40, 48, 64</code>. Espaciado variado por jerarquía (más aire entre bloques que dentro de un bloque).</p>
+<p><strong>Iconografía</strong></p>
+<ul>
+<li>Set recomendado: <strong>Lucide</strong> (o Heroicons), trazo <code>1.5px</code>, tamaño base 20px (24px en acciones). Iconos decorativos con <code>aria-hidden=&quot;true&quot;</code>; iconos con significado llevan <code>aria-label</code>.</li>
+<li>Iconos clave: negrita/cursiva/lista (toolbar), clip (adjunto), X (quitar chip/adjunto), check (éxito), alerta (error/aviso), spinner (enviando).</li>
+</ul>
+</section>
+<section class="doc-section" id="4-design-tokens-css">
+<h2><a class="anchor" href="#4-design-tokens-css" aria-label="Enlace">#</a>4. Design tokens CSS</h2>
+<pre><code>:root {
+  /* Marca NTT DATA */
+  --color-primary: #0072CE;
+  --color-primary-action: #005A9E;
+  --color-primary-hover: #00457A;
+  --color-brand-red: #DA291C;
+
+  /* Neutros */
+  --color-bg: #F4F6F8;
+  --color-surface: #FFFFFF;
+  --color-border: #D5DCE3;
+  --color-border-strong: #9AA7B4;
+  --color-text: #1F2933;
+  --color-text-muted: #52606D;
+  --color-text-disabled: #8A97A3;
+
+  /* Estados */
+  --color-success-fg: #1E7A46;
+  --color-success-bg: #E7F4EC;
+  --color-success-border: #9AD5B4;
+  --color-error-fg: #C21B0E;
+  --color-error-bg: #FDECEA;
+  --color-error-border: #F2B8B2;
+  --color-warning-fg: #8A5A00;
+  --color-warning-bg: #FDF3E2;
+  --color-warning-border: #E9C88A;
+  --color-info-fg: #005A9E;
+  --color-info-bg: #E8F1FB;
+  --color-info-border: #A9CCEC;
+
+  /* Tipografía */
+  --font-family-base: &quot;Inter&quot;, -apple-system, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-size-h1: 1.75rem;
+  --font-size-h2: 1.375rem;
+  --font-size-h3: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --font-size-caption: 0.75rem;
+  --line-height-body: 1.5;
+  --line-height-tight: 1.3;
+
+  /* Espaciado (base 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radios */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;   /* chips */
+
+  /* Sombras (sutiles) */
+  --shadow-sm: 0 1px 2px rgba(31, 41, 51, 0.06);
+  --shadow-md: 0 4px 12px rgba(31, 41, 51, 0.10);
+
+  /* Foco (accesibilidad) */
+  --focus-ring: 0 0 0 3px rgba(0, 114, 206, 0.45);
+  --focus-outline: 2px solid var(--color-primary);
+
+  /* Layout */
+  --container-max: 760px;        /* ancho de la hoja de composición */
+  --control-min-target: 44px;    /* hit target mínimo AA */
+}</code></pre>
+</section>
+<section class="doc-section" id="5-componentes-base-y-pautas-de-uso">
+<h2><a class="anchor" href="#5-componentes-base-y-pautas-de-uso" aria-label="Enlace">#</a>5. Componentes base y pautas de uso</h2>
+<p><strong>Botones</strong></p>
+<ul>
+<li><strong>Primario</strong> (Enviar): fondo <code>--color-primary-action</code>, texto blanco, <code>--radius-md</code>, padding <code>12px 20px</code>, peso 600. Hover <code>--color-primary-hover</code>. Foco <code>--focus-ring</code>. Disabled: fondo <code>--color-border</code>, texto <code>--color-text-disabled</code>, sin sombra.</li>
+<li><strong>Secundario</strong> (p. ej. quitar adjunto): fondo transparente, borde <code>--color-border-strong</code>, texto <code>--color-text</code>.</li>
+<li><strong>Terciario / icon-only</strong> (borrar chip, toolbar): mínimo <code>44×44px</code> de área efectiva aunque el icono sea 20px; <code>aria-label</code> obligatorio.</li>
+</ul>
+<p><strong>Campos de texto (Asunto) e inputs</strong></p>
+<ul>
+<li>Superficie blanca, borde <code>--color-border</code>, <code>--radius-md</code>, padding <code>10px 12px</code>, texto 16px. Foco: borde <code>--color-primary</code> + <code>--focus-ring</code>. Error: borde <code>--color-error-border</code>, mensaje bajo el campo con icono + texto (<code>aria-describedby</code>).</li>
+<li>Etiqueta siempre visible (no solo placeholder). Los campos opcionales se marcan con el texto &quot;(opcional)&quot;, no solo por estilo.</li>
+</ul>
+<p><strong>Chips de destinatarios (Para/CC/CCO)</strong></p>
+<ul>
+<li>Contenedor tipo input que envuelve chips + campo de escritura. Añadir con Enter o coma; cada chip es una <code>--radius-pill</code> con fondo <code>--color-info-bg</code>, texto <code>--color-text</code>, y botón X (<code>aria-label=&quot;Quitar &lt;email&gt;&quot;</code>, target 44px).</li>
+<li>Chip con email inválido: borde/fondo de error y sufijo textual &quot;(no válido)&quot;.</li>
+<li><strong>Para</strong> es obligatorio; <strong>CC/CCO</strong> opcionales y colapsables.</li>
+</ul>
+<p><strong>Editor de cuerpo (React Quill)</strong></p>
+<ul>
+<li>Toolbar minimalista: <strong>negrita, cursiva, lista ordenada, lista no ordenada</strong> (nada más; coherente con <span class="chip chip-rf">RF-06</span>). Botones toggle con estado <code>aria-pressed</code>. Área de edición con <code>--radius-md</code>, min-height ~180px, padding <code>12px</code>.</li>
+<li>La salida HTML se <strong>sanea en backend</strong> (<span class="chip chip-us">HU-17</span>); el whitelist visual coincide con estas opciones.</li>
+</ul>
+<p><strong>Adjunto</strong></p>
+<ul>
+<li>Zona de un único fichero: botón &quot;Adjuntar&quot; + al seleccionar muestra nombre, tamaño (<code>tabular-nums</code>, caption) y botón quitar. Máx. 10 MB y tipos permitidos (JPG, GIF, PDF, Word, Excel, PowerPoint); errores como banner de estado de error.</li>
+</ul>
+<p><strong>Banners / feedback</strong></p>
+<ul>
+<li>Éxito, error, aviso e info usan los tokens de estado (§2) con icono + texto. Los cambios asíncronos (enviando, resultado) se anuncian con <code>aria-live=&quot;polite&quot;</code>.</li>
+</ul>
+<p><strong>Tarjeta / panel</strong></p>
+<ul>
+<li>El formulario vive en una superficie blanca con <code>--shadow-sm</code>, <code>--radius-lg</code>, ancho <code>--container-max</code> centrado sobre <code>--color-bg</code>.</li>
+</ul>
+</section>
+<section class="doc-section" id="6-responsive-y-accesibilidad">
+<h2><a class="anchor" href="#6-responsive-y-accesibilidad" aria-label="Enlace">#</a>6. Responsive y accesibilidad</h2>
+<p><strong>Breakpoints</strong> (desktop-first, adaptando hacia abajo)</p>
+<div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Ancho</th><th>Comportamiento</th></tr></thead><tbody><tr><td><code>lg</code> (desktop)</td><td>≥1024px</td><td>Hoja centrada a <code>--container-max</code>; CC/CCO pueden ir en la misma fila.</td></tr><tr><td><code>md</code> (tablet)</td><td>640–1023px</td><td>Hoja a ancho casi completo con márgenes; campos apilados.</td></tr><tr><td><code>sm</code> (móvil)</td><td>&lt;640px</td><td>Una columna, padding reducido (<code>--space-4</code>), botón Enviar a ancho completo, toolbar del editor con scroll horizontal si no cabe.</td></tr></tbody></table></div>
+<p><strong>Accesibilidad — WCAG 2.1 AA</strong></p>
+<ul>
+<li><strong>Contraste:</strong> ≥4.5:1 texto normal, ≥3:1 texto grande y componentes UI. Paleta §2 verificada.</li>
+<li><strong>Foco visible:</strong> <code>--focus-ring</code> en todos los controles (<code>:focus-visible</code>); nunca <code>outline:none</code> sin reemplazo.</li>
+<li><strong>Hit targets:</strong> ≥44×44px en botones, chips (incluida su X), toolbar y adjunto.</li>
+<li><strong>Semántica:</strong> <code>&lt;header&gt;/&lt;main&gt;/&lt;aside&gt;/&lt;footer&gt;</code>, <code>&lt;label&gt;</code> asociada a cada control, jerarquía de headings sin saltos, <code>&lt;caption&gt;</code> sr-only donde aplique.</li>
+<li><strong>Teclado:</strong> orden lógico de tabulación, Enter envía el formulario, Esc descarta errores/menús, chips borrables con teclado.</li>
+<li><strong>ARIA con criterio:</strong> <code>aria-live</code> en feedback asíncrono, <code>aria-describedby</code> en errores de campo, <code>aria-label</code> en botones icon-only, <code>aria-hidden</code> en iconos decorativos, <code>aria-pressed</code> en toggles del editor.</li>
+<li><strong>Estado nunca solo por color:</strong> siempre icono + texto.</li>
+<li><strong>Movimiento:</strong> respetar <code>prefers-reduced-motion</code>; transiciones de feedback &lt;300ms; no animar propiedades de layout.</li>
+</ul>
+</section>
+<section class="doc-section" id="7-estructura-de-pantallas-y-navegaci-n">
+<h2><a class="anchor" href="#7-estructura-de-pantallas-y-navegaci-n" aria-label="Enlace">#</a>7. Estructura de pantallas y navegación</h2>
+<ul>
+<li><strong>Aplicación de una sola pantalla</strong> (el compositor). No hay navegación entre vistas: el flujo es lineal dentro del formulario.</li>
+<li><strong>Layout base:</strong> cabecera con título → hoja de composición (Para → CC/CCO → Asunto → Cuerpo → Adjunto) → barra de acción (feedback + Enviar). Un solo <code>&lt;main&gt;</code> con el formulario; sin menú lateral en producción (el panel de estados del prototipo no forma parte del producto).</li>
+<li><strong>Flujo:</strong> componer → validar (cliente) → enviar → resultado (éxito limpia el formulario; error lo conserva). Ver estados E1–E7 en <code>arquitectura-base-prototipo.md</code>.</li>
+</ul>
+</section>
+<section class="doc-section" id="8-decisiones-tomadas-en-el-paso-2-3-estilos">
+<h2><a class="anchor" href="#8-decisiones-tomadas-en-el-paso-2-3-estilos" aria-label="Enlace">#</a>8. Decisiones tomadas en el paso 2.3 (estilos)</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Origen de la identidad visual (<span class="chip chip-nfr">NFR-12</span>)</td><td>Base neutra provisional / Extraer de Figma / <strong>Marca NTT DATA</strong></td><td><strong>Marca NTT DATA</strong> (azul <code><span class="swatch" style="background:#0072CE"></span>#0072CE</code>, rojo <code><span class="swatch" style="background:#DA291C"></span>#DA291C</code>, Inter)</td><td>usuario</td><td>El usuario indica usar la identidad corporativa NTT DATA; deja de ser provisional.</td></tr><tr><td>2</td><td>Nivel de accesibilidad objetivo</td><td><strong>WCAG 2.1 AA</strong> / AAA / Básico</td><td><strong>WCAG 2.1 AA</strong></td><td>usuario</td><td>Coherente con los NFR y con la variante v2 del prototipo; exigible y realista.</td></tr><tr><td>3</td><td>Soporte responsive</td><td><strong>Desktop-first + móvil</strong> / Solo escritorio / Mobile-first</td><td><strong>Desktop-first con adaptación a móvil</strong></td><td>usuario</td><td>Uso principal en escritorio (despliegue local), pero adaptable.</td></tr><tr><td>4</td><td>Azul de marca para acciones con texto</td><td>Usar <code><span class="swatch" style="background:#0072CE"></span>#0072CE</code> / <strong>Oscurecer a <code><span class="swatch" style="background:#005A9E"></span>#005A9E</code></strong></td><td><strong><code><span class="swatch" style="background:#005A9E"></span>#005A9E</code> en botones</strong></td><td>default</td><td><code><span class="swatch" style="background:#0072CE"></span>#0072CE</code> con texto blanco no alcanza 4.5:1; el tono de acción sí cumple AA.</td></tr><tr><td>5</td><td>Uso del rojo NTT DATA</td><td>Acento general / <strong>Solo error/peligro</strong></td><td><strong>Solo error/peligro</strong></td><td>default</td><td>Evita saturar la interfaz; reserva el rojo para estados críticos, con tono accesible <code><span class="swatch" style="background:#C21B0E"></span>#C21B0E</code> en texto.</td></tr><tr><td>6</td><td>Set de iconografía</td><td><strong>Lucide</strong> / Heroicons / Material</td><td><strong>Lucide</strong> (recomendado, intercambiable)</td><td>default</td><td>Trazo limpio y ligero; no es bloqueante y puede sustituirse por Heroicons.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

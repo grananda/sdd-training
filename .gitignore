@@ -1,0 +1,37 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Entorno — NUNCA commitear credenciales SMTP (NFR-03). Sí se commitea .env.example
+.env
+.env.*
+!.env.example
+
+# Tests / cobertura
+coverage/
+playwright-report/
+test-results/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Claude Code — ajustes locales (permisos de la máquina, no del proyecto)
+.claude/settings.local.json
+
+# Editor / SO
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

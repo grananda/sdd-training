@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan de revisión de Historias de Usuario — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-par-metros-de-planificaci-n">1. Parámetros de planificación</a></li><li><a href="#2-consolidado-de-hu">2. Consolidado de HU</a></li><li><a href="#3-calendario-de-revisi-n-entrelazado-con-los-sprints">3. Calendario de revisión (entrelazado con los sprints)</a></li><li><a href="#4-leyenda-de-campos">4. Leyenda de campos</a></li><li><a href="#5-riesgos-y-supuestos">5. Riesgos y supuestos</a></li><li><a href="#6-decisiones-tomadas">6. Decisiones tomadas</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="plan-de-revisi-n-de-historias-de-usuario-servicio-web-de-env-o-de-email-aidd-training">Plan de revisión de Historias de Usuario — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Documento AIDD</span> <span class="dot">&middot;</span> Vista generada el 2026-07-09 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">16</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">2</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-must"><span class="kpi-value">16</span><span class="kpi-label">Must have</span></div></div></header>
+<blockquote><strong>Versión 4</strong> · <strong>Generado:</strong> 2026-07-09 10:55 CEST<br>Documento de planificación de la revisión de HU (AIDD). Generado por <code>aidd hu-review-plan</code>.<br>Fuentes: docs/mapa-historias-usuario.md, docs/detalle-historias-usuario.md.<br><strong>Modelo entrelazado:</strong> la revisión de cada HU se hace al inicio del sprint que la construye (ver §3 y <code>docs/sprint-plan.md</code>).<br>El Excel docs/xlsx/plan-revision-hu.xlsx es la vista rica de este plan. <strong>Aprobado (2026-07-09).</strong></blockquote>
+<section class="doc-section" id="1-par-metros-de-planificaci-n">
+<h2><a class="anchor" href="#1-par-metros-de-planificaci-n" aria-label="Enlace">#</a>1. Parámetros de planificación</h2>
+<div class="table-wrap"><table><thead><tr><th>Parámetro</th><th>Valor</th></tr></thead><tbody><tr><td>Kickoff</td><td><strong>lunes 3-ago-2026</strong></td></tr><tr><td>Modelo de revisión</td><td><strong>Entrelazado con los sprints</strong>: el refinamiento/validación de cada HU ocurre <strong>al inicio del sprint que la construye</strong> (just-in-time), no como campaña previa.</td></tr><tr><td>Periodo</td><td><strong>3-ago → 21-ago-2026</strong> (semana de arranque + 2 sprints de 1 semana)</td></tr><tr><td>Reuniones de revisión</td><td><strong>4</strong> (2 por sprint) + 1 de revisión de documentación de cliente en el arranque</td></tr><tr><td>Agrupación por reunión</td><td>Todas las HU de la fase del sprint agrupadas por tipo (varias HU relacionadas por sesión)</td></tr><tr><td>Separación de revisión</td><td><strong>Funcional (negocio) / Técnica (TI)</strong>, activada: cada sprint tiene 1 sesión de cada</td></tr></tbody></table></div>
+<p><strong>Por qué entrelazado (y no una campaña previa):</strong> el build real con IA es <strong>~6,1 días-persona</strong>; una campaña de revisión monolítica de 4 semanas antes de construir sería waterfall encubierto y eclipsaría el desarrollo. Con 18 HU pequeñas y muy relacionadas se revisa <strong>lo que se va a construir, justo antes de construirlo</strong>: F0+F1 al inicio del Sprint 1 y F2+F3+F4 al inicio del Sprint 2. Así el desarrollo arranca el <strong>10-ago</strong> (no el 24-ago) y todo cierra el <strong>21-ago</strong>.</p>
+</section>
+<section class="doc-section" id="2-consolidado-de-hu">
+<h2><a class="anchor" href="#2-consolidado-de-hu" aria-label="Enlace">#</a>2. Consolidado de HU</h2>
+<div class="table-wrap"><table><thead><tr><th>HU</th><th>Fase</th><th>Persona</th><th>Épica</th><th>Historia (Como / quiero / para)</th><th>Prior.</th><th>MoSCoW</th><th>Est.</th><th>Estado</th><th>Bloq.</th><th>RF</th><th>Tipo rev.</th><th>Dependencias</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-01</span></td><td>F0</td><td>Equipo de desarrollo</td><td>Foundation</td><td>Como equipo de desarrollo, quiero un monorepo Turborepo + pnpm con apps web y api, para tener la base del proyecto.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td>enabler (<span class="chip chip-rf">RF-01</span>, <span class="chip chip-rf">RF-06</span>)</td><td>técnica</td><td>—</td></tr><tr><td><span class="chip chip-us">HU-02</span></td><td>F0</td><td>Equipo de desarrollo</td><td>Foundation</td><td>Como equipo de desarrollo, quiero levantar la aplicación en local con Docker Compose, para poder ejecutar y probar el servicio.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td>enabler (<span class="chip chip-nfr">NFR-08</span>)</td><td>técnica</td><td><span class="chip chip-us">HU-01</span></td></tr><tr><td><span class="chip chip-us">HU-03</span></td><td>F0</td><td>Equipo de desarrollo</td><td>Envío (soporte)</td><td>Como equipo de desarrollo, quiero un endpoint de envío con Nodemailer y SMTP configurable por env, para poder enviar correos.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-m">M</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-13</span></td><td>técnica</td><td><span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span></td></tr><tr><td><span class="chip chip-us">HU-04</span></td><td>F0</td><td>Equipo de desarrollo</td><td>Envío (soporte)</td><td>Como equipo de desarrollo, quiero registrar en logs el resultado de cada envío (sin persistir contenido), para tener trazabilidad operativa.</td><td><span class="chip chip-prio-mid">Media</span></td><td><span class="chip chip-should">Should</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-15</span></td><td>técnica</td><td><span class="chip chip-us">HU-03</span></td></tr><tr><td><span class="chip chip-us">HU-05</span></td><td>F1</td><td>Remitente</td><td>Acceder al formulario</td><td>Como remitente, quiero ver un formulario con Para, CC, CCO, Asunto, Cuerpo y Adjunto, para redactar un email.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-01</span></td><td>funcional</td><td><span class="chip chip-us">HU-01</span></td></tr><tr><td><span class="chip chip-us">HU-06</span></td><td>F1</td><td>Remitente</td><td>Definir destinatarios</td><td>Como remitente, quiero indicar una o varias direcciones en Para, para enviar a los destinatarios que necesite.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-m">M</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-02</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span></td></tr><tr><td><span class="chip chip-us">HU-07</span></td><td>F1</td><td>Remitente</td><td>Definir destinatarios</td><td>Como remitente, quiero añadir una o varias direcciones en CC y CCO (opcionales), para incluir copias visibles y ocultas.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-03</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span></td></tr><tr><td><span class="chip chip-us">HU-09</span></td><td>F1</td><td>Remitente</td><td>Redactar mensaje</td><td>Como remitente, quiero escribir el asunto en una línea, para titular el correo.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-05</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span></td></tr><tr><td><span class="chip chip-us">HU-10</span></td><td>F1</td><td>Remitente</td><td>Redactar mensaje</td><td>Como remitente, quiero redactar el cuerpo con un editor minimalista (negrita, cursiva, listas), para dar formato al mensaje.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-06</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span></td></tr><tr><td><span class="chip chip-us">HU-15</span></td><td>F1</td><td>Remitente</td><td>Enviar y ver resultado</td><td>Como remitente, quiero enviar directamente al pulsar Enviar (sin confirmación ni vista previa), para un flujo ágil.</td><td><span class="chip chip-prio-low">Baja</span></td><td><span class="chip chip-could">Could</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-11</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-03</span></td></tr><tr><td><span class="chip chip-us">HU-16</span></td><td>F1</td><td>Remitente</td><td>Enviar y ver resultado</td><td>Como remitente, quiero feedback claro de éxito o error tras enviar, para saber si el correo salió.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-14</span></td><td>funcional</td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-15</span></td></tr><tr><td><span class="chip chip-us">HU-08</span></td><td>F2</td><td>Remitente</td><td>Definir destinatarios</td><td>Como remitente, quiero que se valide el formato de cada dirección, para evitar envíos a direcciones inválidas.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-04</span></td><td>ambas</td><td><span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span></td></tr><tr><td><span class="chip chip-us">HU-14</span></td><td>F2</td><td>Remitente</td><td>Validación de entradas</td><td>Como remitente, quiero que el sistema exija Para, Asunto y Cuerpo antes de enviar, para no mandar correos incompletos.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-10</span></td><td>funcional</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span></td></tr><tr><td><span class="chip chip-us">HU-11</span></td><td>F3</td><td>Remitente</td><td>Adjuntar documento</td><td>Como remitente, quiero adjuntar un único documento (opcional) al email.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-07</span></td><td>ambas</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-03</span></td></tr><tr><td><span class="chip chip-us">HU-12</span></td><td>F3</td><td>Remitente</td><td>Adjuntar documento</td><td>Como remitente, quiero que se valide el tipo del adjunto (JPG, GIF, PDF, Word, Excel, PowerPoint), para no enviar formatos no permitidos.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-08</span></td><td>ambas</td><td><span class="chip chip-us">HU-11</span></td></tr><tr><td><span class="chip chip-us">HU-13</span></td><td>F3</td><td>Remitente</td><td>Adjuntar documento</td><td>Como remitente, quiero que se valide el tamaño del adjunto (máx. 10 MB), para no exceder el límite.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-xs">XS</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-09</span></td><td>ambas</td><td><span class="chip chip-us">HU-11</span></td></tr><tr><td><span class="chip chip-us">HU-17</span></td><td>F4</td><td>Responsable de seguridad</td><td>Seguridad y endurecimiento</td><td>Como responsable de seguridad, quiero que el backend sanee el HTML del cuerpo antes de enviar, para prevenir XSS/inyección.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-m">M</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-12</span></td><td>técnica</td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-10</span></td></tr><tr><td><span class="chip chip-us">HU-18</span></td><td>F4</td><td>Responsable de seguridad</td><td>Seguridad y endurecimiento</td><td>Como responsable de seguridad, quiero que el backend valide en servidor (obligatorios, formato, tipo/tamaño), para no fiar la validación al cliente.</td><td><span class="chip chip-prio-high">Alta</span></td><td><span class="chip chip-must">Must</span></td><td><span class="chip chip-eff-s">S</span></td><td>Pendiente</td><td>No</td><td><span class="chip chip-rf">RF-16</span></td><td>técnica</td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-11</span></td></tr></tbody></table></div>
+<p><strong>18 HU consolidadas</strong> · 0 bloqueadas · todas en estado <em>Pendiente</em> (sin revisión previa registrada).</p>
+</section>
+<section class="doc-section" id="3-calendario-de-revisi-n-entrelazado-con-los-sprints">
+<h2><a class="anchor" href="#3-calendario-de-revisi-n-entrelazado-con-los-sprints" aria-label="Enlace">#</a>3. Calendario de revisión (entrelazado con los sprints)</h2>
+<p><strong>Semana del 3-ago — Arranque</strong> (no es sprint de desarrollo): kickoff, <strong>revisión de documentación de cliente</strong>, setup de entornos (monorepo/Docker/Mailpit) y refinamiento inicial del backlog.</p>
+<p><strong>Sprints con revisión al inicio</strong> (2 reuniones por sprint: 1 funcional + 1 técnica). Se revisa el lunes/martes y se construye el resto de la semana:</p>
+<div class="table-wrap"><table><thead><tr><th>Sprint</th><th>Fecha reunión</th><th>Tipo</th><th>HU revisadas</th><th>Enfoque</th></tr></thead><tbody><tr><td><strong>Sprint 1</strong> — F0+F1 (MVP)&lt;br&gt;10–14 ago</td><td>lun 10-ago</td><td>Técnica</td><td><span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>, <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span></td><td>Foundation: monorepo, Docker/Mailpit, endpoint SMTP (Nodemailer), logs</td></tr><tr><td></td><td>mar 11-ago</td><td>Funcional</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span></td><td>Formulario, destinatarios (Para/CC/CCO), asunto, cuerpo enriquecido, envío directo y feedback</td></tr><tr><td><strong>Sprint 2</strong> — F2+F3+F4 (endurecimiento)&lt;br&gt;17–21 ago</td><td>lun 17-ago</td><td>Funcional</td><td><span class="chip chip-us">HU-14</span>, <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span></td><td>Validación de entradas (obligatorios, formato) y adjunto, de cara al usuario</td></tr><tr><td></td><td>mar 18-ago</td><td>Técnica</td><td><span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>, <span class="chip chip-us">HU-18</span>, <span class="chip chip-us">HU-17</span></td><td>Adjunto (multipart/MIME real), validación autoritativa en servidor y saneamiento del HTML</td></tr></tbody></table></div>
+<p><strong>Build:</strong> Sprint 1 construye de mié–vie (11–14 ago) con demo del MVP el vie 14-ago; Sprint 2, de mié–vie (18–21 ago) con cierre el vie 21-ago.</p>
+<p><strong>Reparto:</strong> 2 reuniones funcionales (negocio) + 2 técnicas (TI). Las HU <strong>ambas</strong> (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>) se revisan una vez con negocio (lun) y otra con TI (mar) <strong>dentro de su sprint</strong>. El orden respeta fases y dependencias (F0 → F1 → F2/F3 → F4). Cada sprint cierra sus HU al arrancar la semana, no antes de empezar el proyecto.</p>
+</section>
+<section class="doc-section" id="4-leyenda-de-campos">
+<h2><a class="anchor" href="#4-leyenda-de-campos" aria-label="Enlace">#</a>4. Leyenda de campos</h2>
+<p><strong>Persona / rol</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Valor</th><th>Significado</th></tr></thead><tbody><tr><td>Remitente</td><td>Usuario final que compone y envía el correo desde la web (rol único, sin login).</td></tr><tr><td>Equipo de desarrollo</td><td>Rol técnico de los habilitadores de F0 (monorepo, envío, Docker). No es usuario del producto.</td></tr><tr><td>Responsable de seguridad</td><td>Perspectiva de seguridad materializada en F4 (saneamiento y validación en servidor).</td></tr></tbody></table></div>
+<p><strong>Estado</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Valor</th><th>Significado</th></tr></thead><tbody><tr><td>Pendiente</td><td>HU aún no revisada ni cerrada con negocio/TI.</td></tr><tr><td>En revisión</td><td>HU en proceso de validación en una reunión.</td></tr><tr><td>Cerrada</td><td>HU validada y lista para construir.</td></tr></tbody></table></div>
+<p><strong>Tipo de revisión</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Valor</th><th>Significado</th></tr></thead><tbody><tr><td>funcional</td><td>Revisión con negocio (reglas de negocio, UX, criterios de aceptación de cara al remitente).</td></tr><tr><td>técnica</td><td>Revisión con TI (habilitadores, integraciones, seguridad de servidor, NFR).</td></tr><tr><td>ambas</td><td>La HU se revisa en una reunión funcional y en una técnica.</td></tr></tbody></table></div>
+<p><strong>Estimación (talla)</strong> — escala de puntos fijos; 1 d = jornada de 8 h (métrica del detalle de historias)</p>
+<div class="table-wrap"><table><thead><tr><th>Valor</th><th>Significado</th></tr></thead><tbody><tr><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 días-persona</td></tr><tr><td><span class="chip chip-eff-s">S</span></td><td>1,5 días-persona</td></tr><tr><td><span class="chip chip-eff-m">M</span></td><td>3 días-persona</td></tr><tr><td><span class="chip chip-eff-l">L</span></td><td>5 días-persona</td></tr><tr><td><span class="chip chip-eff-xl">XL</span></td><td>8 días-persona</td></tr></tbody></table></div>
+<blockquote>No hay campos codificados propios del cliente (Persona P1/P5, GAP) en los documentos fuente; las personas se nombran por rol. No queda ningún significado por completar.</blockquote>
+</section>
+<section class="doc-section" id="5-riesgos-y-supuestos">
+<h2><a class="anchor" href="#5-riesgos-y-supuestos" aria-label="Enlace">#</a>5. Riesgos y supuestos</h2>
+<ul>
+<li><strong>Supuesto (kickoff/modelo):</strong> kickoff 3-ago y modelo entrelazado (revisión al inicio de cada sprint), a confirmar por el usuario.</li>
+<li><strong>Concentración de reuniones al inicio del sprint (riesgo de agenda):</strong> revisar lunes/martes y construir de miércoles a viernes exige disponibilidad de negocio y TI <strong>al arranque de cada sprint</strong>. Hay que blindar el 10–11 ago (Sprint 1) y el 17–18 ago (Sprint 2).</li>
+<li><strong>Retraso de una revisión = retraso solo de ese sprint:</strong> al estar entrelazado, si la sesión de inicio se cae, se retrasa el build de ese sprint, no toda una campaña previa.</li>
+<li><strong>Dependencia de configuración (no bloqueante):</strong> proveedor y credenciales SMTP (<code>requisitos.md</code> §7/§8) afectan a la <strong>puesta en marcha</strong> de <span class="chip chip-us">HU-03</span>, no a su revisión; dev usa Mailpit.</li>
+<li><strong>Dependencia de diseño (no bloqueante):</strong> identidad visual pendiente (<span class="chip chip-nfr">NFR-12</span>); no bloquea la revisión de <span class="chip chip-us">HU-05</span> ni del resto de la UI.</li>
+<li><strong>Vacaciones de agosto (riesgo de agenda):</strong> la ventana es más corta (3–21 ago) pero más densa; conviene confirmar disponibilidad de negocio y TI en esas fechas concretas. Ninguna HU está marcada como bloqueada.</li>
+</ul>
+</section>
+<section class="doc-section" id="6-decisiones-tomadas">
+<h2><a class="anchor" href="#6-decisiones-tomadas" aria-label="Enlace">#</a>6. Decisiones tomadas</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Periodo objetivo y kickoff</td><td>Jul kickoff 13 / Jul kickoff 08 / Jul–ago / <strong>3-ago</strong></td><td><strong>Kickoff 3-ago-2026</strong></td><td>usuario</td><td>Respuesta directa del usuario en el pre-flight.</td></tr><tr><td>2</td><td>Modelo de revisión</td><td>Campaña previa a los sprints / <strong>Entrelazado con los sprints</strong></td><td><strong>Entrelazado: revisión al inicio de cada sprint</strong></td><td>usuario</td><td>Para un build de ~6 días, una campaña previa de 4 semanas es waterfall; se revisa just-in-time lo que cada sprint construye.</td></tr><tr><td>3</td><td>Reuniones por sprint</td><td>1 mixta / <strong>1 funcional + 1 técnica</strong></td><td><strong>2 por sprint (funcional + técnica)</strong></td><td>usuario</td><td>Mantiene la separación negocio/TI dentro de cada iteración.</td></tr><tr><td>4</td><td>Separación funcional/técnica</td><td><strong>Sí</strong> / No</td><td><strong>Sí (funcional + técnica)</strong></td><td>usuario</td><td>Separa validación con negocio de la de TI; las HU mixtas se revisan en ambas dentro de su sprint.</td></tr><tr><td>5</td><td>Tipo de revisión por HU</td><td>Derivar del contenido / Preguntar una a una</td><td><strong>Derivado del contenido</strong></td><td>default</td><td>F0 y F4 → técnica; F1/F2 de cara al remitente → funcional; adjunto y formato → ambas.</td></tr><tr><td>6</td><td>Agrupación de HU por reunión</td><td>Una por reunión / <strong>Varias relacionadas (por fase del sprint)</strong></td><td><strong>Varias HU por sesión</strong></td><td>default</td><td>Minimiza sesiones; agrupa por fase/épica/dependencia dentro del sprint.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

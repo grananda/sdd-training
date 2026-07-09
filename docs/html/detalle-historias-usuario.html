@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalle de historias de usuario — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#historias-detalladas">Historias detalladas</a></li><li><a href="#cobertura">Cobertura</a></li><li><a href="#preguntas-abiertas-y-pendientes">Preguntas abiertas y pendientes</a></li><li><a href="#decisiones-tomadas-en-el-paso-1-3">Decisiones tomadas en el paso 1.3</a></li><li><a href="#change-log">Change log</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="detalle-de-historias-de-usuario-servicio-web-de-env-o-de-email-aidd-training">Detalle de historias de usuario — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Detalle de historias</span> <span class="badge badge-soft">Fase 1 · 1.3</span> <span class="dot">&middot;</span> Vista generada el 2026-07-09 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">16</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">9</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-essential"><span class="kpi-value">34</span><span class="kpi-label">Imprescindibles</span></div><div class="kpi kpi-warn"><span class="kpi-value">4</span><span class="kpi-label">Preguntas abiertas</span></div></div></header>
+<blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-09 08:17 CEST<br>Documento de Fase 1 (AIDD · paso 1.3). Generado por <code>aidd user-story-details</code>.<br>Entradas: docs/requisitos.md, docs/mapa-historias-usuario.md. Cierra la Fase 1.<br><strong>Aprobado (2026-07-09).</strong><br><br>Escala de estimación (tallas de puntos fijos; 1 d = jornada de 8 h): <strong>XS</strong> = 0,5 d · <strong>S</strong> = 1,5 d · <strong>M</strong> = 3 d · <strong>L</strong> = 5 d · <strong>XL</strong> = 8 d. Cada historia toma la talla más cercana a su esfuerzo humano; es la fuente de la doble estimación (humano vs IA) del plan de proyecto.<br>Los criterios marcados con <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong> son los que hay que cumplir para dar por cerrada su fase (condicionan su criterio de salida). No indican un impedimento: el resto de criterios son deseables pero no frenan el cierre de la fase.</blockquote>
+<section class="doc-section" id="historias-detalladas">
+<h2><a class="anchor" href="#historias-detalladas" aria-label="Enlace">#</a>Historias detalladas</h2>
+<h3 id="f0-foundation-base-t-cnica">F0 — Foundation (base técnica)</h3>
+<h4 id="hu-01-monorepo-turborepo-pnpm-con-apps-web-y-api">HU-01 — Monorepo Turborepo + pnpm con apps <code>web</code> y <code>api</code></h4>
+<ul>
+<li><strong>Fase</strong>: F0   <strong>RF cubierto(s)</strong>: enabler (soporte <span class="chip chip-rf">RF-01</span>, <span class="chip chip-rf">RF-06</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: estructura de monorepo con Turborepo y pnpm (workspaces), con <code>apps/web</code> (React + TypeScript + Tailwind) y <code>apps/api</code> (Express + TypeScript), y un paquete compartido opcional para tipos/validaciones.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el repositorio, cuando se ejecuta <code>pnpm install</code> en la raíz, entonces se instalan las dependencias de todos los workspaces sin error. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el monorepo, cuando se listan los workspaces, entonces existen <code>apps/web</code> y <code>apps/api</code> reconocidos por Turborepo y pnpm. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado <code>apps/web</code>, cuando se arranca en desarrollo, entonces sirve una página React con TypeScript y Tailwind operativos.</li>
+<li>Dado <code>apps/api</code>, cuando se arranca, entonces levanta un servidor Express en TypeScript que responde a un health-check.</li>
+<li>Dado un paquete compartido (si se crea), cuando <code>web</code>/<code>api</code> importan tipos o validaciones, entonces se resuelven vía workspace.</li>
+<li><strong>Notas técnicas y dependencias</strong>: base de <span class="chip chip-us">HU-05</span> (web) y <span class="chip chip-us">HU-03</span> (api). Restricciones §5 de <code>requisitos.md</code>: TypeScript, Tailwind, Turborepo + pnpm. Sin dependencias previas.</li>
+</ul>
+<h4 id="hu-02-ejecuci-n-local-con-docker-compose">HU-02 — Ejecución local con Docker Compose</h4>
+<ul>
+<li><strong>Fase</strong>: F0   <strong>RF cubierto(s)</strong>: enabler (<span class="chip chip-nfr">NFR-08</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: orquestación local de <code>web</code> + <code>api</code> con Docker Compose, con configuración por variables de entorno y sin secretos en el repo.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado <code>docker-compose.yml</code>, cuando se ejecuta <code>docker compose up</code>, entonces se levantan los servicios <code>web</code> y <code>api</code> en local. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado los servicios arrancados, cuando se accede a la URL del frontend, entonces la web carga y puede invocar al backend (CORS configurado con <code>WEB_ORIGIN</code>).</li>
+<li>Dado variables SMTP en el entorno (<code>.env</code>), cuando arranca <code>api</code>, entonces las lee del entorno y no del código.</li>
+<li>Dado <code>.env.example</code>, cuando se revisa el repo, entonces documenta las variables <strong>sin secretos reales</strong>. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong> (<span class="chip chip-nfr">NFR-03</span>)</li>
+<li><strong>Notas técnicas y dependencias</strong>: depende de <span class="chip chip-us">HU-01</span>. Variables de entorno §7 de <code>requisitos.md</code>. Configura CORS local.</li>
+</ul>
+<h4 id="hu-03-endpoint-de-env-o-con-nodemailer-y-smtp-configurable">HU-03 — Endpoint de envío con Nodemailer y SMTP configurable</h4>
+<ul>
+<li><strong>Fase</strong>: F0   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-13</span> (<span class="chip chip-nfr">NFR-03</span>, <span class="chip chip-nfr">NFR-09</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-m">M</span></li>
+<li><strong>Descripción</strong>: endpoint HTTP en el backend que recibe los datos del email y realiza el envío real vía SMTP con Nodemailer, usando configuración por variables de entorno.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el backend con SMTP configurado, cuando se hace <code>POST</code> al endpoint de envío con datos válidos, entonces Nodemailer entrega el correo al servidor SMTP y responde éxito. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un fallo del SMTP, cuando se envía, entonces el endpoint responde un error controlado (estado/estructura definidos) <strong>sin filtrar credenciales</strong> ni datos sensibles. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un cambio en las variables de entorno (<code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_SECURE</code>, <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>MAIL_FROM</code>), cuando se reinicia el servicio, entonces el envío usa la nueva configuración sin recompilar. (<span class="chip chip-nfr">NFR-09</span>)</li>
+<li>Dado un cuerpo con formato y/o un adjunto, cuando se envía, entonces el correo se construye como HTML e incluye el adjunto si existe.</li>
+<li><strong>Notas técnicas y dependencias</strong>: depende de <span class="chip chip-us">HU-01</span>/<span class="chip chip-us">HU-02</span>. Es la base de <span class="chip chip-us">HU-16</span> (feedback) y del envío de F1–F3. El saneamiento (<span class="chip chip-us">HU-17</span>) y la validación en servidor (<span class="chip chip-us">HU-18</span>) se añaden en F4 sobre este endpoint.</li>
+</ul>
+<h4 id="hu-04-registro-en-logs-del-resultado-del-env-o">HU-04 — Registro en logs del resultado del envío</h4>
+<ul>
+<li><strong>Fase</strong>: F0   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-15</span> (<span class="chip chip-nfr">NFR-06</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-mid">Media</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: trazabilidad operativa mínima en logs del servidor, sin persistir el contenido del correo.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado un envío (éxito o error), cuando termina, entonces se registra en logs: resultado, destinatarios, asunto y timestamp. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el log de un envío, cuando se inspecciona, entonces <strong>no</strong> contiene el cuerpo del correo ni el contenido del adjunto. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong> (<span class="chip chip-nfr">NFR-06</span>)</li>
+<li>Dado datos sensibles (credenciales SMTP), cuando se registra la traza, entonces no aparecen en claro.</li>
+<li><strong>Notas técnicas y dependencias</strong>: depende de <span class="chip chip-us">HU-03</span>. Sin base de datos (<span class="chip chip-nfr">NFR-06</span>). Prioridad Should en el mapa: el envío funciona sin logging.</li>
+</ul>
+<h3 id="f1-composici-n-y-env-o-del-email-n-cleo-happy-path">F1 — Composición y envío del email (núcleo, happy path)</h3>
+<h4 id="hu-05-formulario-de-composici-n">HU-05 — Formulario de composición</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-01</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: pantalla única con el formulario de composición y el botón Enviar; contenedor del resto de historias de F1–F3.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el usuario en la web, cuando carga la página, entonces ve un formulario con los campos Para, CC, CCO, Asunto, Cuerpo y Adjunto, y un botón Enviar. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el formulario, cuando se muestra, entonces la interfaz está en español. (<span class="chip chip-nfr">NFR-01</span>)</li>
+<li>Dado los campos CC, CCO y Adjunto, cuando se muestran, entonces se indican como opcionales.</li>
+<li><strong>Notas técnicas y dependencias</strong>: depende de <span class="chip chip-us">HU-01</span>. Contenedor de <span class="chip chip-us">HU-06</span>…<span class="chip chip-us">HU-16</span>. La identidad visual está <strong>pendiente de definir</strong> (<span class="chip chip-nfr">NFR-12</span>); se concretará en la guía de estilos (Fase 2).</li>
+</ul>
+<h4 id="hu-06-destinatarios-en-para-una-o-varias-chips">HU-06 — Destinatarios en Para (una o varias, chips)</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-02</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-m">M</span></li>
+<li><strong>Descripción</strong>: el campo Para admite una o varias direcciones introducidas como etiquetas (chips).</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el campo Para, cuando el usuario escribe una dirección y pulsa Enter o coma, entonces se añade como chip eliminable. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado varios chips en Para, cuando se envía, entonces todas las direcciones se incluyen como destinatarios principales (To).</li>
+<li>Dado un chip existente, cuando el usuario lo elimina, entonces desaparece de la lista de destinatarios.</li>
+<li><strong>Notas técnicas y dependencias</strong>: decisión de entrada = <strong>chips/etiquetas</strong> (paso 1.3). El mecanismo de entrada es esta historia; la <strong>validación de formato</strong> es <span class="chip chip-us">HU-08</span> (F2). Depende de <span class="chip chip-us">HU-05</span>.</li>
+</ul>
+<h4 id="hu-07-copias-cc-y-cco-opcionales-chips">HU-07 — Copias CC y CCO (opcionales, chips)</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-03</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: campos CC y CCO con el mismo comportamiento de chips que Para, opcionales, admitiendo varias direcciones cada uno.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado los campos CC y CCO, cuando el usuario añade direcciones, entonces se comportan como Para (chips) y admiten varias cada uno.</li>
+<li>Dado CC y CCO vacíos, cuando se envía, entonces el envío procede (son opcionales). <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado direcciones en CCO, cuando se entrega el correo, entonces van como copia oculta (no visibles para el resto de destinatarios).</li>
+<li><strong>Notas técnicas y dependencias</strong>: reutiliza el componente de chips de <span class="chip chip-us">HU-06</span>. Depende de <span class="chip chip-us">HU-05</span>/<span class="chip chip-us">HU-06</span>.</li>
+</ul>
+<h4 id="hu-09-asunto">HU-09 — Asunto</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-05</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: campo de asunto de una sola línea.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el campo Asunto, cuando el usuario escribe, entonces acepta texto de una sola línea. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un texto con saltos de línea pegado, cuando se introduce en Asunto, entonces se normaliza a una sola línea.</li>
+<li><strong>Notas técnicas y dependencias</strong>: la obligatoriedad se cubre en <span class="chip chip-us">HU-14</span> (F2). Depende de <span class="chip chip-us">HU-05</span>.</li>
+</ul>
+<h4 id="hu-10-cuerpo-con-editor-enriquecido-minimalista-react-quill">HU-10 — Cuerpo con editor enriquecido minimalista (React Quill)</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-06</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: editor React Quill con un conjunto acotado de formato: negrita, cursiva y listas (ordenada y no ordenada), con salida HTML.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el cuerpo, cuando el usuario redacta, entonces dispone de un editor React Quill con <strong>negrita, cursiva y listas</strong> (ordenada y no ordenada), y nada más. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el contenido redactado, cuando se envía, entonces el cuerpo se transmite como HTML.</li>
+<li>Dado el toolbar, cuando se revisa, entonces no ofrece opciones fuera del set (ni enlaces, ni imágenes, ni encabezados).</li>
+<li><strong>Notas técnicas y dependencias</strong>: la salida HTML se <strong>sanea en backend</strong> (<span class="chip chip-us">HU-17</span>, F4) con un whitelist coherente con este toolbar. Depende de <span class="chip chip-us">HU-05</span>.</li>
+</ul>
+<h4 id="hu-15-env-o-directo">HU-15 — Envío directo</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-11</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-low">Baja</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: al pulsar Enviar el correo se manda directamente, sin diálogo de confirmación ni vista previa.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el formulario, cuando el usuario pulsa Enviar, entonces el envío se dispara sin diálogo de confirmación ni vista previa. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un envío en curso, cuando se está procesando, entonces el botón Enviar se deshabilita e indica progreso para evitar envíos duplicados.</li>
+<li><strong>Notas técnicas y dependencias</strong>: es el comportamiento por defecto (Could en el mapa). El feedback de resultado es <span class="chip chip-us">HU-16</span>. Depende de <span class="chip chip-us">HU-05</span>/<span class="chip chip-us">HU-03</span>.</li>
+</ul>
+<h4 id="hu-16-feedback-de-resultado-y-limpieza-del-formulario">HU-16 — Feedback de resultado y limpieza del formulario</h4>
+<ul>
+<li><strong>Fase</strong>: F1   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-14</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: tras enviar, la UI muestra éxito o error; tras un éxito, el formulario se limpia.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado un envío con éxito, cuando el backend responde OK, entonces la UI muestra un mensaje de éxito claro. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un envío con error, cuando el backend responde error, entonces la UI muestra un mensaje de error claro, sin exponer detalles técnicos sensibles. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un envío con éxito, cuando se confirma, entonces el formulario se <strong>limpia</strong> (todos los campos vacíos) y queda listo para uno nuevo. (decisión 1.3)</li>
+<li>Dado un envío con error, cuando ocurre, entonces se conservan los datos introducidos para poder reintentar.</li>
+<li><strong>Notas técnicas y dependencias</strong>: depende de <span class="chip chip-us">HU-03</span>/<span class="chip chip-us">HU-15</span>. (<span class="chip chip-nfr">NFR-10</span> usabilidad.)</li>
+</ul>
+<h3 id="f2-validaci-n-de-entradas-del-formulario">F2 — Validación de entradas del formulario</h3>
+<h4 id="hu-08-validaci-n-de-formato-de-las-direcciones">HU-08 — Validación de formato de las direcciones</h4>
+<ul>
+<li><strong>Fase</strong>: F2   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-04</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: validación en cliente del formato de cada dirección de Para, CC y CCO.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado una dirección introducida en Para/CC/CCO, cuando el usuario la confirma (chip), entonces se valida su formato y, si es inválida, se señala y no se acepta como chip válido. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado alguna dirección inválida presente, cuando se intenta enviar, entonces no se permite el envío y se indica el campo afectado. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado direcciones con formato válido, cuando se validan, entonces se aceptan según la regla de formato de email documentada.</li>
+<li><strong>Notas técnicas y dependencias</strong>: aplica a los tres campos de destinatarios. Validación de <strong>cliente</strong>; la autoritativa en servidor es <span class="chip chip-us">HU-18</span> (F4). Depende de <span class="chip chip-us">HU-06</span>/<span class="chip chip-us">HU-07</span>.</li>
+</ul>
+<h4 id="hu-14-campos-obligatorios-antes-de-enviar">HU-14 — Campos obligatorios antes de enviar</h4>
+<ul>
+<li><strong>Fase</strong>: F2   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-10</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: exigir Para, Asunto y Cuerpo no vacíos antes de permitir el envío.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado Para sin ninguna dirección, cuando se intenta enviar, entonces se bloquea el envío y se indica que Para es obligatorio. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado Asunto vacío, cuando se intenta enviar, entonces se bloquea y se indica obligatorio. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado Cuerpo vacío, cuando se intenta enviar, entonces se bloquea y se indica obligatorio. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado Para, Asunto y Cuerpo válidos y CC/CCO/adjunto vacíos, cuando se envía, entonces el envío procede.</li>
+<li><strong>Notas técnicas y dependencias</strong>: &quot;Cuerpo vacío&quot; = sin texto real (se ignora HTML vacío tipo <code>&lt;p&gt;&lt;br&gt;&lt;/p&gt;</code>). Validación de <strong>cliente</strong>; refuerzo en servidor en <span class="chip chip-us">HU-18</span>. Depende de <span class="chip chip-us">HU-05</span>/<span class="chip chip-us">HU-06</span>/<span class="chip chip-us">HU-09</span>/<span class="chip chip-us">HU-10</span>.</li>
+</ul>
+<h3 id="f3-adjunto">F3 — Adjunto</h3>
+<h4 id="hu-11-adjuntar-un-nico-documento">HU-11 — Adjuntar un único documento</h4>
+<ul>
+<li><strong>Fase</strong>: F3   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-07</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: adjuntar un único fichero opcional al correo.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado el campo Adjunto, cuando el usuario selecciona un fichero, entonces se muestra su nombre y tamaño, y puede quitarse. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un adjunto ya seleccionado, cuando el usuario elige otro, entonces se reemplaza (solo uno permitido). <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un adjunto válido, cuando se envía, entonces se transmite al backend y se incluye en el correo.</li>
+<li>Dado ningún adjunto, cuando se envía, entonces el envío procede (es opcional).</li>
+<li><strong>Notas técnicas y dependencias</strong>: envío <code>multipart/form-data</code>. Las validaciones de tipo/tamaño son <span class="chip chip-us">HU-12</span>/<span class="chip chip-us">HU-13</span>. Depende de <span class="chip chip-us">HU-05</span>/<span class="chip chip-us">HU-03</span>.</li>
+</ul>
+<h4 id="hu-12-validaci-n-del-tipo-de-adjunto">HU-12 — Validación del tipo de adjunto</h4>
+<ul>
+<li><strong>Fase</strong>: F3   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-08</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: permitir solo tipos de la lista blanca: JPG, GIF, PDF, Word (doc/docx), Excel (xls/xlsx), PowerPoint (ppt/pptx).</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado un adjunto de tipo permitido, cuando se selecciona, entonces se acepta. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un adjunto de tipo no permitido, cuando se selecciona o se intenta enviar, entonces se rechaza con un aviso claro. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un fichero renombrado (extensión permitida pero contenido de otro tipo), cuando se valida en servidor, entonces se detecta por <strong>MIME real</strong> (contenido) y se rechaza. (decisión 1.3)</li>
+<li><strong>Notas técnicas y dependencias</strong>: en cliente se valida por extensión/tipo declarado; en servidor por <strong>extensión + MIME real (magic bytes)</strong> — reforzado en <span class="chip chip-us">HU-18</span>. Depende de <span class="chip chip-us">HU-11</span>.</li>
+</ul>
+<h4 id="hu-13-validaci-n-del-tama-o-de-adjunto">HU-13 — Validación del tamaño de adjunto</h4>
+<ul>
+<li><strong>Fase</strong>: F3   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-09</span>   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-xs">XS</span></li>
+<li><strong>Descripción</strong>: rechazar adjuntos que superen 10 MB.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado un adjunto de tamaño ≤ 10 MB, cuando se selecciona, entonces se acepta. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado un adjunto de tamaño &gt; 10 MB, cuando se selecciona o se intenta enviar, entonces se rechaza con un aviso que indica el límite. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el límite configurado, cuando se aplica, entonces usa <code>MAX_ATTACHMENT_SIZE_MB</code> (por defecto 10).</li>
+<li><strong>Notas técnicas y dependencias</strong>: interpretación del límite = 10 MB binarios (10 × 1024 × 1024 bytes). Validación también en servidor (<span class="chip chip-us">HU-18</span>). Depende de <span class="chip chip-us">HU-11</span>.</li>
+</ul>
+<h3 id="f4-seguridad-y-endurecimiento-de-servidor">F4 — Seguridad y endurecimiento de servidor</h3>
+<h4 id="hu-17-saneamiento-del-html-del-cuerpo-en-backend">HU-17 — Saneamiento del HTML del cuerpo en backend</h4>
+<ul>
+<li><strong>Fase</strong>: F4   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-12</span> (<span class="chip chip-nfr">NFR-02</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-m">M</span></li>
+<li><strong>Descripción</strong>: sanear en el backend el HTML del cuerpo antes de construir y enviar el correo, dejando solo el formato permitido.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado un cuerpo con HTML, cuando llega al backend, entonces se sanea antes de construir el correo. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado contenido peligroso (p. ej. <code>&lt;script&gt;</code>, atributos <code>on*</code>, <code>&lt;iframe&gt;</code>), cuando se sanea, entonces se elimina o neutraliza. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el whitelist acordado, cuando se sanea, entonces solo sobreviven <code>b/strong</code>, <code>i/em</code>, <code>ul</code>, <code>ol</code>, <code>li</code>, <code>p</code>, <code>br</code>; se elimina todo lo demás, <strong>incluidos enlaces e imágenes</strong>. (decisión 1.3)</li>
+<li>Dado un cuerpo saneado, cuando se envía, entonces conserva el formato válido del toolbar.</li>
+<li><strong>Notas técnicas y dependencias</strong>: whitelist coherente con el toolbar de <span class="chip chip-us">HU-10</span>. Saneo con librería de servidor (p. ej. <code>sanitize-html</code>). Depende de <span class="chip chip-us">HU-03</span>/<span class="chip chip-us">HU-10</span>.</li>
+</ul>
+<h4 id="hu-18-validaci-n-en-servidor-autoritativa">HU-18 — Validación en servidor (autoritativa)</h4>
+<ul>
+<li><strong>Fase</strong>: F4   <strong>RF cubierto(s)</strong>: <span class="chip chip-rf">RF-16</span> (<span class="chip chip-nfr">NFR-11</span>)   <strong>Prioridad</strong>: <span class="chip chip-prio-high">Alta</span></li>
+<li><strong>Estimación</strong>: <span class="chip chip-eff-s">S</span></li>
+<li><strong>Descripción</strong>: revalidar en el backend obligatorios, formato de direcciones y tipo/tamaño de adjunto, sin confiar en el frontend.</li>
+<li><strong>Criterios de aceptación</strong>:</li>
+<li>Dado una petición de envío, cuando llega al backend, entonces se validan en servidor: obligatorios (Para/Asunto/Cuerpo), formato de cada dirección y tipo + tamaño del adjunto. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado una petición que burla la validación de cliente (falta un obligatorio, email inválido, o tipo/tamaño de adjunto no permitido), cuando llega al backend, entonces se rechaza con error y <strong>no</strong> se envía. <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong></li>
+<li>Dado el adjunto, cuando se valida el tipo en servidor, entonces se comprueba el <strong>MIME real</strong> además de la extensión. (decisión 1.3)</li>
+<li>Dado datos válidos en servidor, cuando pasan la validación, entonces se procede al envío (<span class="chip chip-us">HU-03</span>).</li>
+<li><strong>Notas técnicas y dependencias</strong>: es la validación <strong>autoritativa</strong>; la de cliente (<span class="chip chip-us">HU-08</span>/<span class="chip chip-us">HU-12</span>/<span class="chip chip-us">HU-13</span>/<span class="chip chip-us">HU-14</span>) queda como conveniencia. Reutiliza el esquema/validaciones compartidas (<code>packages/shared</code>). Depende de <span class="chip chip-us">HU-03</span>/<span class="chip chip-us">HU-11</span>.</li>
+</ul>
+</section>
+<section class="doc-section" id="cobertura">
+<h2><a class="anchor" href="#cobertura" aria-label="Enlace">#</a>Cobertura</h2>
+<p><strong>18/18 historias del mapa detalladas.</strong> Ninguna pendiente.</p>
+<div class="table-wrap"><table><thead><tr><th>Fase</th><th>Historias</th><th>Detalladas</th></tr></thead><tbody><tr><td>F0 — Foundation</td><td><span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>, <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span></td><td>✅ 4/4</td></tr><tr><td>F1 — Composición y envío</td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span></td><td>✅ 7/7</td></tr><tr><td>F2 — Validación de entradas</td><td><span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span></td><td>✅ 2/2</td></tr><tr><td>F3 — Adjunto</td><td><span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span></td><td>✅ 3/3</td></tr><tr><td>F4 — Seguridad y endurecimiento</td><td><span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span></td><td>✅ 2/2</td></tr></tbody></table></div>
+<p>Cobertura RF (heredada del mapa §5): <strong>16/16 RF</strong>. <span class="chip chip-us">HU-01</span> y <span class="chip chip-us">HU-02</span> son enablers sin RF directo.</p>
+</section>
+<section class="doc-section" id="preguntas-abiertas-y-pendientes">
+<h2><a class="anchor" href="#preguntas-abiertas-y-pendientes" aria-label="Enlace">#</a>Preguntas abiertas y pendientes</h2>
+<ul>
+<li>Ninguna <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong> para pasar a Fase 2 (Diseño).</li>
+<li>Pendiente de configuración (no de requisitos): <strong>proveedor y credenciales SMTP</strong> (<code>requisitos.md</code> §7/§8) — afecta a la puesta en marcha de <span class="chip chip-us">HU-03</span>, no a su definición.</li>
+<li>Pendiente de diseño: <strong>identidad visual</strong> (<span class="chip chip-nfr">NFR-12</span>) — se concretará en la guía de estilos (Fase 2); no bloquea los criterios de aceptación.</li>
+<li>A concretar en implementación (no bloqueante): lista exacta de <strong>etiquetas/atributos</strong> y expresión de validación de email; el conjunto de referencia ya queda fijado en <span class="chip chip-us">HU-17</span> y <span class="chip chip-us">HU-08</span>.</li>
+</ul>
+</section>
+<section class="doc-section" id="decisiones-tomadas-en-el-paso-1-3">
+<h2><a class="anchor" href="#decisiones-tomadas-en-el-paso-1-3" aria-label="Enlace">#</a>Decisiones tomadas en el paso 1.3</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Entrada de múltiples destinatarios (Para/CC/CCO)</td><td>Chips/etiquetas / Texto separado por comas / Una por línea</td><td><strong>Chips/etiquetas</strong></td><td>usuario</td><td>UX habitual de cliente de correo; valida cada dirección al confirmarla (<span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-08</span>).</td></tr><tr><td>2</td><td>Validación del tipo de adjunto</td><td>Extensión + MIME real / Solo extensión / MIME del navegador</td><td><strong>Extensión + MIME real (magic bytes) en servidor</strong></td><td>usuario</td><td>Más seguro frente a ficheros renombrados (<span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-18</span>).</td></tr><tr><td>3</td><td>Whitelist de saneamiento del cuerpo</td><td>Solo el set del toolbar / Toolbar + enlaces / Set ampliado</td><td><strong>Solo el set del toolbar</strong> (b/strong, i/em, ul, ol, li, p, br)</td><td>usuario</td><td>Coherente con el editor minimalista; minimiza superficie XSS (<span class="chip chip-us">HU-17</span>).</td></tr><tr><td>4</td><td>Formulario tras un envío con éxito</td><td>Limpiar / Conservar / Conservar destinatarios</td><td><strong>Limpiar el formulario</strong></td><td>usuario</td><td>Flujo ágil listo para un nuevo correo; en error se conservan los datos (<span class="chip chip-us">HU-16</span>).</td></tr><tr><td>5</td><td>Interpretación de &quot;Cuerpo vacío&quot;</td><td>Ignorar HTML vacío / Tomar cualquier HTML como no vacío</td><td><strong>Ignorar HTML vacío (<code>&lt;p&gt;&lt;br&gt;&lt;/p&gt;</code>)</strong></td><td>default</td><td>Evita falsos positivos de cuerpo relleno al validar obligatorios (<span class="chip chip-us">HU-14</span>).</td></tr><tr><td>6</td><td>Prevención de envíos duplicados</td><td>Deshabilitar botón durante el envío / Sin control</td><td><strong>Deshabilitar Enviar + indicador de progreso</strong></td><td>default</td><td>Evita doble envío en un flujo sin confirmación (<span class="chip chip-us">HU-15</span>).</td></tr><tr><td>7</td><td>Interpretación del límite de 10 MB</td><td>Binario (10 × 1024²) / Decimal (10 × 1000²)</td><td><strong>Binario (10 MiB)</strong></td><td>default</td><td>Criterio de tamaño reproducible para <span class="chip chip-us">HU-13</span>/<span class="chip chip-us">HU-18</span>.</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="change-log">
+<h2><a class="anchor" href="#change-log" aria-label="Enlace">#</a>Change log</h2>
+<p>Registro de cambios del documento (las HU se mantienen limpias y client-ready; aquí se anotan las modificaciones).</p>
+<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cambio</th><th>Origen</th></tr></thead><tbody><tr><td>2026-07-08</td><td>Generación inicial del detalle: 18 HU sobre el faseado de 5 ciclos (F0–F4), con criterios Dado/Cuando/Entonces, estimación S/M/L y notas. Etiqueta de criterios de cierre = <strong><span class="chip chip-essential">IMPRESCINDIBLE</span></strong>. Decisiones 1.3 registradas (4 del usuario + 3 defaults).</td><td><code>aidd user-story-details</code></td></tr><tr><td>2026-07-08</td><td>Regeneración/sobrescritura del documento a petición del usuario (contenido equivalente; ciclo limpio del skill).</td><td><code>aidd user-story-details</code></td></tr><tr><td>2026-07-08</td><td>Regeneración/sobrescritura a petición del usuario. Sin cambios en requisitos ni mapa; se conservan IDs, criterios y las 7 decisiones 1.3. Contenido equivalente.</td><td><code>aidd user-story-details</code></td></tr><tr><td>2026-07-09</td><td><strong>Cambio de métrica de estimación</strong> (skill 1.9.0): de rangos S/M/L a <strong>escala de tallas de puntos fijos</strong> (XS 0,5 d · S 1,5 d · M 3 d · L 5 d · XL 8 d, 1 d = 8 h). Solo cambia el significado de la escala; <strong>las tallas asignadas por HU, las HU, sus fases, criterios y prioridades quedan intactas</strong>.</td><td>usuario</td></tr><tr><td>2026-07-09</td><td><strong>Re-estimación con la nueva granularidad</strong> (aprovechando XS): 13 HU bajan de talla (ninguna sube). Nueva distribución <strong>3 M + 8 S + 7 XS</strong> (antes 9 M + 9 S). M: <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-17</span>. S: <span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>, <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-16</span>, <span class="chip chip-us">HU-18</span>. XS: <span class="chip chip-us">HU-04</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-13</span>, <span class="chip chip-us">HU-14</span>, <span class="chip chip-us">HU-15</span>. <strong>HU, fases, criterios y prioridades intactos</strong>; solo cambia la talla.</td><td>usuario</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

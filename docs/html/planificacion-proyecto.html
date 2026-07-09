@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planificación de proyecto (recursos) — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-objetivo-y-resumen">1. Objetivo y resumen</a></li><li><a href="#2-perfiles-y-equipo-recomendado">2. Perfiles y equipo recomendado</a></li><li><a href="#3-software-herramientas-y-licencias">3. Software, herramientas y licencias</a></li><li><a href="#4-infraestructura-y-entornos">4. Infraestructura y entornos</a></li><li><a href="#5-estimaci-n-de-esfuerzo-humano-cl-sico-vs-ia">5. Estimación de esfuerzo — humano clásico vs IA</a></li><li><a href="#6-kpis-de-esfuerzo-diferencia-humano-vs-ia">6. KPIs de esfuerzo (diferencia humano vs IA)</a></li><li><a href="#7-dependencias-y-prerequisitos-de-recursos">7. Dependencias y prerequisitos de recursos</a></li><li><a href="#8-riesgos-de-recursos-y-supuestos">8. Riesgos de recursos y supuestos</a></li><li><a href="#9-decisiones-tomadas">9. Decisiones tomadas</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="planificaci-n-de-proyecto-recursos-servicio-web-de-env-o-de-email-aidd-training">Planificación de proyecto (recursos) — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Plan de proyecto</span> <span class="badge badge-soft">Fase 3.5 · 3.5.1</span> <span class="dot">&middot;</span> Vista generada el 2026-07-09 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">2</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">5</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">3</span><span class="kpi-label">Fuera de alcance</span></div><div class="kpi kpi-essential"><span class="kpi-value">1</span><span class="kpi-label">Imprescindibles</span></div></div></header>
+<blockquote><strong>Versión 5</strong> · <strong>Generado:</strong> 2026-07-09 08:17 CEST<br>Documento de Planificación de entrega (AIDD). Generado por <code>aidd project-plan</code>.<br>Fuentes: docs/arquitectura-base.md, docs/mapa-historias-usuario.md, docs/detalle-historias-usuario.md.<br>Insumo de <code>aidd sprint-planning</code>. <strong>Aprobado (2026-07-09).</strong><br><br>Planifica el <strong>QUÉ se necesita</strong> (recursos), no el CUÁNDO (eso es <code>aidd sprint-planning</code>). Modelo de equipo <strong>híbrido</strong>: perfiles tradicionales mapeados a roles SDD, con la IA (Claude Code) como acelerador transversal. Equipo objetivo: <strong>1 dev full-stack + IA</strong>. Costes <strong>cualitativos con rangos</strong>.</blockquote>
+<section class="doc-section" id="1-objetivo-y-resumen">
+<h2><a class="anchor" href="#1-objetivo-y-resumen" aria-label="Enlace">#</a>1. Objetivo y resumen</h2>
+<p>Construir una app web de <strong>una sola pantalla</strong> para componer y enviar un correo (Para/CC/CCO, asunto, cuerpo enriquecido, un adjunto) con <strong>envío real vía SMTP</strong>, monorepo Turborepo+pnpm, backend Express y frontend React, desplegada <strong>solo en local con Docker</strong> y <strong>sin persistencia</strong> (ver <code>arquitectura-base.md</code>).</p>
+<p><strong>Resumen de recursos:</strong> una persona <strong>full-stack</strong> cubriendo los roles de front, back y validación, con <strong>Claude Code</strong> como copiloto (acelerador de código, tests y documentación). Stack <strong>100% open source</strong> salvo el proveedor SMTP de producción (pendiente) y la eventual licencia de Docker Desktop en organizaciones grandes. Infraestructura mínima: entorno <strong>local</strong> con Docker Compose (web + api + Mailpit). <strong>Sin BD, sin cloud, sin backups</strong>.</p>
+<p><strong>Esfuerzo (doble estimación, §5-§6):</strong> con la <strong>escala de tallas de puntos fijos</strong> (XS 0,5 · S 1,5 · M 3 · L 5 · XL 8 días) y tras la re-estimación por historia (<strong>3 M + 8 S + 7 XS</strong>), el trabajo suma <strong>24,5 días-persona</strong> en modo <strong>humano clásico</strong> (total <strong>exacto</strong>, sin rangos); el <strong>mismo trabajo con IA</strong> como recurso se estima en <strong>~6,1 días-persona</strong>, es decir <strong>~75% menos</strong> (<strong>factor ≈ x4,0</strong>). La cifra con IA es una <strong>hipótesis con supuestos</strong>, no un dato cerrado.</p>
+</section>
+<section class="doc-section" id="2-perfiles-y-equipo-recomendado">
+<h2><a class="anchor" href="#2-perfiles-y-equipo-recomendado" aria-label="Enlace">#</a>2. Perfiles y equipo recomendado</h2>
+<p>Un único recurso humano lleva varios &quot;sombreros&quot;; se mapean a roles SDD para trazabilidad.</p>
+<div class="table-wrap"><table><thead><tr><th>Perfil (tradicional)</th><th>Rol SDD</th><th>Responsabilidades</th><th>Skills concretos (ligados al stack/NFR)</th><th>Dedicación</th></tr></thead><tbody><tr><td><strong>Full-stack developer</strong> (principal)</td><td>AI Lead Front + AI Lead Back + AI Developer</td><td>Implementa web, api y <code>packages/shared</code>; integra el flujo de envío; escribe tests.</td><td>React + TypeScript, Tailwind, React Quill, React Hook Form, Zod; Express + TS, Nodemailer, Multer, sanitize-html, file-type, pino; Turborepo + pnpm; Docker Compose.</td><td>Alta (rol principal)</td></tr><tr><td><strong>Arquitecto (a tiempo parcial)</strong></td><td>AI Architect</td><td>Custodia la arquitectura base y la guía de estilos; valida decisiones técnicas.</td><td>Diseño de sistemas, seguridad (XSS/saneamiento, validación en servidor), accesibilidad AA.</td><td>Baja (ya hecho el grueso en Fase 2)</td></tr><tr><td><strong>Validador / QA (a tiempo parcial)</strong></td><td>Outcome Validator</td><td>Verifica criterios de aceptación <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code>, accesibilidad AA y el recorrido E1–E7.</td><td>Vitest, RTL, Supertest, Playwright; auditoría WCAG 2.1 AA (foco, contraste, teclado).</td><td>Media (por fase)</td></tr><tr><td><strong>IA — Claude Code</strong></td><td>Acelerador transversal (AIDD/SDD)</td><td>Genera código, tests y documentación; asiste en refactor y revisión. No sustituye la decisión ni la validación humana.</td><td>Recurso, no persona. Requiere suscripción (ver §3).</td><td>Continua</td></tr></tbody></table></div>
+<blockquote>En un equipo de 1 persona, los tres sombreros humanos recaen en el mismo dev; se listan por separado para dejar clara la dedicación por tipo de trabajo. Escalar a 2–3 personas separaría front/back y QA (ver §8).</blockquote>
+</section>
+<section class="doc-section" id="3-software-herramientas-y-licencias">
+<h2><a class="anchor" href="#3-software-herramientas-y-licencias" aria-label="Enlace">#</a>3. Software, herramientas y licencias</h2>
+<div class="table-wrap"><table><thead><tr><th>Categoría</th><th>Herramienta</th><th>Coste</th><th>Ligado a</th></tr></thead><tbody><tr><td>Lenguaje/runtime</td><td>Node.js LTS, TypeScript</td><td><strong>Open source</strong></td><td>Stack backend/tooling (<code>arquitectura-base.md</code> §1)</td></tr><tr><td>Monorepo</td><td>Turborepo, pnpm</td><td><strong>Open source</strong></td><td>Restricción <code>requisitos.md</code> §5 (<span class="chip chip-us">HU-01</span>)</td></tr><tr><td>Frontend</td><td>React, Vite, Tailwind CSS, React Quill, React Hook Form, Zod</td><td><strong>Open source</strong></td><td><span class="chip chip-us">HU-05</span>…<span class="chip chip-us">HU-16</span>, <span class="chip chip-rf">RF-06</span>, guía de estilos</td></tr><tr><td>Backend</td><td>Express, Nodemailer, Multer, sanitize-html, file-type, pino, cors, dotenv</td><td><strong>Open source</strong></td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-11</span>–13, <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>, <span class="chip chip-us">HU-04</span></td></tr><tr><td>Contrato compartido</td><td>Zod</td><td><strong>Open source</strong></td><td><code>packages/shared</code> (<span class="chip chip-us">HU-18</span>, <span class="chip chip-nfr">NFR-11</span>)</td></tr><tr><td>Testing</td><td>Vitest, React Testing Library, Supertest, Playwright</td><td><strong>Open source</strong></td><td>Estrategia de testing (propuesta §4)</td></tr><tr><td>Contenedores</td><td>Docker + Docker Compose</td><td><strong>OSS engine</strong>; Docker Desktop <strong>con coste</strong> en orgs grandes (alternativas OSS: Colima/Podman)</td><td>Despliegue (<span class="chip chip-nfr">NFR-08</span>, <span class="chip chip-us">HU-02</span>)</td></tr><tr><td>SMTP de desarrollo</td><td>Mailpit (<code>axllent/mailpit</code>)</td><td><strong>Open source</strong></td><td>SMTP dev (arquitectura §10)</td></tr><tr><td>SMTP de producción</td><td>Proveedor por definir (Gmail app pwd / transaccional)</td><td><strong>Coste variable — pendiente</strong></td><td><span class="chip chip-rf">RF-13</span>, <code>requisitos.md</code> §7/§8</td></tr><tr><td>Repo / CI</td><td>Git + hosting (p. ej. GitHub) + CI (p. ej. GitHub Actions)</td><td><strong>Free tier</strong> suele bastar; coste si privado/mayor volumen</td><td>Buena práctica (recomendación)</td></tr><tr><td>IDE + calidad</td><td>VS Code, ESLint, Prettier</td><td><strong>Open source / gratuito</strong></td><td>Buena práctica (recomendación)</td></tr><tr><td><strong>IA</strong></td><td><strong>Claude Code</strong></td><td><strong>Coste de suscripción</strong> (orden: plan mensual por usuario)</td><td>Recurso acelerador (modelo híbrido)</td></tr></tbody></table></div>
+<p><strong>Órdenes de magnitud:</strong> el desarrollo es prácticamente <strong>coste-cero en licencias</strong> (todo OSS). Los únicos costes reales: <strong>suscripción de Claude Code</strong> (bajo, por usuario/mes), <strong>proveedor SMTP</strong> de producción (desde gratuito/al uso hasta plan transaccional, pendiente) y, si aplica en la organización, <strong>Docker Desktop</strong> (evitable con Colima/Podman).</p>
+</section>
+<section class="doc-section" id="4-infraestructura-y-entornos">
+<h2><a class="anchor" href="#4-infraestructura-y-entornos" aria-label="Enlace">#</a>4. Infraestructura y entornos</h2>
+<ul>
+<li><strong>Desarrollo (único entorno real):</strong> local con <strong>Docker Compose</strong> levantando <code>web</code> + <code>api</code> + <strong>Mailpit</strong> (SMTP <code>1025</code> / UI <code>8025</code>). Config por <code>.env</code> a partir de <code>.env.example</code>, sin secretos en el repo (<span class="chip chip-nfr">NFR-03</span>). CORS a <code>WEB_ORIGIN</code>.</li>
+<li><strong>Pre/Pro:</strong> <strong>fuera de alcance</strong> — despliegue solo local (<span class="chip chip-nfr">NFR-08</span>). Si en el futuro se publicara, sería el punto de extensión (hosting de contenedores + proveedor SMTP real + SPF/DKIM).</li>
+<li><strong>Almacenamiento y backups:</strong> <strong>no aplica</strong> — sin base de datos ni persistencia de correos (<span class="chip chip-nfr">NFR-06</span>). Única traza: logs de servidor (efímeros).</li>
+<li><strong>Red/acceso:</strong> servicio local no expuesto; sin auth ni anti-abuso por alcance (<span class="chip chip-nfr">NFR-04</span>/05).</li>
+<li><strong>Secretos:</strong> credenciales SMTP solo por variables de entorno; nunca commiteadas (<span class="chip chip-nfr">NFR-03</span>).</li>
+</ul>
+</section>
+<section class="doc-section" id="5-estimaci-n-de-esfuerzo-humano-cl-sico-vs-ia">
+<h2><a class="anchor" href="#5-estimaci-n-de-esfuerzo-humano-cl-sico-vs-ia" aria-label="Enlace">#</a>5. Estimación de esfuerzo — humano clásico vs IA</h2>
+<p>Dos estimaciones <strong>en paralelo</strong> por historia y fase, para poder contrastarlas. Talla del detalle de historias con la <strong>escala de puntos fijos</strong> (XS 0,5 d · S 1,5 d · M 3 d · L 5 d · XL 8 d; 1 d = jornada de 8 h). El <strong>humano clásico</strong> es la <strong>suma exacta</strong> de los puntos (sin rangos ni punto medio); <strong>con IA</strong> el mismo trabajo asumiendo Claude Code como recurso, con <strong>compresión según la naturaleza de la tarea</strong> (no un % plano).</p>
+<div class="table-wrap"><table><thead><tr><th>Fase / Historia</th><th>Talla</th><th>Humano clásico</th><th>Con IA</th><th>Diferencia</th></tr></thead><tbody><tr><td><strong>F0 · Foundation</strong></td><td></td><td><strong>6,5 d</strong></td><td><strong>1,3 d</strong></td><td><strong>-5,2 (-80%)</strong></td></tr><tr><td>F0 / <span class="chip chip-us">HU-01</span> Monorepo Turborepo+pnpm</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,2 d</td><td>-1,3 (-87%)</td></tr><tr><td>F0 / <span class="chip chip-us">HU-02</span> Docker Compose</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,2 d</td><td>-1,3 (-87%)</td></tr><tr><td>F0 / <span class="chip chip-us">HU-03</span> Endpoint Nodemailer/SMTP</td><td><span class="chip chip-eff-m">M</span></td><td>3 d</td><td>0,8 d</td><td>-2,2 (-73%)</td></tr><tr><td>F0 / <span class="chip chip-us">HU-04</span> Logs de envío</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td><strong>F1 · Composición y envío</strong></td><td></td><td><strong>9 d</strong></td><td><strong>2,3 d</strong></td><td><strong>-6,7 (-74%)</strong></td></tr><tr><td>F1 / <span class="chip chip-us">HU-05</span> Formulario</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,4 d</td><td>-1,1 (-73%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-06</span> Chips Para</td><td><span class="chip chip-eff-m">M</span></td><td>3 d</td><td>0,8 d</td><td>-2,2 (-73%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-07</span> CC/CCO (reutiliza chips)</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-09</span> Asunto</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-10</span> Cuerpo React Quill</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,4 d</td><td>-1,1 (-73%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-15</span> Envío directo</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td>F1 / <span class="chip chip-us">HU-16</span> Feedback resultado</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,4 d</td><td>-1,1 (-73%)</td></tr><tr><td><strong>F2 · Validación de entradas</strong></td><td></td><td><strong>1 d</strong></td><td><strong>0,2 d</strong></td><td><strong>-0,8 (-80%)</strong></td></tr><tr><td>F2 / <span class="chip chip-us">HU-08</span> Formato de direcciones</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td>F2 / <span class="chip chip-us">HU-14</span> Campos obligatorios</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td><strong>F3 · Adjunto</strong></td><td></td><td><strong>3,5 d</strong></td><td><strong>1,0 d</strong></td><td><strong>-2,5 (-71%)</strong></td></tr><tr><td>F3 / <span class="chip chip-us">HU-11</span> Adjuntar documento</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,4 d</td><td>-1,1 (-73%)</td></tr><tr><td>F3 / <span class="chip chip-us">HU-12</span> Validación de tipo (MIME real)</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,5 d</td><td>-1,0 (-67%)</td></tr><tr><td>F3 / <span class="chip chip-us">HU-13</span> Validación de tamaño</td><td><span class="chip chip-eff-xs">XS</span></td><td>0,5 d</td><td>0,1 d</td><td>-0,4 (-80%)</td></tr><tr><td><strong>F4 · Seguridad y endurecimiento</strong></td><td></td><td><strong>4,5 d</strong></td><td><strong>1,3 d</strong></td><td><strong>-3,2 (-71%)</strong></td></tr><tr><td>F4 / <span class="chip chip-us">HU-17</span> Saneamiento HTML</td><td><span class="chip chip-eff-m">M</span></td><td>3 d</td><td>0,8 d</td><td>-2,2 (-73%)</td></tr><tr><td>F4 / <span class="chip chip-us">HU-18</span> Validación en servidor</td><td><span class="chip chip-eff-s">S</span></td><td>1,5 d</td><td>0,5 d</td><td>-1,0 (-67%)</td></tr><tr><td><strong>Total</strong></td><td><strong>3 M + 8 S + 7 XS</strong></td><td><strong>24,5 d-persona</strong></td><td><strong>6,1 d-persona</strong></td><td><strong>-18,4 (-75%)</strong></td></tr></tbody></table></div>
+<ul>
+<li><strong>Esfuerzo humano clásico</strong>: deriva de las tallas de <code>docs/detalle-historias-usuario.md</code> con la <strong>escala de puntos fijos</strong> (en este proyecto: XS = 0,5 d, S = 1,5 d, M = 3 d; sin L/XL). Tras la re-estimación con la nueva granularidad (3 M + 8 S + 7 XS), el total es <strong>exacto: 24,5 d</strong>, sin rangos ni punto medio. Es volumen de trabajo, no calendario.</li>
+<li><strong>Esfuerzo estimado con IA</strong>: el mismo trabajo con Claude Code como recurso. La IA genera el grueso; <strong>lo no comprimible es dirigir, revisar y validar</strong> (PR, criterios de aceptación, e2e, accesibilidad, seguridad). <strong>Compresión por naturaleza de la tarea</strong>:</li>
+<li><strong>Alta</strong> (boilerplate/scaffolding/CRUD): monorepo, Docker, CC/CCO reutilizando chips, Asunto, logs, validaciones simples → comprimen ~80-87%.</li>
+<li><strong>Media</strong> (integración estándar): endpoint Nodemailer, formulario, chips, React Quill, adjunto → comprimen ~73%.</li>
+<li><strong>Baja/moderada</strong> (seguridad y validación críticas, MIME real): saneamiento, validación en servidor, tipo de adjunto → comprimen ~67-73% porque exigen revisión y pruebas cuidadosas que la IA no elimina.</li>
+<li>Es una <strong>estimación con supuestos</strong> (§8); no es un dato cerrado.</li>
+</ul>
+</section>
+<section class="doc-section" id="6-kpis-de-esfuerzo-diferencia-humano-vs-ia">
+<h2><a class="anchor" href="#6-kpis-de-esfuerzo-diferencia-humano-vs-ia" aria-label="Enlace">#</a>6. KPIs de esfuerzo (diferencia humano vs IA)</h2>
+<p>Calculados de forma consistente con la tabla de §5.</p>
+<div class="table-wrap"><table><thead><tr><th>KPI</th><th>Valor</th></tr></thead><tbody><tr><td>Esfuerzo humano total</td><td><strong>24,5 d-persona</strong> (exacto, escala de puntos fijos)</td></tr><tr><td>Esfuerzo con IA total</td><td><strong>6,1 d-persona</strong></td></tr><tr><td>Ahorro absoluto</td><td><strong>~18,4 d-persona</strong></td></tr><tr><td>Reducción (%)</td><td><strong>~75%</strong></td></tr><tr><td>Factor de aceleración</td><td><strong>≈ x4,0</strong></td></tr><tr><td>Fase con mayor ahorro</td><td><strong>F0 · Foundation (-80%)</strong> (empata con F2) — scaffolding/boilerplate y validaciones simples, muy comprimibles</td></tr><tr><td>Fase con menor ahorro</td><td><strong>F3 · Adjunto / F4 · Seguridad (-71%)</strong> — MIME real, multipart y validación de seguridad exigen más revisión</td></tr></tbody></table></div>
+<blockquote>Lectura: la IA no &quot;hace la mitad del trabajo con un botón&quot;. Comprime mucho lo repetitivo (arranque del proyecto, componentes estándar, validaciones simples) y <strong>poco</strong> lo que exige criterio humano (seguridad, accesibilidad, validación de aceptación). Por eso el ahorro es alto pero no total, y varía por fase.</blockquote>
+</section>
+<section class="doc-section" id="7-dependencias-y-prerequisitos-de-recursos">
+<h2><a class="anchor" href="#7-dependencias-y-prerequisitos-de-recursos" aria-label="Enlace">#</a>7. Dependencias y prerequisitos de recursos</h2>
+<p>Antes de empezar a construir:</p>
+<ol>
+<li><strong>Estación de trabajo</strong> con Node.js LTS, pnpm y Docker (o Colima/Podman) instalados.</li>
+<li><strong>Acceso a Claude Code</strong> (suscripción activa) — recurso del modelo híbrido y base de la estimación con IA.</li>
+<li><strong>Repositorio Git</strong> + CI configurados (recomendado).</li>
+<li><strong><code>.env</code></strong> derivado de <code>.env.example</code>; <strong>Mailpit</strong> para el SMTP de desarrollo (resuelve el envío sin proveedor real).</li>
+<li><strong>Perfil full-stack</strong> disponible con los skills de §2.</li>
+</ol>
+<p>Dependencias entre recursos:</p>
+<ul>
+<li>El <strong>envío real en producción</strong> depende del <strong>proveedor SMTP + credenciales</strong> (pendiente) — no bloquea el desarrollo (Mailpit cubre dev).</li>
+<li>La <strong>estimación con IA</strong> depende de disponer de Claude Code; sin ese recurso, aplica la columna de esfuerzo humano clásico.</li>
+<li>La <strong>validación de accesibilidad AA</strong> depende de que el sombrero de <strong>Outcome Validator</strong> tenga tiempo asignado por fase (no dejarlo al final).</li>
+</ul>
+</section>
+<section class="doc-section" id="8-riesgos-de-recursos-y-supuestos">
+<h2><a class="anchor" href="#8-riesgos-de-recursos-y-supuestos" aria-label="Enlace">#</a>8. Riesgos de recursos y supuestos</h2>
+<p><strong>Riesgos</strong></p>
+<ul>
+<li><strong>Equipo de 1 persona (bus factor / sin paralelización):</strong> cualquier ausencia detiene el proyecto y F0→F4 es secuencial. Mitiga la IA como copiloto; escalar a 2–3 (front/back + QA) si el calendario aprieta.</li>
+<li><strong>Proveedor SMTP de producción sin definir:</strong> no bloquea el desarrollo (Mailpit), pero <strong>bloquea el envío real en un despliegue real</strong> hasta decidirlo. <strong>[Pendiente, no bloqueante en dev]</strong></li>
+<li><strong>Entregabilidad con SMTP real</strong> (SPF/DKIM, spam): riesgo si algún día se usa un proveedor real; irrelevante en local con Mailpit.</li>
+<li><strong>Licencia de Docker Desktop</strong> en organizaciones grandes: coste evitable con Colima/Podman (OSS).</li>
+<li><strong>Concentración de roles:</strong> el mismo dev decide y valida; conviene reservar tiempo explícito de QA/accesibilidad para no auto-validarse con sesgo.</li>
+</ul>
+<p><strong>Supuestos</strong></p>
+<ul>
+<li>Modelo híbrido con 1 dev full-stack + IA, según decisión del usuario.</li>
+<li>Alcance estable (18 HU, F0–F4) tras aprobar la Fase 2; sin persistencia, sin cloud.</li>
+<li>Costes tratados cualitativamente; no se aportaron tarifas.</li>
+<li><strong>Supuestos de la compresión por IA (§5):</strong> dev competente con Claude Code; el código generado se revisa y valida (no se acepta a ciegas); las tareas de seguridad y accesibilidad conservan su coste de validación humana. La cifra con IA es una <strong>hipótesis</strong>, no un compromiso.</li>
+</ul>
+</section>
+<section class="doc-section" id="9-decisiones-tomadas">
+<h2><a class="anchor" href="#9-decisiones-tomadas" aria-label="Enlace">#</a>9. Decisiones tomadas</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Modelo de equipo</td><td>Roles SDD+IA / Tradicionales / <strong>Híbrido</strong></td><td><strong>Híbrido</strong> (perfiles tradicionales mapeados a roles SDD + IA transversal)</td><td>usuario</td><td>Da perfiles reconocibles y a la vez traza a los roles SDD; refleja a Claude Code como acelerador.</td></tr><tr><td>2</td><td>Tamaño de equipo</td><td><strong>1 dev full-stack + IA</strong> / Pequeño 2-3 / Completo 4+</td><td><strong>1 dev full-stack + IA</strong></td><td>usuario</td><td>Realista para 18 HU acotadas en un proyecto de formación; la IA cubre throughput.</td></tr><tr><td>3</td><td>Tratamiento de costes</td><td><strong>Cualitativo con rangos</strong> / Cifras concretas</td><td><strong>Cualitativo con rangos</strong></td><td>usuario</td><td>Sin tarifas aportadas; se marca OSS vs coste y órdenes de magnitud.</td></tr><tr><td>4</td><td>Alternativa a Docker Desktop</td><td>Asumir Docker Desktop / <strong>Señalar Colima/Podman</strong></td><td><strong>Señalar alternativa OSS</strong></td><td>default</td><td>Evita coste de licencia en organizaciones grandes sin cambiar la arquitectura.</td></tr><tr><td>5</td><td>Entornos pre/pro</td><td>Incluir / <strong>Solo dev local</strong></td><td><strong>Solo dev local</strong></td><td>default</td><td>La arquitectura fija despliegue solo local (<span class="chip chip-nfr">NFR-08</span>); pre/pro quedan como extensión futura.</td></tr><tr><td>6</td><td>Métrica de estimación</td><td>Rangos S/M/L / <strong>Escala de tallas de puntos fijos (skill 1.9.0)</strong></td><td><strong>Puntos fijos</strong> (XS 0,5 · S 1,5 · M 3 · L 5 · XL 8 d)</td><td>usuario</td><td>El usuario cambió la métrica; el total humano pasa a ser <strong>exacto</strong> en lugar del rango 36-63.</td></tr><tr><td>7</td><td>Re-estimación con la nueva granularidad</td><td>Mantener 9 M + 9 S / <strong>Re-etiquetar con XS</strong></td><td><strong>Re-estimado a 3 M + 8 S + 7 XS</strong> (13 HU bajan de talla; ninguna sube)</td><td>usuario</td><td>Con XS disponible, las historias triviales (input único, reuso de componente, validación simple) encajan mejor; el total humano baja de 40,5 a <strong>24,5 d</strong>. HU/fases/criterios intactos.</td></tr><tr><td>8</td><td>Doble estimación humano vs IA</td><td>Estimación única / <strong>Doble estimación con KPIs</strong></td><td><strong>Doble estimación con KPIs</strong></td><td>default (skill 1.8.0+)</td><td>El humano clásico (24,5 d) es el volumen de trabajo; la columna con IA (~6,1 d) da la cifra realista, con el desglose por naturaleza de tarea.</td></tr><tr><td>9</td><td>Base de la compresión por IA</td><td>% plano / <strong>Por naturaleza de la tarea</strong></td><td><strong>Por naturaleza de la tarea</strong> (alta/media/baja)</td><td>default</td><td>Boilerplate/validaciones simples comprimen ~80-87%; seguridad/validación crítica ~67-73%; refleja que la revisión humana no se elimina.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

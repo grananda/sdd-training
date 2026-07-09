@@ -1,0 +1,610 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Redactar correo — Wireframe (v2, Web Interface Guidelines)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          // Paleta de wireframe: solo neutros. Verificados AA sobre blanco (#fff).
+          ink: '#1f2937',      // gris-800 texto principal  ~12.6:1
+          sub: '#4b5563',      // gris-600 texto secundario ~7.5:1
+          line: '#9ca3af',     // gris-400 bordes UI        ~2.9:1 vs blanco -> uso en bordes gruesos/fondos
+          hair: '#d1d5db',     // gris-300 líneas finas decorativas
+          field: '#f9fafb',    // gris-50 fondo de campo
+        },
+        fontFamily: {
+          sys: ['ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial','sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  /* Halo de foco universal (>=3px, contraste alto vs cualquier fondo claro). */
+  :focus-visible {
+    outline: 3px solid #111827;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Nunca outline:none sin reemplazo: fallback para navegadores sin :focus-visible */
+  a:focus, button:focus, input:focus, [tabindex]:focus, [contenteditable]:focus {
+    outline: 3px solid #111827;
+    outline-offset: 2px;
+  }
+  a:focus:not(:focus-visible), button:focus:not(:focus-visible),
+  input:focus:not(:focus-visible), [tabindex]:focus:not(:focus-visible),
+  [contenteditable]:focus:not(:focus-visible) { outline: none; }
+
+  /* Estética de boceto: bordes finos, esquinas suaves */
+  .wf-box { border: 1px solid #9ca3af; background: #fff; }
+  .wf-field { border: 1px solid #9ca3af; background: #f9fafb; }
+  .wf-dashed { border: 1.5px dashed #9ca3af; background: #f9fafb; }
+
+  /* Objetivos táctiles >= 44x44 */
+  .hit { min-height: 44px; min-width: 44px; }
+
+  /* Indicador de progreso "enviando" */
+  @keyframes wf-spin { to { transform: rotate(360deg); } }
+  .wf-spinner { animation: wf-spin 0.9s linear infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .wf-spinner { animation: none; }
+    * { scroll-behavior: auto !important; }
+  }
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: #6b7280;
+  }
+  /* Marcadores de lista dentro del editor simulado (el reset de Tailwind los quita) */
+  #cuerpo p { margin: 0 0 0.5rem; }
+  #cuerpo ol { list-style: decimal; padding-left: 1.5rem; margin: 0 0 0.5rem; }
+  #cuerpo ul { list-style: disc; padding-left: 1.5rem; margin: 0 0 0.5rem; }
+  #cuerpo li { margin: 0.125rem 0; }
+</style>
+
+<body class="font-sys text-ink bg-white antialiased">
+  <!-- Skip link: visible al recibir foco -->
+  <a href="#main"
+     class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-3 focus:left-3 focus:px-4 focus:py-3 focus:bg-white focus:text-ink focus:wf-box focus:font-medium">
+    Saltar al contenido principal
+  </a>
+
+  <div class="mx-auto max-w-[760px] px-4 sm:px-6 py-8">
+
+    <!-- 1. CABECERA -->
+    <header class="mb-6">
+      <p class="text-xs uppercase tracking-widest text-sub mb-1">Wireframe · baja fidelidad</p>
+      <h1 class="text-2xl font-semibold text-ink">Redactar correo</h1>
+      <p class="text-sm text-sub mt-1">Compón y envía un correo: destinatarios, asunto, cuerpo y un adjunto opcional.</p>
+    </header>
+
+    <main id="main" tabindex="-1" class="outline-none">
+      <!-- Región de feedback (aria-live) situada SOBRE la barra de acción por lectura,
+           pero anclada visualmente encima del botón Enviar más abajo -->
+      <form id="compose-form" novalidate class="wf-box rounded-lg p-5 sm:p-6 space-y-6">
+
+        <!-- 2. PARA (obligatorio, chips) -->
+        <div>
+          <div class="flex items-baseline justify-between gap-2 mb-1.5">
+            <label for="para-input" class="text-sm font-medium text-ink">
+              Para <span class="text-sub font-normal">(obligatorio)</span>
+            </label>
+            <span class="text-xs text-sub" aria-hidden="true">Enter o coma para añadir</span>
+          </div>
+          <div id="para-box"
+               class="wf-field rounded-md px-2 py-2 flex flex-wrap items-center gap-2 focus-within:outline focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[#111827]">
+            <!-- chips inyectados por JS -->
+            <input id="para-input" name="para" type="email" inputmode="email" autocomplete="email"
+                   spellcheck="false" multiple
+                   aria-describedby="para-help para-error"
+                   class="hit flex-1 min-w-[140px] bg-transparent px-2 py-2 text-sm text-ink placeholder:text-sub outline-none border-0"
+                   placeholder="nombre@empresa.com" />
+          </div>
+          <p id="para-help" class="sr-only">Escribe una dirección de correo y pulsa Enter o coma para añadirla como destinatario.</p>
+          <p id="para-error" class="min-h-[1.25rem] mt-1 text-sm text-ink" role="alert" data-error-for="para"></p>
+        </div>
+
+        <!-- 3. CC y CCO (opcionales, chips) -->
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div>
+            <label for="cc-input" class="block text-sm font-medium text-ink mb-1.5">
+              CC <span class="text-sub font-normal">(opcional)</span>
+            </label>
+            <div id="cc-box"
+                 class="wf-field rounded-md px-2 py-2 flex flex-wrap items-center gap-2 focus-within:outline focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[#111827]">
+              <input id="cc-input" name="cc" type="email" inputmode="email" autocomplete="email" spellcheck="false" multiple
+                     aria-describedby="cc-error"
+                     class="hit flex-1 min-w-[120px] bg-transparent px-2 py-2 text-sm text-ink placeholder:text-sub outline-none border-0"
+                     placeholder="copia@empresa.com" />
+            </div>
+            <p id="cc-error" class="min-h-[1.25rem] mt-1 text-sm text-ink" role="alert" data-error-for="cc"></p>
+          </div>
+          <div>
+            <label for="cco-input" class="block text-sm font-medium text-ink mb-1.5">
+              CCO <span class="text-sub font-normal">(opcional)</span>
+            </label>
+            <div id="cco-box"
+                 class="wf-field rounded-md px-2 py-2 flex flex-wrap items-center gap-2 focus-within:outline focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[#111827]">
+              <input id="cco-input" name="cco" type="email" inputmode="email" autocomplete="email" spellcheck="false" multiple
+                     aria-describedby="cco-help cco-error"
+                     class="hit flex-1 min-w-[120px] bg-transparent px-2 py-2 text-sm text-ink placeholder:text-sub outline-none border-0"
+                     placeholder="oculta@empresa.com" />
+            </div>
+            <p id="cco-help" class="sr-only">Copia oculta: estos destinatarios no serán visibles para el resto.</p>
+            <p id="cco-error" class="min-h-[1.25rem] mt-1 text-sm text-ink" role="alert" data-error-for="cco"></p>
+          </div>
+        </div>
+
+        <!-- 4. ASUNTO -->
+        <div>
+          <label for="asunto" class="block text-sm font-medium text-ink mb-1.5">
+            Asunto <span class="text-sub font-normal">(obligatorio)</span>
+          </label>
+          <input id="asunto" name="asunto" type="text" autocomplete="off" spellcheck="true"
+                 aria-describedby="asunto-error"
+                 class="hit w-full wf-field rounded-md px-3 py-2 text-sm text-ink placeholder:text-sub"
+                 placeholder="Escribe el asunto del correo" />
+          <p id="asunto-error" class="min-h-[1.25rem] mt-1 text-sm text-ink" role="alert" data-error-for="asunto"></p>
+        </div>
+
+        <!-- 5. CUERPO (editor enriquecido simulado) -->
+        <div>
+          <span id="cuerpo-label" class="block text-sm font-medium text-ink mb-1.5">
+            Cuerpo <span class="text-sub font-normal">(obligatorio)</span>
+          </span>
+          <div class="wf-box rounded-md overflow-hidden">
+            <!-- Toolbar -->
+            <div role="toolbar" aria-label="Formato del texto" aria-controls="cuerpo"
+                 class="flex items-center gap-1 border-b border-line bg-field px-2 py-1.5">
+              <button type="button" data-fmt="bold" aria-label="Negrita" aria-pressed="false"
+                      class="hit inline-flex items-center justify-center rounded font-bold text-ink hover:bg-hair">B</button>
+              <button type="button" data-fmt="italic" aria-label="Cursiva" aria-pressed="false"
+                      class="hit inline-flex items-center justify-center rounded italic text-ink hover:bg-hair">I</button>
+              <span class="mx-1 h-6 w-px bg-hair" aria-hidden="true"></span>
+              <button type="button" data-fmt="insertOrderedList" aria-label="Lista ordenada" aria-pressed="false"
+                      class="hit inline-flex items-center justify-center rounded text-ink hover:bg-hair">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <text x="1" y="8" font-size="7" fill="currentColor" stroke="none">1.</text>
+                  <text x="1" y="16" font-size="7" fill="currentColor" stroke="none">2.</text>
+                  <line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="14" x2="21" y2="14"/>
+                </svg>
+              </button>
+              <button type="button" data-fmt="insertUnorderedList" aria-label="Lista no ordenada" aria-pressed="false"
+                      class="hit inline-flex items-center justify-center rounded text-ink hover:bg-hair">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <circle cx="4" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="4" cy="14" r="1.6" fill="currentColor" stroke="none"/>
+                  <line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="14" x2="21" y2="14"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Área de redacción -->
+            <div id="cuerpo" contenteditable="true" role="textbox" aria-multiline="true"
+                 aria-labelledby="cuerpo-label" aria-describedby="cuerpo-error"
+                 data-placeholder="Redacta aquí el cuerpo del correo…"
+                 class="min-h-[140px] px-3 py-3 text-sm text-ink bg-white leading-relaxed focus:outline-none focus-visible:outline-none"></div>
+          </div>
+          <p id="cuerpo-error" class="min-h-[1.25rem] mt-1 text-sm text-ink" role="alert" data-error-for="cuerpo"></p>
+        </div>
+
+        <!-- 6. ADJUNTO (único, opcional) -->
+        <div>
+          <span class="block text-sm font-medium text-ink mb-1.5">
+            Adjunto <span class="text-sub font-normal">(opcional · un único fichero, máx. 10 MB)</span>
+          </span>
+
+          <!-- Estado sin adjunto -->
+          <div id="adjunto-empty" class="wf-dashed rounded-md p-4 flex flex-wrap items-center gap-3">
+            <button type="button" id="btn-adjuntar"
+                    class="hit inline-flex items-center gap-2 wf-box rounded-md px-4 py-2 text-sm font-medium text-ink hover:bg-field">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+              Seleccionar archivo
+            </button>
+            <span class="text-sm text-sub">Ningún archivo seleccionado.</span>
+          </div>
+
+          <!-- Estado con adjunto (oculto por defecto) -->
+          <div id="adjunto-file" hidden class="wf-box rounded-md p-3 flex items-center gap-3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="text-sub shrink-0" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
+            </svg>
+            <div class="min-w-0 flex-1">
+              <p id="adjunto-name" class="text-sm font-medium text-ink truncate">propuesta.pdf</p>
+              <p id="adjunto-size" class="text-xs text-sub tabular-nums">2,4 MB</p>
+            </div>
+            <button type="button" id="btn-quitar-adjunto" aria-label="Quitar adjunto propuesta.pdf"
+                    class="hit inline-flex items-center justify-center rounded-md text-ink hover:bg-field">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Avisos de rechazo (E4) -->
+          <ul id="adjunto-rechazos" hidden class="mt-2 space-y-1" aria-live="polite"></ul>
+        </div>
+
+        <!-- 7. FEEDBACK + BARRA DE ACCIÓN -->
+        <!-- Zona de feedback con aria-live, situada SOBRE la barra -->
+        <div id="feedback" role="status" aria-live="polite" class="empty:hidden"></div>
+
+        <div class="flex items-center justify-between gap-3 border-t border-hair pt-5">
+          <p class="text-xs text-sub">Los campos marcados como obligatorios deben completarse.</p>
+          <button type="submit" id="btn-enviar"
+                  class="hit inline-flex items-center gap-2 rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-white hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed">
+            <svg id="enviar-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="wf-spinner hidden" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-6.2-8.6" stroke-linecap="round"/>
+            </svg>
+            <span id="enviar-label">Enviar</span>
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!-- 8. PANEL DE CONTROL DE LA DEMO -->
+    <aside aria-labelledby="demo-title" class="mt-8 wf-box rounded-lg p-5 bg-field">
+      <h2 id="demo-title" class="text-sm font-semibold text-ink">Control de la demo — no forma parte del producto</h2>
+      <p class="text-xs text-sub mt-1 mb-3">Fuerza cada estado de la pantalla para la validación con cliente. Todo es simulado.</p>
+      <div role="group" aria-label="Estados de la demostración" class="flex flex-wrap gap-2">
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E1" aria-pressed="true">E1 · Vacío</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E2" aria-pressed="false">E2 · Compuesto</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E3" aria-pressed="false">E3 · Errores validación</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E4" aria-pressed="false">E4 · Adjunto rechazado</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E5" aria-pressed="false">E5 · Enviando</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E6" aria-pressed="false">E6 · Éxito</button>
+        <button type="button" class="demo-btn hit rounded-md wf-box px-3 py-2 text-sm text-ink hover:bg-white" data-state="E7" aria-pressed="false">E7 · Error de envío</button>
+      </div>
+      <p class="text-xs text-sub mt-3">Al pulsar <strong>Enviar</strong>, el resultado (éxito o error) depende del estado activo seleccionado aquí.</p>
+    </aside>
+
+    <footer class="mt-8 text-center">
+      <p class="text-xs text-sub">Prototipo de formación · aidd-training · Wireframe de baja fidelidad. Sin datos reales.</p>
+    </footer>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var recipients = { para: [], cc: [], cco: [] };
+  var sendOutcome = 'success'; // 'success' | 'error', lo fija el panel de control
+
+  // ---------- Chips ----------
+  function boxFor(field) { return document.getElementById(field + '-box'); }
+  function inputFor(field) { return document.getElementById(field + '-input'); }
+
+  function renderChips(field) {
+    var box = boxFor(field);
+    // eliminar chips previos (todo lo que no sea el input)
+    Array.prototype.slice.call(box.querySelectorAll('[data-chip]')).forEach(function (n) { n.remove(); });
+    var input = inputFor(field);
+    recipients[field].forEach(function (email, idx) {
+      var chip = document.createElement('span');
+      chip.setAttribute('data-chip', '');
+      var invalid = !EMAIL_RE.test(email);
+      chip.className = 'inline-flex items-center gap-1 rounded-md border px-2 py-1 text-sm ' +
+        (invalid ? 'border-ink bg-white text-ink' : 'border-line bg-white text-ink');
+      var label = document.createElement('span');
+      label.className = 'max-w-[200px] truncate';
+      label.textContent = email;
+      chip.appendChild(label);
+      if (invalid) {
+        var warn = document.createElement('span');
+        warn.className = 'text-xs font-semibold';
+        warn.textContent = '(no válido)';
+        chip.appendChild(warn);
+      }
+      var x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'hit inline-flex items-center justify-center rounded hover:bg-field';
+      x.setAttribute('aria-label', 'Quitar destinatario ' + email);
+      x.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+      x.addEventListener('click', function () {
+        recipients[field].splice(idx, 1);
+        renderChips(field);
+        inputFor(field).focus();
+      });
+      chip.appendChild(x);
+      box.insertBefore(chip, input);
+    });
+  }
+
+  function tryAddChip(field, raw) {
+    var value = (raw || '').trim().replace(/,$/, '').trim();
+    if (!value) return false;
+    recipients[field].push(value);
+    inputFor(field).value = '';
+    renderChips(field);
+    return true;
+  }
+
+  ['para', 'cc', 'cco'].forEach(function (field) {
+    var input = inputFor(field);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        if (input.value.trim() !== '') {
+          e.preventDefault(); // añade chip en vez de enviar el formulario
+          tryAddChip(field, input.value);
+        }
+      } else if (e.key === 'Backspace' && input.value === '' && recipients[field].length) {
+        recipients[field].pop();
+        renderChips(field);
+      }
+    });
+    input.addEventListener('blur', function () {
+      if (input.value.trim() !== '') tryAddChip(field, input.value);
+    });
+  });
+
+  // ---------- Toolbar del cuerpo (simulada con execCommand) ----------
+  var cuerpo = document.getElementById('cuerpo');
+  document.querySelectorAll('[data-fmt]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cuerpo.focus();
+      try { document.execCommand(btn.getAttribute('data-fmt'), false, null); } catch (_) {}
+      var pressed = btn.getAttribute('aria-pressed') === 'true';
+      btn.setAttribute('aria-pressed', String(!pressed));
+    });
+  });
+
+  // ---------- Adjunto ----------
+  var adjEmpty = document.getElementById('adjunto-empty');
+  var adjFile = document.getElementById('adjunto-file');
+  var adjName = document.getElementById('adjunto-name');
+  var adjSize = document.getElementById('adjunto-size');
+  var adjRechazos = document.getElementById('adjunto-rechazos');
+
+  function showAttachment(name, size) {
+    adjName.textContent = name;
+    adjSize.textContent = size;
+    document.getElementById('btn-quitar-adjunto').setAttribute('aria-label', 'Quitar adjunto ' + name);
+    adjEmpty.hidden = true;
+    adjFile.hidden = false;
+  }
+  function clearAttachment() {
+    adjEmpty.hidden = false;
+    adjFile.hidden = true;
+  }
+  function clearRejections() {
+    adjRechazos.hidden = true;
+    adjRechazos.innerHTML = '';
+  }
+  function addRejection(file, reason) {
+    adjRechazos.hidden = false;
+    var li = document.createElement('li');
+    li.className = 'wf-box rounded-md px-3 py-2 text-sm text-ink flex items-start gap-2';
+    li.innerHTML = '<span aria-hidden="true" class="font-semibold">!</span>' +
+      '<span><strong>' + file + '</strong> — ' + reason + '</span>';
+    adjRechazos.appendChild(li);
+  }
+
+  document.getElementById('btn-adjuntar').addEventListener('click', function () {
+    clearRejections();
+    showAttachment('propuesta.pdf', '2,4 MB'); // selección simulada
+  });
+  document.getElementById('btn-quitar-adjunto').addEventListener('click', function () {
+    clearAttachment();
+    document.getElementById('btn-adjuntar').focus();
+  });
+
+  // ---------- Errores de validación ----------
+  function setError(field, msg) {
+    var p = document.querySelector('[data-error-for="' + field + '"]');
+    var input = inputFor(field) || document.getElementById(field) || document.getElementById(field === 'cuerpo' ? 'cuerpo' : field);
+    if (msg) {
+      p.textContent = '⚠ ' + msg;
+      p.classList.add('font-medium');
+      if (input) { input.setAttribute('aria-invalid', 'true'); }
+      var container = boxFor(field);
+      if (container) container.classList.add('!border-ink', 'border-2');
+      if (field === 'asunto') document.getElementById('asunto').classList.add('!border-ink', 'border-2');
+      if (field === 'cuerpo') document.getElementById('cuerpo').parentElement.classList.add('!border-ink', 'border-2');
+    } else {
+      p.textContent = '';
+      p.classList.remove('font-medium');
+      if (input) input.removeAttribute('aria-invalid');
+      var c2 = boxFor(field);
+      if (c2) c2.classList.remove('!border-ink', 'border-2');
+      if (field === 'asunto') document.getElementById('asunto').classList.remove('!border-ink', 'border-2');
+      if (field === 'cuerpo') document.getElementById('cuerpo').parentElement.classList.remove('!border-ink', 'border-2');
+    }
+  }
+  function clearAllErrors() {
+    ['para', 'cc', 'cco', 'asunto', 'cuerpo'].forEach(function (f) { setError(f, ''); });
+  }
+
+  function validate() {
+    clearAllErrors();
+    var firstInvalid = null;
+    // Para: obligatorio + formato
+    if (recipients.para.length === 0) {
+      setError('para', 'Añade al menos un destinatario.');
+      firstInvalid = firstInvalid || inputFor('para');
+    } else {
+      var bad = recipients.para.filter(function (e) { return !EMAIL_RE.test(e); });
+      if (bad.length) {
+        setError('para', 'Hay direcciones con formato no válido: ' + bad.join(', ') + '.');
+        firstInvalid = firstInvalid || inputFor('para');
+      }
+    }
+    // CC / CCO: si hay, deben ser válidos
+    ['cc', 'cco'].forEach(function (f) {
+      var bad = recipients[f].filter(function (e) { return !EMAIL_RE.test(e); });
+      if (bad.length) {
+        setError(f, 'Direcciones con formato no válido: ' + bad.join(', ') + '.');
+        firstInvalid = firstInvalid || inputFor(f);
+      }
+    });
+    // Asunto obligatorio
+    if (document.getElementById('asunto').value.trim() === '') {
+      setError('asunto', 'El asunto es obligatorio.');
+      firstInvalid = firstInvalid || document.getElementById('asunto');
+    }
+    // Cuerpo obligatorio
+    if (cuerpo.textContent.trim() === '') {
+      setError('cuerpo', 'El cuerpo del correo es obligatorio.');
+      firstInvalid = firstInvalid || cuerpo;
+    }
+    return firstInvalid;
+  }
+
+  // ---------- Feedback / envío ----------
+  var feedback = document.getElementById('feedback');
+  var btnEnviar = document.getElementById('btn-enviar');
+  var enviarLabel = document.getElementById('enviar-label');
+  var spinner = document.getElementById('enviar-spinner');
+  var sending = false;
+
+  function clearFeedback() { feedback.innerHTML = ''; }
+
+  function banner(kind, title, body) {
+    feedback.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+    feedback.setAttribute('aria-live', kind === 'error' ? 'assertive' : 'polite');
+    var mark = kind === 'error' ? '✕' : (kind === 'success' ? '✓' : '…');
+    feedback.innerHTML =
+      '<div class="wf-box rounded-md p-3 flex items-start gap-3 ' +
+      (kind === 'error' ? 'border-2 border-ink' : '') + '">' +
+        '<span aria-hidden="true" class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-ink text-ink font-bold text-sm">' + mark + '</span>' +
+        '<div class="min-w-0"><p class="text-sm font-semibold text-ink">' + title + '</p>' +
+        (body ? '<p class="text-sm text-sub mt-0.5">' + body + '</p>' : '') + '</div>' +
+      '</div>';
+  }
+
+  function setSending(on) {
+    sending = on;
+    btnEnviar.disabled = on;
+    spinner.classList.toggle('hidden', !on);
+    enviarLabel.textContent = on ? 'Enviando…' : 'Enviar';
+  }
+
+  function doSend() {
+    if (sending) return;
+    var firstInvalid = validate();
+    if (firstInvalid) {
+      firstInvalid.focus();
+      banner('error', 'Revisa los campos marcados', 'Hay información obligatoria o con formato incorrecto.');
+      return;
+    }
+    clearFeedback();
+    setSending(true);
+    banner('info', 'Enviando el correo…', 'Espera un momento, no cierres la ventana.');
+    setTimeout(function () {
+      setSending(false);
+      if (sendOutcome === 'success') {
+        applyState('E6', false);
+      } else {
+        applyState('E7', false);
+      }
+    }, 1000);
+  }
+
+  document.getElementById('compose-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    doSend();
+  });
+
+  // Esc: descarta errores/feedback y quita foco de menús
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      clearAllErrors();
+      clearFeedback();
+    }
+  });
+
+  // ---------- Panel de control: estados E1–E7 ----------
+  function resetForm() {
+    recipients = { para: [], cc: [], cco: [] };
+    ['para', 'cc', 'cco'].forEach(function (f) { inputFor(f).value = ''; renderChips(f); });
+    document.getElementById('asunto').value = '';
+    cuerpo.innerHTML = '';
+    clearAttachment();
+    clearRejections();
+    clearAllErrors();
+    clearFeedback();
+    setSending(false);
+  }
+
+  function seedComposed() {
+    recipients.para = ['ana.lopez@empresa.com', 'soporte@cliente.es'];
+    recipients.cc = ['jefe.proyecto@empresa.com'];
+    recipients.cco = ['auditoria@empresa.com'];
+    ['para', 'cc', 'cco'].forEach(renderChips);
+    document.getElementById('asunto').value = 'Propuesta de colaboración: revisión';
+    cuerpo.innerHTML =
+      '<p>Estimado equipo, adjunto la <strong>propuesta</strong> para su <em>revisión</em>.</p>' +
+      '<p>Puntos a validar:</p>' +
+      '<ol><li>Alcance funcional</li><li>Calendario</li><li>Presupuesto</li></ol>';
+    showAttachment('propuesta.pdf', '2,4 MB');
+  }
+
+  function markActive(state) {
+    document.querySelectorAll('.demo-btn').forEach(function (b) {
+      var on = b.getAttribute('data-state') === state;
+      b.setAttribute('aria-pressed', String(on));
+      b.setAttribute('aria-current', on ? 'true' : 'false');
+      b.classList.toggle('bg-white', on);
+      b.classList.toggle('border-2', on);
+      b.classList.toggle('!border-ink', on);
+      b.classList.toggle('font-semibold', on);
+    });
+  }
+
+  function applyState(state, resetFirst) {
+    if (resetFirst !== false) resetForm();
+    markActive(state);
+    switch (state) {
+      case 'E1': // Vacío
+        sendOutcome = 'success';
+        break;
+      case 'E2': // Compuesto
+        seedComposed();
+        sendOutcome = 'success';
+        break;
+      case 'E3': // Errores de validación
+        // Para con una dirección de formato inválido; Asunto y Cuerpo vacíos
+        recipients.para = ['ana@']; renderChips('para');
+        var first = validate();
+        if (first) first.focus();
+        banner('error', 'Revisa los campos marcados', 'Hay información obligatoria o con formato incorrecto.');
+        break;
+      case 'E4': // Adjunto rechazado
+        seedComposed();
+        clearAttachment();
+        clearRejections();
+        addRejection('script.exe', 'tipo de archivo no permitido.');
+        addRejection('video.mp4 (18 MB)', 'supera el límite de 10 MB.');
+        sendOutcome = 'success';
+        break;
+      case 'E5': // Enviando
+        if (resetFirst !== false) seedComposed();
+        setSending(true);
+        banner('info', 'Enviando el correo…', 'Espera un momento, no cierres la ventana.');
+        break;
+      case 'E6': // Éxito
+        resetForm(); // formulario limpio, listo para otro correo
+        markActive('E6');
+        banner('success', 'Correo enviado correctamente', 'Puedes redactar un nuevo correo.');
+        sendOutcome = 'success';
+        break;
+      case 'E7': // Error de envío (conserva datos)
+        if (resetFirst !== false) seedComposed(); // panel: rellena; envío real: conserva lo escrito
+        banner('error', 'No se ha podido enviar el correo', 'Vuelve a intentarlo. Tus datos se han conservado.');
+        sendOutcome = 'error';
+        break;
+    }
+  }
+
+  document.querySelectorAll('.demo-btn').forEach(function (b) {
+    b.addEventListener('click', function () { applyState(b.getAttribute('data-state')); });
+  });
+
+  // Estado inicial (permite prefijar vía ?state=E2 para capturas/demos)
+  var initial = (new URLSearchParams(location.search).get('state') || 'E1').toUpperCase();
+  if (!/^E[1-7]$/.test(initial)) initial = 'E1';
+  applyState(initial);
+})();
+</script>
+</body>

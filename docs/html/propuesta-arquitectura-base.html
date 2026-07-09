@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Propuesta de arquitectura base — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-stack-t-cnico-recomendado">1. Stack técnico recomendado</a></li><li><a href="#2-organizaci-n-de-m-dulos-y-capas">2. Organización de módulos y capas</a></li><li><a href="#3-gesti-n-de-estado-y-flujo-de-datos">3. Gestión de estado y flujo de datos</a></li><li><a href="#4-estrategia-de-testing">4. Estrategia de testing</a></li><li><a href="#5-seguridad-y-escalabilidad">5. Seguridad y escalabilidad</a></li><li><a href="#6-recomendaciones-t-cnicas">6. Recomendaciones técnicas</a></li><li><a href="#7-decisiones-tomadas-en-el-paso-2-3-arquitectura">7. Decisiones tomadas en el paso 2.3 (arquitectura)</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="propuesta-de-arquitectura-base-servicio-web-de-env-o-de-email-aidd-training">Propuesta de arquitectura base — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Propuesta de arquitectura</span> <span class="badge badge-soft">Fase 2 · 2.3</span> <span class="dot">&middot;</span> Vista generada el 2026-07-08 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">5</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">6</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">17</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div><div class="kpi kpi-essential"><span class="kpi-value">1</span><span class="kpi-label">Imprescindibles</span></div></div></header>
+<blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-08 12:57 CEST<br>Documento de Fase 2 (AIDD · paso 2.3). Generado por <code>aidd architecture-proposal</code>.<br>Entrada: docs/detalle-historias-usuario.md. Propuesta, no arquitectura definitiva.<br><strong>Aprobado (2026-07-08).</strong><br><br>El stack base (React+TS+Tailwind+React Quill · Node+Express+TS+Nodemailer · Turborepo+pnpm · Docker · sin BD) viene <strong>decidido y no negociable</strong> de Fase 0/1 (<code>cliente-requisitos.md</code> §3, <code>requisitos.md</code> §5). Esta propuesta lo respeta y añade las decisiones aún abiertas (validación, estado, testing) con justificación.</blockquote>
+<section class="doc-section" id="1-stack-t-cnico-recomendado">
+<h2><a class="anchor" href="#1-stack-t-cnico-recomendado" aria-label="Enlace">#</a>1. Stack técnico recomendado</h2>
+<p><strong>Monorepo y tooling</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Capa</th><th>Tecnología</th><th>Justificación</th></tr></thead><tbody><tr><td>Monorepo</td><td><strong>Turborepo + pnpm workspaces</strong></td><td>Restricción no negociable (<code>requisitos.md</code> §5). Habilita <code>packages/shared</code> para compartir tipos y validación entre <code>web</code> y <code>api</code> (<span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-18</span>).</td></tr><tr><td>Lenguaje</td><td><strong>TypeScript</strong> (front y back)</td><td>Restricción no negociable. Tipado extremo a extremo del contrato del email (<span class="chip chip-us">HU-01</span>).</td></tr><tr><td>Contenedores</td><td><strong>Docker + Docker Compose</strong></td><td>Único modelo de despliegue (<span class="chip chip-nfr">NFR-08</span>). Orquesta <code>web</code> + <code>api</code> en local (<span class="chip chip-us">HU-02</span>).</td></tr></tbody></table></div>
+<p><strong>Frontend (<code>apps/web</code>)</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Elemento</th><th>Tecnología</th><th>Justificación</th></tr></thead><tbody><tr><td>UI</td><td><strong>React + TypeScript</strong></td><td>Restricción no negociable. SPA de una sola pantalla (<span class="chip chip-us">HU-05</span>).</td></tr><tr><td>Build/dev</td><td><strong>Vite</strong></td><td>Dev server rápido y build sencillo para React+TS; encaja con Vitest (testing) y con contenedor ligero.</td></tr><tr><td>Estilos</td><td><strong>Tailwind CSS</strong></td><td>Restricción no negociable. Aplica los design tokens de <code>guia-estilos.md</code> (marca NTT DATA, AA).</td></tr><tr><td>Editor de cuerpo</td><td><strong>React Quill</strong></td><td>Restricción no negociable (<span class="chip chip-rf">RF-06</span>). Toolbar minimalista: negrita, cursiva, listas; salida HTML (<span class="chip chip-us">HU-10</span>).</td></tr><tr><td>Formulario</td><td><strong>React Hook Form + <code>@hookform/resolvers</code> (Zod)</strong></td><td>Estado y errores del formulario con pocos re-render y buena a11y; reutiliza el esquema Zod de <code>shared</code> para validar en cliente (<span class="chip chip-us">HU-06</span>…<span class="chip chip-us">HU-14</span>).</td></tr><tr><td>Peticiones</td><td><strong>fetch nativo</strong> (+ <code>FormData</code>)</td><td>El adjunto viaja como <code>multipart/form-data</code> (<span class="chip chip-us">HU-11</span>); no hace falta cliente HTTP pesado para un único endpoint.</td></tr></tbody></table></div>
+<p><strong>Backend (<code>apps/api</code>)</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Elemento</th><th>Tecnología</th><th>Justificación</th></tr></thead><tbody><tr><td>Servidor</td><td><strong>Node.js + Express + TypeScript</strong></td><td>Restricción no negociable. Expone el endpoint de envío (<span class="chip chip-us">HU-03</span>, <span class="chip chip-rf">RF-13</span>).</td></tr><tr><td>Envío SMTP</td><td><strong>Nodemailer</strong> sobre SMTP configurable por env</td><td>Restricción no negociable (<span class="chip chip-rf">RF-13</span>, <span class="chip chip-nfr">NFR-03</span>/09). Proveedor pendiente de definir; el código se ata solo a la config SMTP.</td></tr><tr><td>Subida de adjunto</td><td><strong>Multer</strong> (memoryStorage)</td><td>Parsea <code>multipart/form-data</code> para el adjunto único; permite validar tipo/tamaño antes de adjuntar (<span class="chip chip-us">HU-11</span>…<span class="chip chip-us">HU-13</span>, <span class="chip chip-us">HU-18</span>).</td></tr><tr><td>Saneamiento HTML</td><td><strong>sanitize-html</strong></td><td>Whitelist coherente con el toolbar (<code>b/strong</code>, <code>i/em</code>, <code>ul</code>, <code>ol</code>, <code>li</code>, <code>p</code>, <code>br</code>); elimina scripts, <code>on*</code>, iframes, enlaces e imágenes (<span class="chip chip-us">HU-17</span>, <span class="chip chip-rf">RF-12</span>, <span class="chip chip-nfr">NFR-02</span>).</td></tr><tr><td>Detección MIME real</td><td><strong>file-type</strong></td><td>Verifica el MIME por <em>magic bytes</em> además de la extensión, contra ficheros renombrados (<span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-18</span>, decisión 1.3).</td></tr><tr><td>Validación</td><td><strong>Zod</strong> (esquema de <code>shared</code>)</td><td>Revalidación autoritativa en servidor de obligatorios, formato de email y tipo/tamaño (<span class="chip chip-us">HU-18</span>, <span class="chip chip-rf">RF-16</span>, <span class="chip chip-nfr">NFR-11</span>).</td></tr><tr><td>CORS</td><td><strong>cors</strong></td><td>Origen permitido del frontend en local vía <code>WEB_ORIGIN</code> (<span class="chip chip-us">HU-02</span>).</td></tr><tr><td>Config</td><td><strong>dotenv</strong> + validación de env con Zod</td><td>Carga y valida <code>SMTP_*</code>, <code>MAIL_FROM</code>, <code>MAX_ATTACHMENT_SIZE_MB</code>, <code>PORT</code>, <code>WEB_ORIGIN</code> al arranque (<span class="chip chip-nfr">NFR-03</span>/09).</td></tr><tr><td>Logging</td><td><strong>pino</strong></td><td>Traza estructurada del resultado de cada envío (resultado, destinatarios, asunto, timestamp) sin persistir contenido ni secretos (<span class="chip chip-us">HU-04</span>, <span class="chip chip-rf">RF-15</span>, <span class="chip chip-nfr">NFR-06</span>).</td></tr></tbody></table></div>
+<p><strong>Paquete compartido (<code>packages/shared</code>)</strong></p>
+<div class="table-wrap"><table><thead><tr><th>Elemento</th><th>Tecnología</th><th>Justificación</th></tr></thead><tbody><tr><td>Esquema y tipos</td><td><strong>Zod</strong></td><td>Fuente única de verdad del contrato del email y de las reglas de validación; se consume en cliente (RHF) y servidor (<span class="chip chip-us">HU-18</span>). Evita divergencia cliente/servidor (<span class="chip chip-nfr">NFR-11</span>).</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="2-organizaci-n-de-m-dulos-y-capas">
+<h2><a class="anchor" href="#2-organizaci-n-de-m-dulos-y-capas" aria-label="Enlace">#</a>2. Organización de módulos y capas</h2>
+<p>Árbol previsto (coherente con <code>cliente-requisitos.md</code> §9):</p>
+<pre><code>aidd-training/
+├── apps/
+│   ├── web/                      # Frontend React + Vite
+│   │   └── src/
+│   │       ├── components/       # EmailForm, RecipientChips, BodyEditor, AttachmentField, FeedbackBanner
+│   │       ├── hooks/            # useSendEmail (fetch + estado de envío)
+│   │       ├── lib/              # api client, mapeo de errores
+│   │       └── App.tsx
+│   └── api/                      # Backend Express
+│       └── src/
+│           ├── routes/           # POST /api/send
+│           ├── services/         # mailer (Nodemailer), sanitizer, attachment
+│           ├── middleware/       # multer, validación (Zod), errorHandler, cors
+│           ├── config/           # carga+validación de env
+│           └── server.ts
+├── packages/
+│   └── shared/                   # emailSchema (Zod), tipos, límites y listas (tipos permitidos, 10 MB)
+├── docker-compose.yml
+├── turbo.json
+└── .env.example</code></pre>
+<p><strong>Capas del backend</strong> (flujo de una petición de envío):</p>
+<ol>
+<li><strong>Ruta</strong> (<code>POST /api/send</code>) — punto de entrada.</li>
+<li><strong>Middleware de subida</strong> (Multer, memoria) — extrae campos + adjunto.</li>
+<li><strong>Validación</strong> (Zod de <code>shared</code> + <code>file-type</code>) — obligatorios, formato de email, tipo/tamaño y MIME real. Rechaza con error si algo falla (<span class="chip chip-us">HU-18</span>).</li>
+<li><strong>Saneamiento</strong> (<code>sanitize-html</code>) — limpia el cuerpo HTML (<span class="chip chip-us">HU-17</span>).</li>
+<li><strong>Servicio de envío</strong> (Nodemailer) — construye y envía el correo (<span class="chip chip-us">HU-03</span>).</li>
+<li><strong>Logging</strong> (pino) — registra el resultado (<span class="chip chip-us">HU-04</span>).</li>
+<li><strong>Manejador de errores</strong> — respuesta controlada sin filtrar credenciales ni detalles sensibles (<span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-16</span>).</li>
+</ol>
+<p><strong>Frontend</strong> — una pantalla (<code>EmailForm</code>) que compone los componentes de campo; <code>useSendEmail</code> encapsula la llamada al backend y el estado éxito/error/enviando.</p>
+</section>
+<section class="doc-section" id="3-gesti-n-de-estado-y-flujo-de-datos">
+<h2><a class="anchor" href="#3-gesti-n-de-estado-y-flujo-de-datos" aria-label="Enlace">#</a>3. Gestión de estado y flujo de datos</h2>
+<ul>
+<li><strong>Estado del formulario:</strong> local a la pantalla con <strong>React Hook Form</strong>; validación en cliente con el <strong>resolver de Zod</strong> sobre el esquema de <code>shared</code> (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span>). No se introduce store global (Redux/Zustand): el alcance es una sola pantalla sin estado compartido (<span class="chip chip-nfr">NFR-06</span>, sin persistencia).</li>
+<li><strong>Chips de destinatarios:</strong> estado controlado dentro del componente <code>RecipientChips</code>, expuesto a RHF como arrays de direcciones (Para/CC/CCO) (<span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>).</li>
+<li><strong>Adjunto:</strong> un único <code>File</code> en estado del formulario; se valida tipo/tamaño en cliente antes de habilitar el envío (<span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>).</li>
+<li><strong>Flujo de datos de envío:</strong> <code>EmailForm</code> → <code>useSendEmail</code> construye <code>FormData</code> (campos + adjunto) → <code>POST /api/send</code> → el backend valida/sanea/envía → responde <code>{ ok, message }</code> → la UI muestra éxito (limpia el formulario) o error (conserva datos) (<span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span>).</li>
+<li><strong>Sin persistencia:</strong> el envío es <em>fire-and-forget</em>; la única traza es el log de servidor (<span class="chip chip-nfr">NFR-06</span>).</li>
+</ul>
+</section>
+<section class="doc-section" id="4-estrategia-de-testing">
+<h2><a class="anchor" href="#4-estrategia-de-testing" aria-label="Enlace">#</a>4. Estrategia de testing</h2>
+<p>Stack: <strong>Vitest + React Testing Library + Supertest</strong> (E2E opcional con Playwright).</p>
+<div class="table-wrap"><table><thead><tr><th>Nivel</th><th>Herramienta</th><th>Qué cubre</th></tr></thead><tbody><tr><td>Unit (shared)</td><td><strong>Vitest</strong></td><td>El esquema Zod: obligatorios, formato de email, límites de tipo/tamaño (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>, <span class="chip chip-us">HU-14</span>). Es el núcleo reutilizado, máxima prioridad.</td></tr><tr><td>Unit (api)</td><td><strong>Vitest</strong></td><td>Saneamiento (<code>sanitize-html</code>: elimina <code>&lt;script&gt;</code>, <code>on*</code>, iframes, enlaces) y detección MIME real (<span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-12</span>). Nodemailer <strong>mockeado</strong>.</td></tr><tr><td>Integración (api)</td><td><strong>Supertest</strong></td><td><code>POST /api/send</code>: 2xx en caso válido, 4xx cuando se burla la validación de cliente, error controlado ante fallo SMTP sin filtrar secretos (<span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-16</span>, <span class="chip chip-us">HU-18</span>).</td></tr><tr><td>Componentes (web)</td><td><strong>RTL</strong></td><td>Chips (añadir/eliminar, inválido), obligatorios que bloquean envío, adjunto rechazado, feedback de éxito/error y limpieza (<span class="chip chip-us">HU-06</span>…<span class="chip chip-us">HU-16</span>).</td></tr><tr><td>E2E (opcional)</td><td><strong>Playwright</strong></td><td>Recorrido E1→E7 del prototipo sobre la app real, con SMTP de pruebas (MailHog).</td></tr></tbody></table></div>
+<p>Criterio de cobertura: priorizar la validación compartida y el saneamiento (superficie de seguridad), no un % global. Los criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> del detalle son el mínimo a cubrir.</p>
+</section>
+<section class="doc-section" id="5-seguridad-y-escalabilidad">
+<h2><a class="anchor" href="#5-seguridad-y-escalabilidad" aria-label="Enlace">#</a>5. Seguridad y escalabilidad</h2>
+<p><strong>Seguridad</strong> (alineada con <span class="chip chip-nfr">NFR-02</span>/03/11 y F4)</p>
+<ul>
+<li><strong>Saneamiento del cuerpo en servidor</strong> con whitelist estricto antes de construir el correo (<span class="chip chip-us">HU-17</span>). El cliente no es de fiar.</li>
+<li><strong>Validación autoritativa en servidor</strong> de todo lo validado en cliente (<span class="chip chip-us">HU-18</span>); el frontend es conveniencia.</li>
+<li><strong>Secretos solo por env</strong>: credenciales SMTP nunca en código ni expuestas al frontend; <code>.env.example</code> sin secretos reales (<span class="chip chip-nfr">NFR-03</span>). Logs sin credenciales ni contenido (<span class="chip chip-nfr">NFR-06</span>).</li>
+<li><strong>Límite de tamaño</strong> aplicado también en Multer (<code>MAX_ATTACHMENT_SIZE_MB</code>, 10 MiB) para no cargar en memoria adjuntos gigantes (<span class="chip chip-us">HU-13</span>).</li>
+<li><strong>CORS</strong> restringido a <code>WEB_ORIGIN</code> en local.</li>
+<li><strong>Fuera de alcance consciente:</strong> sin auth ni anti-abuso (<span class="chip chip-nfr">NFR-04</span>/05), aceptado por despliegue local no expuesto; sin antivirus de adjuntos (riesgo aceptado en el brief).</li>
+</ul>
+<p><strong>Escalabilidad</strong> (proporcional al alcance)</p>
+<ul>
+<li>Backend <strong>sin estado</strong> (fire-and-forget, sin BD) → escalado horizontal trivial si algún día se necesitara; hoy basta una instancia en Compose (<span class="chip chip-nfr">NFR-06</span>/08).</li>
+<li>El envío SMTP es el único punto de I/O externo; el <code>transporter</code> de Nodemailer se reutiliza entre peticiones.</li>
+<li>No se diseñan colas ni reintentos (fuera de alcance); si el volumen creciera, el punto de extensión natural sería una cola delante del envío.</li>
+</ul>
+</section>
+<section class="doc-section" id="6-recomendaciones-t-cnicas">
+<h2><a class="anchor" href="#6-recomendaciones-t-cnicas" aria-label="Enlace">#</a>6. Recomendaciones técnicas</h2>
+<ul>
+<li><strong>SMTP de desarrollo:</strong> usar <strong>Mailpit</strong> (<code>axllent/mailpit</code>, SMTP <code>1025</code> / UI <code>8025</code>) en un servicio más del <code>docker-compose.yml</code> para probar el envío sin proveedor real y previsualizar HTML + adjuntos; el proveedor de producción queda configurable por env (resuelve el pendiente de <code>requisitos.md</code> §7/§8 sin atar el código).</li>
+<li><strong>Config validada al arranque:</strong> fallar rápido si falta una variable SMTP obligatoria, con mensaje claro (evita fallos opacos en el envío).</li>
+<li><strong>Contrato de error uniforme</strong> <code>{ ok: false, code, message }</code> para que la UI mapee mensajes de error sin exponer detalles técnicos (<span class="chip chip-us">HU-16</span>).</li>
+<li><strong>Tipos permitidos y límite centralizados en <code>shared</code></strong> (una sola lista JPG/GIF/PDF/Word/Excel/PowerPoint y el tope de 10 MB) para que cliente y servidor no diverjan.</li>
+<li><strong>Accesibilidad heredada de la guía de estilos</strong>: componibles con foco visible, hit targets ≥44px y <code>aria-live</code> en el feedback (WCAG 2.1 AA).</li>
+<li><strong>Alineación con la arquitectura definitiva (2.4):</strong> esta propuesta es el insumo directo de <code>aidd architecture</code>; las decisiones aquí confirmadas se consolidan allí.</li>
+</ul>
+</section>
+<section class="doc-section" id="7-decisiones-tomadas-en-el-paso-2-3-arquitectura">
+<h2><a class="anchor" href="#7-decisiones-tomadas-en-el-paso-2-3-arquitectura" aria-label="Enlace">#</a>7. Decisiones tomadas en el paso 2.3 (arquitectura)</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Librería de validación en <code>shared</code></td><td><strong>Zod</strong> / Valibot / Manual</td><td><strong>Zod</strong></td><td>usuario</td><td>Esquema TypeScript-first único para cliente y servidor; evita divergencia (<span class="chip chip-us">HU-18</span>, <span class="chip chip-nfr">NFR-11</span>).</td></tr><tr><td>2</td><td>Gestión del estado del formulario</td><td><strong>React Hook Form + Zod</strong> / useState controlado</td><td><strong>React Hook Form + Zod</strong></td><td>usuario</td><td>Menos re-render, buena a11y y reutiliza el esquema de <code>shared</code> (<span class="chip chip-us">HU-06</span>…<span class="chip chip-us">HU-14</span>).</td></tr><tr><td>3</td><td>Stack de testing</td><td><strong>Vitest + RTL + Supertest</strong> / Jest+RTL+Supertest / Mínimo</td><td><strong>Vitest + RTL + Supertest</strong> (E2E Playwright opcional)</td><td>usuario</td><td>Rápido con TS/ESM; cubre unit, componentes e integración del endpoint (F1–F4).</td></tr><tr><td>4</td><td>Build del frontend</td><td><strong>Vite</strong> / CRA / Next.js</td><td><strong>Vite</strong></td><td>default</td><td>Ligero y rápido para SPA React+TS; encaja con Vitest y con contenedor simple. No se necesita SSR (una pantalla).</td></tr><tr><td>5</td><td>Parseo del adjunto en backend</td><td><strong>Multer (memoria)</strong> / Busboy / body-parser</td><td><strong>Multer (memoryStorage)</strong></td><td>default</td><td>Estándar en Express para <code>multipart/form-data</code>; valida antes de adjuntar, sin escribir a disco (<span class="chip chip-us">HU-11</span>).</td></tr><tr><td>6</td><td>Saneamiento y MIME</td><td><strong>sanitize-html + file-type</strong> / DOMPurify(jsdom) / regex</td><td><strong>sanitize-html + file-type</strong></td><td>default</td><td><code>sanitize-html</code> es de servidor y configurable por whitelist; <code>file-type</code> da MIME real por magic bytes (<span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-12</span>).</td></tr><tr><td>7</td><td>SMTP de desarrollo</td><td><strong>Mailpit</strong> / MailHog / proveedor real / Ethereal</td><td><strong>Mailpit</strong> en Compose (<code>axllent/mailpit</code>, 1025/8025)</td><td>usuario</td><td>Elegido frente a MailHog por estar mantenido y renderizar mejor HTML y adjuntos; el proveedor final sigue configurable por env (§7/§8 requisitos).</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

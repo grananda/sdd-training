@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapa de historias de usuario — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-personas-roles-de-usuario">1. Personas / roles de usuario</a></li><li><a href="#2-backbone-de-actividades">2. Backbone de actividades</a></li><li><a href="#3-historias-por-fase">3. Historias por fase</a></li><li><a href="#4-priorizaci-n-moscow-fases-de-producto-f1-f4">4. Priorización MoSCoW (fases de producto F1–F4)</a></li><li><a href="#5-trazabilidad-rf-historias">5. Trazabilidad RF → historias</a></li><li><a href="#6-preguntas-abiertas-y-pendientes">6. Preguntas abiertas y pendientes</a></li><li><a href="#7-decisiones-tomadas-en-el-paso-1-2">7. Decisiones tomadas en el paso 1.2</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="mapa-de-historias-de-usuario-servicio-web-de-env-o-de-email-aidd-training">Mapa de historias de usuario — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Mapa de historias</span> <span class="badge badge-soft">Fase 1 · 1.2</span> <span class="dot">&middot;</span> Vista generada el 2026-07-07 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">16</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">6</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-must"><span class="kpi-value">20</span><span class="kpi-label">Must have</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div><div class="kpi kpi-warn"><span class="kpi-value">2</span><span class="kpi-label">Preguntas abiertas</span></div></div></header>
+<blockquote>Documento de Fase 1 (AIDD · paso 1.2). Generado por <code>aidd user-stories</code>.<br>Entrada: docs/requisitos.md. Salida hacia: docs/detalle-historias-usuario.md.<br><strong>Aprobado (2026-07-07).</strong></blockquote>
+<section class="doc-section" id="1-personas-roles-de-usuario">
+<h2><a class="anchor" href="#1-personas-roles-de-usuario" aria-label="Enlace">#</a>1. Personas / roles de usuario</h2>
+<div class="table-wrap"><table><thead><tr><th>Rol</th><th>Objetivo principal</th><th>Contexto de uso</th></tr></thead><tbody><tr><td><strong>Remitente (usuario final)</strong></td><td>Enviar un correo con formato y (opcionalmente) un adjunto de forma rápida, sin abrir un cliente de correo externo.</td><td>Accede a la web (sin login), rellena un formulario y envía. Uso puntual en local.</td></tr><tr><td><strong>Equipo de desarrollo</strong> <em>(rol técnico, historias enabler de F0)</em></td><td>Disponer de la base técnica (monorepo, backend de envío, Docker) para soportar el flujo del remitente.</td><td>Fase de foundation.</td></tr><tr><td><strong>Responsable de seguridad</strong> <em>(perspectiva, no usuario)</em></td><td>Garantizar que el envío es seguro (saneamiento, validación en servidor, secretos por env).</td><td>Se materializa en F4 (seguridad y endurecimiento).</td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="2-backbone-de-actividades">
+<h2><a class="anchor" href="#2-backbone-de-actividades" aria-label="Enlace">#</a>2. Backbone de actividades</h2>
+<p>Recorrido del remitente, de izquierda a derecha:</p>
+<ol>
+<li><strong>Acceder</strong> al formulario de composición.</li>
+<li><strong>Definir destinatarios</strong> (Para, CC, CCO).</li>
+<li><strong>Redactar</strong> el mensaje (asunto + cuerpo con formato).</li>
+<li><strong>Adjuntar</strong> un documento (opcional).</li>
+<li><strong>Enviar</strong> y <strong>ver el resultado</strong> (éxito/error).</li>
+</ol>
+<p>Actividades de soporte (no visibles al usuario): configurar SMTP, sanear el cuerpo, validar en servidor, registrar en logs.</p>
+</section>
+<section class="doc-section" id="3-historias-por-fase">
+<h2><a class="anchor" href="#3-historias-por-fase" aria-label="Enlace">#</a>3. Historias por fase</h2>
+<h3 id="f0-foundation-base-t-cnica">F0 — Foundation (base técnica)</h3>
+<ul>
+<li><strong>Objetivo:</strong> dejar el monorepo y el servicio de envío operativos en local para soportar el flujo del remitente.</li>
+<li><strong>Criterio de salida:</strong> la app arranca con Docker Compose; el backend expone un endpoint de envío que manda un correo de prueba vía SMTP configurable y registra el resultado en logs.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Historia</th><th>RF</th><th>MoSCoW</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-01</span></td><td>Como equipo de desarrollo, quiero un monorepo Turborepo + pnpm con apps <code>web</code> (React + TS + Tailwind) y <code>api</code> (Express + TS) para tener la base del proyecto.</td><td>(enabler; soporte <span class="chip chip-rf">RF-01</span>, <span class="chip chip-rf">RF-06</span>)</td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-02</span></td><td>Como equipo de desarrollo, quiero levantar la aplicación en local con Docker Compose para poder ejecutar y probar el servicio.</td><td>(enabler; <span class="chip chip-nfr">NFR-08</span>)</td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-03</span></td><td>Como equipo de desarrollo, quiero un endpoint de envío en el backend que use Nodemailer con SMTP configurable por variables de entorno para poder enviar correos.</td><td><span class="chip chip-rf">RF-13</span>, <span class="chip chip-nfr">NFR-03</span>, <span class="chip chip-nfr">NFR-09</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-04</span></td><td>Como equipo de desarrollo, quiero registrar en logs el resultado de cada envío (sin persistir el contenido) para tener trazabilidad operativa.</td><td><span class="chip chip-rf">RF-15</span>, <span class="chip chip-nfr">NFR-06</span></td><td><span class="chip chip-should">Should</span></td></tr></tbody></table></div>
+<h3 id="f1-composici-n-y-env-o-del-email-n-cleo-happy-path">F1 — Composición y envío del email (núcleo, happy path)</h3>
+<ul>
+<li><strong>Objetivo:</strong> el remitente compone (formulario con Para/CC/CCO, asunto, cuerpo enriquecido) y envía el correo, con feedback de resultado. Sin validación de entradas todavía.</li>
+<li><strong>Criterio de salida:</strong> desde la UI se puede componer y enviar un correo con formato (destinatarios, asunto, cuerpo enriquecido); el envío es directo; la UI muestra éxito/error. Quedan fuera de esta fase la validación de entradas (F2), el adjunto (F3) y el endurecimiento en servidor (F4).</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Historia</th><th>RF</th><th>MoSCoW</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-05</span></td><td>Como remitente, quiero ver un formulario con Para, CC, CCO, Asunto, Cuerpo y Adjunto para redactar un email.</td><td><span class="chip chip-rf">RF-01</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-06</span></td><td>Como remitente, quiero indicar una o varias direcciones en <strong>Para</strong> para enviar a los destinatarios que necesite.</td><td><span class="chip chip-rf">RF-02</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-07</span></td><td>Como remitente, quiero añadir una o varias direcciones en <strong>CC</strong> y <strong>CCO</strong> (opcionales) para incluir copias visibles y ocultas.</td><td><span class="chip chip-rf">RF-03</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-09</span></td><td>Como remitente, quiero escribir el <strong>asunto</strong> en una línea para titular el correo.</td><td><span class="chip chip-rf">RF-05</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-10</span></td><td>Como remitente, quiero redactar el <strong>cuerpo</strong> con un editor minimalista (negrita, cursiva, listas) para dar formato al mensaje.</td><td><span class="chip chip-rf">RF-06</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-15</span></td><td>Como remitente, quiero <strong>enviar directamente</strong> al pulsar Enviar, sin confirmación ni vista previa, para un flujo ágil.</td><td><span class="chip chip-rf">RF-11</span></td><td><span class="chip chip-could">Could</span></td></tr><tr><td><span class="chip chip-us">HU-16</span></td><td>Como remitente, quiero <strong>feedback claro de éxito o error</strong> tras enviar para saber si el correo salió.</td><td><span class="chip chip-rf">RF-14</span></td><td><span class="chip chip-must">Must</span></td></tr></tbody></table></div>
+<h3 id="f2-validaci-n-de-entradas-del-formulario">F2 — Validación de entradas del formulario</h3>
+<ul>
+<li><strong>Objetivo:</strong> validar en el cliente las entradas del formulario antes de permitir el envío: formato de las direcciones y campos obligatorios.</li>
+<li><strong>Criterio de salida:</strong> no se puede enviar si faltan <strong>Para, Asunto o Cuerpo</strong>, ni si alguna dirección (Para/CC/CCO) tiene formato inválido; se muestran errores claros junto a los campos. La validación es de cliente; la autoritativa en servidor llega en F4.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Historia</th><th>RF</th><th>MoSCoW</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-08</span></td><td>Como remitente, quiero que se valide el <strong>formato</strong> de cada dirección de correo para evitar envíos a direcciones inválidas.</td><td><span class="chip chip-rf">RF-04</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-14</span></td><td>Como remitente, quiero que el sistema exija <strong>Para, Asunto y Cuerpo</strong> antes de enviar para no mandar correos incompletos.</td><td><span class="chip chip-rf">RF-10</span></td><td><span class="chip chip-must">Must</span></td></tr></tbody></table></div>
+<h3 id="f3-adjunto">F3 — Adjunto</h3>
+<ul>
+<li><strong>Objetivo:</strong> añadir el adjunto único con sus validaciones de tipo y tamaño.</li>
+<li><strong>Criterio de salida:</strong> se puede adjuntar un único documento al correo y se valida su tipo y tamaño (máx. 10 MB) antes de enviar. La validación de adjunto es aún de cliente; el endurecimiento en servidor llega en F4.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Historia</th><th>RF</th><th>MoSCoW</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-11</span></td><td>Como remitente, quiero <strong>adjuntar un único documento</strong> (opcional) al email.</td><td><span class="chip chip-rf">RF-07</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-12</span></td><td>Como remitente, quiero que se valide el <strong>tipo</strong> del adjunto (JPG, GIF, PDF, Word, Excel, PowerPoint) para no enviar formatos no permitidos.</td><td><span class="chip chip-rf">RF-08</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-13</span></td><td>Como remitente, quiero que se valide el <strong>tamaño</strong> del adjunto (máx. 10 MB) para no exceder el límite.</td><td><span class="chip chip-rf">RF-09</span></td><td><span class="chip chip-must">Must</span></td></tr></tbody></table></div>
+<h3 id="f4-seguridad-y-endurecimiento-de-servidor">F4 — Seguridad y endurecimiento de servidor</h3>
+<ul>
+<li><strong>Objetivo:</strong> elevar la seguridad del envío al backend: saneamiento del cuerpo y validación autoritativa en servidor.</li>
+<li><strong>Criterio de salida:</strong> el backend <strong>sanea</strong> el HTML del cuerpo y <strong>valida en servidor</strong> (obligatorios, formato de email, tipo/tamaño del adjunto), quedando la validación de cliente como conveniencia. El flujo del remitente queda operativo y seguro de extremo a extremo.</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Historia</th><th>RF</th><th>MoSCoW</th></tr></thead><tbody><tr><td><span class="chip chip-us">HU-17</span></td><td>Como responsable de seguridad, quiero que el backend <strong>sanee el HTML</strong> del cuerpo antes de enviar para prevenir XSS/inyección.</td><td><span class="chip chip-rf">RF-12</span>, <span class="chip chip-nfr">NFR-02</span></td><td><span class="chip chip-must">Must</span></td></tr><tr><td><span class="chip chip-us">HU-18</span></td><td>Como responsable de seguridad, quiero que el backend <strong>valide en servidor</strong> (obligatorios, formato de email, tipo/tamaño de adjunto) para no fiar la validación al cliente.</td><td><span class="chip chip-rf">RF-16</span>, <span class="chip chip-nfr">NFR-11</span></td><td><span class="chip chip-must">Must</span></td></tr></tbody></table></div>
+</section>
+<section class="doc-section" id="4-priorizaci-n-moscow-fases-de-producto-f1-f4">
+<h2><a class="anchor" href="#4-priorizaci-n-moscow-fases-de-producto-f1-f4" aria-label="Enlace">#</a>4. Priorización MoSCoW (fases de producto F1–F4)</h2>
+<blockquote>Las fases de producto (F1 a F4) forman el MVP funcional; casi todo es <strong>Must</strong> porque cada pieza fue solicitada explícitamente por el cliente. Se distinguen los matices secundarios.</blockquote>
+<ul>
+<li><strong>Must:</strong> <span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>, <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>, <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>, <span class="chip chip-us">HU-14</span>, <span class="chip chip-us">HU-16</span>, <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>.</li>
+<li><strong>Should:</strong> <span class="chip chip-us">HU-04</span> (logging: valioso pero el envío funciona sin él).</li>
+<li><strong>Could:</strong> <span class="chip chip-us">HU-15</span> (envío directo: es el comportamiento por defecto; apenas requiere trabajo específico).</li>
+<li><strong>Won&#x27;t (esta fase):</strong> autenticación, anti-abuso, persistencia/historial/reintentos, múltiples adjuntos, plantillas/borradores/programación, despliegue cloud, antivirus de adjuntos, i18n más allá del español (ver §6 &quot;Fuera de esta fase&quot; en <code>docs/requisitos.md</code>).</li>
+</ul>
+</section>
+<section class="doc-section" id="5-trazabilidad-rf-historias">
+<h2><a class="anchor" href="#5-trazabilidad-rf-historias" aria-label="Enlace">#</a>5. Trazabilidad RF → historias</h2>
+<div class="table-wrap"><table><thead><tr><th>RF</th><th>Historia(s)</th><th>Cubierto</th></tr></thead><tbody><tr><td><span class="chip chip-rf">RF-01</span></td><td><span class="chip chip-us">HU-05</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-02</span></td><td><span class="chip chip-us">HU-06</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-03</span></td><td><span class="chip chip-us">HU-07</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-04</span></td><td><span class="chip chip-us">HU-08</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-05</span></td><td><span class="chip chip-us">HU-09</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-06</span></td><td><span class="chip chip-us">HU-10</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-07</span></td><td><span class="chip chip-us">HU-11</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-08</span></td><td><span class="chip chip-us">HU-12</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-09</span></td><td><span class="chip chip-us">HU-13</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-10</span></td><td><span class="chip chip-us">HU-14</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-11</span></td><td><span class="chip chip-us">HU-15</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-12</span></td><td><span class="chip chip-us">HU-17</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-13</span></td><td><span class="chip chip-us">HU-03</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-14</span></td><td><span class="chip chip-us">HU-16</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-15</span></td><td><span class="chip chip-us">HU-04</span></td><td>✅</td></tr><tr><td><span class="chip chip-rf">RF-16</span></td><td><span class="chip chip-us">HU-18</span></td><td>✅</td></tr></tbody></table></div>
+<p><strong>Cobertura: 16/16 RF.</strong> No hay requisitos funcionales sin historia.</p>
+</section>
+<section class="doc-section" id="6-preguntas-abiertas-y-pendientes">
+<h2><a class="anchor" href="#6-preguntas-abiertas-y-pendientes" aria-label="Enlace">#</a>6. Preguntas abiertas y pendientes</h2>
+<ul>
+<li>Ninguna <strong>bloqueante</strong> para arrancar el paso 1.3.</li>
+<li>Pendiente de configuración (no de requisitos): variables/proveedor SMTP (heredado de <code>docs/requisitos.md</code> §8) — afecta a <span class="chip chip-us">HU-03</span> en su puesta en marcha, no a su definición.</li>
+</ul>
+</section>
+<section class="doc-section" id="7-decisiones-tomadas-en-el-paso-1-2">
+<h2><a class="anchor" href="#7-decisiones-tomadas-en-el-paso-1-2" aria-label="Enlace">#</a>7. Decisiones tomadas en el paso 1.2</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Pregunta</th><th>Opciones</th><th>Decisión</th><th>Origen</th><th>Justificación</th></tr></thead><tbody><tr><td>1</td><td>Faseado del trabajo</td><td>Una sola fase MVP / F0 + F1 / <strong>Cinco ciclos (F0 + F1 + F2 + F3 + F4)</strong></td><td><strong>Cinco ciclos: F0 foundation + F1 composición y envío + F2 validación de entradas + F3 adjunto + F4 seguridad y endurecimiento</strong></td><td>humano</td><td>Ciclos pequeños a petición humana: este proyecto de formación se usa en un <strong>workshop</strong> que necesita más ciclos cortos que recorrer. La división respeta límites de valor —composición/envío (F1), validación de entradas (F2), adjunto (F3) y seguridad en servidor (F4)—, de modo que cada ciclo entrega algo demostrable. La validación del adjunto (<span class="chip chip-us">HU-12</span>/<span class="chip chip-us">HU-13</span>) <strong>no</strong> se subdivide para no fragmentar en exceso.</td></tr><tr><td>2</td><td>Nivel de prioridad de las fases de producto (F1–F4)</td><td>Casi todo Must / Reparto amplio MoSCoW</td><td><strong>Casi todo Must, con Should/Could puntuales</strong></td><td>default</td><td>Cada pieza (CC/CCO, formato, adjunto) fue pedida explícitamente por el cliente; son núcleo del MVP.</td></tr><tr><td>3</td><td>Tratamiento de seguridad como historias</td><td>Diluido en otras / Historias propias</td><td><strong>Historias propias (<span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>)</strong></td><td>default</td><td>Hace explícitos y verificables el saneamiento y la validación en servidor.</td></tr></tbody></table></div>
+</section>
+    </main>
+  </div>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+
+    // Scroll-spy: highlight the current section in the TOC.
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>
