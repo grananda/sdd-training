@@ -3,6 +3,8 @@
 > Documento de Fase 1 (AIDD · paso 1.1). Generado por `aidd requirements`.
 > Entrada: docs/cliente-requisitos.md. Salida hacia: docs/mapa-historias-usuario.md.
 > **Aprobado (2026-07-03; re-aprobado 2026-07-07 tras enmienda).** **Enmienda (2026-07-07):** la identidad visual pasa a **pendiente de definir** (se retira la referencia a una marca concreta que no figuraba en el brief de Fase 0). Nota: el proveedor y las credenciales SMTP quedan pendientes de definir (ver §7 y §8); el requisito estable es que el SMTP sea configurable por variables de entorno.
+>
+> **Enmienda (2026-07-10):** NFR-12 queda **resuelto**. El cliente aportó la identidad de marca **NTT DATA** el 2026-07-08 y se formalizó en `docs/guia-estilos.md` (azul `#0072CE`, rojo `#DA291C`, tipografía Inter), tal como preveía la propia NFR-12 ("se formalizará en la guía de estilos, Fase 2"). Se actualizan NFR-12, §5 y §8; la decisión 8 de §9 se conserva como registro histórico de lo que se decidió el 2026-07-07. El proveedor SMTP sigue pendiente.
 
 ## 1. Descripción del sistema y objetivos
 
@@ -60,7 +62,7 @@ No existen roles administrativos ni de gestión.
 | NFR-09 | **Configurabilidad**: el servidor SMTP (host, puerto, seguridad, credenciales) es configurable por variables de entorno sin recompilar. |
 | NFR-10 | **Usabilidad**: el envío se realiza desde un único formulario con feedback claro de éxito/error tras cada intento. |
 | NFR-11 | **Validación defensiva**: toda validación crítica (obligatorios, formato de email, tipo/tamaño de adjunto) se aplica también en el backend. |
-| NFR-12 | **Identidad visual**: **pendiente de definir**. El cliente aún no ha aportado guía de marca (paleta, tipografía, logotipo, componentes); se formalizará en la guía de estilos (Fase 2). |
+| NFR-12 | **Identidad visual**: corporativa **NTT DATA** (azul primario `#0072CE`, rojo de acento `#DA291C`, tipografía Inter). Formalizada en `docs/guia-estilos.md` (Fase 2). *Resuelto el 2026-07-10; hasta entonces figuraba como pendiente de definir.* |
 
 ## 5. Restricciones técnicas no negociables
 
@@ -70,7 +72,7 @@ No existen roles administrativos ni de gestión.
 - **Despliegue**: **Docker** (Docker Compose) en **local** exclusivamente.
 - **Persistencia**: **sin base de datos**; solo logs de servidor.
 - **Adjunto**: **uno solo**; tipos permitidos: **JPG, GIF, PDF, Word, Excel, PowerPoint**; **máximo 10 MB**.
-- **Identidad visual**: **pendiente de definir** (sin guía de marca aportada por el cliente; se concretará en la guía de estilos, Fase 2).
+- **Identidad visual**: corporativa **NTT DATA**, concretada en la guía de estilos (Fase 2): paleta, tipografía Inter y design tokens de `docs/guia-estilos.md`.
 
 ## 6. Alcance
 
@@ -96,14 +98,15 @@ No existen roles administrativos ni de gestión.
 ## 7. Variables de entorno y configuración requerida
 
 > Sin valores reales de secretos. Los valores concretos del SMTP quedan **pendientes de definir por el usuario**; la columna muestra ejemplos según el proveedor.
+> Los ejemplos de desarrollo usan **Mailpit** (`axllent/mailpit`, SMTP `1025` / UI `8025`), el capturador de correo elegido en la decisión 6 de `docs/arquitectura-base.md`. *(Actualizado el 2026-07-10; antes citaban MailHog.)*
 
 | Variable | Propósito | Ejemplo (según proveedor) |
 |----------|-----------|---------------------------|
-| `SMTP_HOST` | Host del servidor SMTP. | `mailhog` (dev) · `smtp.gmail.com` |
-| `SMTP_PORT` | Puerto SMTP. | `1025` (MailHog) · `587` (STARTTLS) |
+| `SMTP_HOST` | Host del servidor SMTP. | `mailpit` (dev) · `smtp.gmail.com` |
+| `SMTP_PORT` | Puerto SMTP. | `1025` (Mailpit) · `587` (STARTTLS) |
 | `SMTP_SECURE` | TLS/SSL directo (true) o STARTTLS/none (false). | `false` |
-| `SMTP_USER` | Usuario de autenticación SMTP. | *(según proveedor; vacío en MailHog)* |
-| `SMTP_PASSWORD` | Contraseña / contraseña de aplicación / API key. | *(secreto; vacío en MailHog)* |
+| `SMTP_USER` | Usuario de autenticación SMTP. | *(según proveedor; vacío en Mailpit)* |
+| `SMTP_PASSWORD` | Contraseña / contraseña de aplicación / API key. | *(secreto; vacío en Mailpit)* |
 | `MAIL_FROM` | Dirección remitente por defecto (From). | — |
 | `MAX_ATTACHMENT_SIZE_MB` | Límite de tamaño de adjunto. | `10` |
 | `PORT` | Puerto de escucha del backend Express. | — |
@@ -115,7 +118,7 @@ No hay preguntas **bloqueantes** para arrancar el paso 1.2. Todas las pendientes
 
 - **Definir el proveedor SMTP y sus variables de entorno** (host, puerto, credenciales). Decisión aplazada por el usuario; no bloquea el diseño porque el SMTP es configurable.
 - Whitelist final de **etiquetas/atributos HTML** tras el saneamiento del cuerpo, coherente con el toolbar minimalista (bold, italic, listas).
-- **Guía de marca / assets visuales** (paleta, tipografía, logotipo) para la guía de estilos (Fase 2): **pendiente de aportar por el cliente**.
+- ~~**Guía de marca / assets visuales** (paleta, tipografía, logotipo) para la guía de estilos (Fase 2)~~ — **Resuelto (2026-07-10):** el cliente aportó la identidad **NTT DATA** el 2026-07-08; formalizada en `docs/guia-estilos.md` (NFR-12).
 
 ## 9. Decisiones tomadas en el paso 1.1
 

@@ -16,7 +16,7 @@
       --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
       --block: #b00020; --warn: #b58a25; --essential: #e8590c;
       --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
-      --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -28,7 +28,7 @@
         --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
         --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
         --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
-        --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
       }
     }
     * { box-sizing: border-box; }
@@ -111,9 +111,11 @@
     .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
     .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
     .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
     .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
     .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
     .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
     /* Sections */
     .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
       padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
@@ -152,7 +154,7 @@
   <div class="layout">
     <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-objetivo-y-alcance">1. Objetivo y alcance</a></li><li><a href="#2-principios-y-decisiones-arquitect-nicas">2. Principios y decisiones arquitectónicas</a></li><li><a href="#3-estructura-de-la-soluci-n-rbol-de-carpetas-real">3. Estructura de la solución (árbol de carpetas real)</a></li><li><a href="#4-descomposici-n-por-m-dulos-dominios">4. Descomposición por módulos / dominios</a></li><li><a href="#5-capas-y-responsabilidades">5. Capas y responsabilidades</a></li><li><a href="#6-componentes-base-y-relaciones">6. Componentes base y relaciones</a></li><li><a href="#7-flujos-principales-de-informaci-n">7. Flujos principales de información</a></li><li><a href="#8-gesti-n-de-estado">8. Gestión de estado</a></li><li><a href="#9-navegaci-n-y-organizaci-n-de-pantallas-endpoints">9. Navegación y organización de pantallas / endpoints</a></li><li><a href="#10-integraci-n-con-apis-y-servicios-externos">10. Integración con APIs y servicios externos</a></li><li><a href="#11-seguridad-accesibilidad-observabilidad-y-rendimiento">11. Seguridad, accesibilidad, observabilidad y rendimiento</a></li><li><a href="#12-escalabilidad-mantenibilidad-y-extensibilidad">12. Escalabilidad, mantenibilidad y extensibilidad</a></li><li><a href="#13-riesgos-t-cnicos-supuestos-y-decisiones-pendientes">13. Riesgos técnicos, supuestos y decisiones pendientes</a></li><li><a href="#14-decisiones-tomadas-en-el-paso-2-4">14. Decisiones tomadas en el paso 2.4</a></li></ol></nav>
     <main>
-<header class="doc-header"><h1 id="arquitectura-base-servicio-web-de-env-o-de-email-aidd-training">Arquitectura base — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Arquitectura base</span> <span class="badge badge-soft">Fase 2 · 2.4</span> <span class="dot">&middot;</span> Vista generada el 2026-07-08 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">2</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">5</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">13</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div></div></header>
+<header class="doc-header"><h1 id="arquitectura-base-servicio-web-de-env-o-de-email-aidd-training">Arquitectura base — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Arquitectura base</span> <span class="badge badge-soft">Fase 2 · 2.4</span> <span class="dot">&middot;</span> Vista generada el 2026-07-10 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-rf"><span class="kpi-value">2</span><span class="kpi-label">Requisitos funcionales</span></div><div class="kpi kpi-nfr"><span class="kpi-value">5</span><span class="kpi-label">No funcionales</span></div><div class="kpi kpi-us"><span class="kpi-value">13</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">0</span><span class="kpi-label">Fuera de alcance</span></div></div></header>
 <blockquote><strong>Versión 3</strong> · <strong>Generado:</strong> 2026-07-08 12:58 CEST<br>Documento de Fase 2 (AIDD · paso 2.4). Generado por <code>aidd architecture</code>.<br>Fuentes de verdad: detalle-historias-usuario.md, propuesta-arquitectura-base.md, guia-estilos.md.<br>Insumo principal del roadmap. <strong>Aprobado (2026-07-08). Cierra la Fase 2.</strong><br><br>Consolida la arquitectura <strong>definitiva e implementable</strong>. No contradice las fuentes de entrada; el único punto abierto (proveedor SMTP) se documenta como decisión pendiente (§13). El prototipo (2.2) fue aprobado; su validación con cliente y el feedback se incorporarían a <code>cliente-requisitos.md</code> antes de construir.</blockquote>
 <section class="doc-section section-scope" id="1-objetivo-y-alcance">
 <h2><a class="anchor" href="#1-objetivo-y-alcance" aria-label="Enlace">#</a>1. Objetivo y alcance</h2>
@@ -335,7 +337,7 @@
 <h2><a class="anchor" href="#13-riesgos-t-cnicos-supuestos-y-decisiones-pendientes" aria-label="Enlace">#</a>13. Riesgos técnicos, supuestos y decisiones pendientes</h2>
 <p><strong>Decisiones pendientes</strong></p>
 <ul>
-<li><strong>Proveedor y credenciales SMTP definitivos</strong> (<code>requisitos.md</code> §7/§8): no bloqueante; el SMTP es configurable y en dev se usa MailHog/Mailpit. <strong>[Pendiente, no bloqueante]</strong></li>
+<li><strong>Proveedor y credenciales SMTP definitivos</strong> (<code>requisitos.md</code> §7/§8): no bloqueante; el SMTP es configurable y en dev se usa <strong>Mailpit</strong> (decisión 6). <strong>[Pendiente, no bloqueante]</strong></li>
 </ul>
 <p><strong>Supuestos</strong></p>
 <ul>

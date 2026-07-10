@@ -57,7 +57,7 @@
 | **Sprint 2** — F2+F3+F4 (endurecimiento)<br>17–21 ago | lun 17-ago | Funcional | HU-14, HU-08, HU-11, HU-12, HU-13 | Validación de entradas (obligatorios, formato) y adjunto, de cara al usuario |
 | | mar 18-ago | Técnica | HU-08, HU-11, HU-12, HU-13, HU-18, HU-17 | Adjunto (multipart/MIME real), validación autoritativa en servidor y saneamiento del HTML |
 
-**Build:** Sprint 1 construye de mié–vie (11–14 ago) con demo del MVP el vie 14-ago; Sprint 2, de mié–vie (18–21 ago) con cierre el vie 21-ago.
+**Build:** Sprint 1 construye de mié–vie (12–14 ago) con demo del MVP el vie 14-ago; Sprint 2, de mié–vie (19–21 ago) con cierre el vie 21-ago. *(La revisión es lun+mar: 10–11 ago en Sprint 1 y 17–18 ago en Sprint 2; el build empieza el miércoles siguiente.)*
 
 **Reparto:** 2 reuniones funcionales (negocio) + 2 técnicas (TI). Las HU **ambas** (HU-08, HU-11, HU-12, HU-13) se revisan una vez con negocio (lun) y otra con TI (mar) **dentro de su sprint**. El orden respeta fases y dependencias (F0 → F1 → F2/F3 → F4). Cada sprint cierra sus HU al arrancar la semana, no antes de empezar el proyecto.
 
@@ -101,7 +101,7 @@
 - **Concentración de reuniones al inicio del sprint (riesgo de agenda):** revisar lunes/martes y construir de miércoles a viernes exige disponibilidad de negocio y TI **al arranque de cada sprint**. Hay que blindar el 10–11 ago (Sprint 1) y el 17–18 ago (Sprint 2).
 - **Retraso de una revisión = retraso solo de ese sprint:** al estar entrelazado, si la sesión de inicio se cae, se retrasa el build de ese sprint, no toda una campaña previa.
 - **Dependencia de configuración (no bloqueante):** proveedor y credenciales SMTP (`requisitos.md` §7/§8) afectan a la **puesta en marcha** de HU-03, no a su revisión; dev usa Mailpit.
-- **Dependencia de diseño (no bloqueante):** identidad visual pendiente (NFR-12); no bloquea la revisión de HU-05 ni del resto de la UI.
+- ~~**Dependencia de diseño (no bloqueante):** identidad visual pendiente (NFR-12)~~ — **Resuelta (2026-07-10):** identidad corporativa NTT DATA en `docs/guia-estilos.md`. Deja de ser una dependencia de la revisión de HU-05.
 - **Vacaciones de agosto (riesgo de agenda):** la ventana es más corta (3–21 ago) pero más densa; conviene confirmar disponibilidad de negocio y TI en esas fechas concretas. Ninguna HU está marcada como bloqueada.
 
 ## 6. Decisiones tomadas
@@ -114,3 +114,10 @@
 | 4 | Separación funcional/técnica | **Sí** / No | **Sí (funcional + técnica)** | usuario | Separa validación con negocio de la de TI; las HU mixtas se revisan en ambas dentro de su sprint. |
 | 5 | Tipo de revisión por HU | Derivar del contenido / Preguntar una a una | **Derivado del contenido** | default | F0 y F4 → técnica; F1/F2 de cara al remitente → funcional; adjunto y formato → ambas. |
 | 6 | Agrupación de HU por reunión | Una por reunión / **Varias relacionadas (por fase del sprint)** | **Varias HU por sesión** | default | Minimiza sesiones; agrupa por fase/épica/dependencia dentro del sprint. |
+
+## Change log
+
+| Fecha | Cambio | Origen |
+|-------|--------|--------|
+| 2026-07-09 | Generación del plan (Versión 4, modelo entrelazado) y Excel. **Aprobado.** | `aidd hu-review-plan` |
+| 2026-07-10 | **Corrección de fechas de build (errata):** el §3 y el `.json` situaban el build de cada sprint arrancando el **martes** (11 y 18 ago), que es día de reunión de revisión y contradecía la propia prosa "mié–vie". Corregido a **mié–vie = 12–14 / 19–21 ago**; regenerado `docs/xlsx/plan-revision-hu.xlsx` desde el `.json`. También resuelto NFR-12 en §5 (identidad NTT DATA). **Ninguna HU, fase, talla, dependencia ni reunión de revisión cambia.** | usuario |

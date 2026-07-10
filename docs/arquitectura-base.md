@@ -189,7 +189,7 @@ aidd-training/
 ## 13. Riesgos técnicos, supuestos y decisiones pendientes
 
 **Decisiones pendientes**
-- **Proveedor y credenciales SMTP definitivos** (`requisitos.md` §7/§8): no bloqueante; el SMTP es configurable y en dev se usa MailHog/Mailpit. **[Pendiente, no bloqueante]**
+- **Proveedor y credenciales SMTP definitivos** (`requisitos.md` §7/§8): no bloqueante; el SMTP es configurable y en dev se usa **Mailpit** (decisión 6). **[Pendiente, no bloqueante]**
 
 **Supuestos**
 - El prototipo (2.2) se valida con cliente y el feedback se incorpora a `cliente-requisitos.md` antes de construir; esta arquitectura asume el alcance actual sin cambios mayores.

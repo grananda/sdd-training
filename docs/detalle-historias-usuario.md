@@ -66,7 +66,7 @@
   - Dado el usuario en la web, cuando carga la página, entonces ve un formulario con los campos Para, CC, CCO, Asunto, Cuerpo y Adjunto, y un botón Enviar. **[IMPRESCINDIBLE]**
   - Dado el formulario, cuando se muestra, entonces la interfaz está en español. (NFR-01)
   - Dado los campos CC, CCO y Adjunto, cuando se muestran, entonces se indican como opcionales.
-- **Notas técnicas y dependencias**: depende de HU-01. Contenedor de HU-06…HU-16. La identidad visual está **pendiente de definir** (NFR-12); se concretará en la guía de estilos (Fase 2).
+- **Notas técnicas y dependencias**: depende de HU-01. Contenedor de HU-06…HU-16. La identidad visual es la corporativa **NTT DATA** (NFR-12), con los design tokens de `docs/guia-estilos.md`.
 
 #### HU-06 — Destinatarios en Para (una o varias, chips)
 - **Fase**: F1   **RF cubierto(s)**: RF-02   **Prioridad**: Alta
@@ -225,7 +225,7 @@ Cobertura RF (heredada del mapa §5): **16/16 RF**. HU-01 y HU-02 son enablers s
 
 - Ninguna **[IMPRESCINDIBLE]** para pasar a Fase 2 (Diseño).
 - Pendiente de configuración (no de requisitos): **proveedor y credenciales SMTP** (`requisitos.md` §7/§8) — afecta a la puesta en marcha de HU-03, no a su definición.
-- Pendiente de diseño: **identidad visual** (NFR-12) — se concretará en la guía de estilos (Fase 2); no bloquea los criterios de aceptación.
+- ~~Pendiente de diseño: **identidad visual** (NFR-12)~~ — **Resuelto (2026-07-10):** identidad corporativa NTT DATA, formalizada en `docs/guia-estilos.md` (Fase 2).
 - A concretar en implementación (no bloqueante): lista exacta de **etiquetas/atributos** y expresión de validación de email; el conjunto de referencia ya queda fijado en HU-17 y HU-08.
 
 ## Decisiones tomadas en el paso 1.3
@@ -251,3 +251,4 @@ Registro de cambios del documento (las HU se mantienen limpias y client-ready; a
 | 2026-07-08 | Regeneración/sobrescritura a petición del usuario. Sin cambios en requisitos ni mapa; se conservan IDs, criterios y las 7 decisiones 1.3. Contenido equivalente. | `aidd user-story-details` |
 | 2026-07-09 | **Cambio de métrica de estimación** (skill 1.9.0): de rangos S/M/L a **escala de tallas de puntos fijos** (XS 0,5 d · S 1,5 d · M 3 d · L 5 d · XL 8 d, 1 d = 8 h). Solo cambia el significado de la escala; **las tallas asignadas por HU, las HU, sus fases, criterios y prioridades quedan intactas**. | usuario |
 | 2026-07-09 | **Re-estimación con la nueva granularidad** (aprovechando XS): 13 HU bajan de talla (ninguna sube). Nueva distribución **3 M + 8 S + 7 XS** (antes 9 M + 9 S). M: HU-03, HU-06, HU-17. S: HU-01, HU-02, HU-05, HU-10, HU-11, HU-12, HU-16, HU-18. XS: HU-04, HU-07, HU-08, HU-09, HU-13, HU-14, HU-15. **HU, fases, criterios y prioridades intactos**; solo cambia la talla. | usuario |
+| 2026-07-10 | **NFR-12 resuelto.** La nota técnica de HU-05 decía que la identidad visual estaba pendiente de definir; se alinea con `docs/guia-estilos.md`, que la fija como corporativa NTT DATA. Solo cambia esa nota: **ninguna HU, fase, criterio, prioridad ni talla se modifica**. | usuario |

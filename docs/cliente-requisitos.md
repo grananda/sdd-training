@@ -79,7 +79,7 @@ Para el arranque de Fase 1 no hay información bloqueante pendiente. Quedan por 
 
 - Datos/credenciales del **servidor SMTP** de referencia (host, puerto, TLS, usuario) o uso de un SMTP de pruebas (Mailtrap/Ethereal) durante el desarrollo.
 - Preferencia definitiva de **TypeScript vs JavaScript** y **gestor de paquetes** para el monorepo.
-- Cualquier **guía de marca/estilo** o requisito visual para la UI (colores, logotipo, tipografía).
+- ~~Cualquier **guía de marca/estilo** o requisito visual para la UI (colores, logotipo, tipografía).~~ — **Aportado el 2026-07-08:** identidad corporativa **NTT DATA**, formalizada en `docs/guia-estilos.md` (azul `#0072CE`, rojo `#DA291C`, tipografía Inter). Resuelve NFR-12 de `docs/requisitos.md`. *(Anotado el 2026-07-10.)*
 
 ## 9. Estructura inicial propuesta
 
