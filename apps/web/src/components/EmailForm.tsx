@@ -3,6 +3,8 @@ import type { EmailDraft } from "@aidd/shared";
 import { RecipientChips } from "./RecipientChips";
 import { SubjectField } from "./SubjectField";
 import { BodyEditor } from "./BodyEditor";
+import { FeedbackBanner } from "./FeedbackBanner";
+import { useSendEmail } from "../hooks/useSendEmail";
 
 const emptyDraft: EmailDraft = {
   to: [],
@@ -17,18 +19,24 @@ const emptyDraft: EmailDraft = {
  * los campos Para/CC/CCO (chips), Asunto y Cuerpo (React Quill), en español y con
  * identidad NTT DATA.
  *
- * En esta fase **no hay validación** (HU-08/HU-14, fase de validación de cliente)
- * ni **envío** real: el botón Enviar se renderiza pero es **inerte** — el cableado
- * a `POST /api/send` (useSendEmail) llega en la fase de envío desde la UI.
+ * El botón Enviar dispara el **envío directo** (HU-15) vía `useSendEmail`: se
+ * deshabilita durante el envío, muestra un `FeedbackBanner` de éxito/error (HU-16)
+ * y, al éxito, limpia el formulario; al error conserva los datos. La validación
+ * (HU-08/HU-14), el adjunto (HU-11–13) y el saneamiento (HU-17) llegan en fases
+ * posteriores.
  */
 export function EmailForm() {
-  const { control, handleSubmit } = useForm<EmailDraft>({
+  const { control, handleSubmit, reset } = useForm<EmailDraft>({
     defaultValues: emptyDraft,
   });
+  const { send, isSending, feedback } = useSendEmail();
 
-  // Envío inerte en esta fase; se sustituye por useSendEmail en la fase 4.
-  const onSubmit = (_draft: EmailDraft) => {
-    /* no-op: el envío real se cablea en la fase `ui-envio-feedback` */
+  const onSubmit = async (draft: EmailDraft) => {
+    const result = await send(draft);
+    if (result.ok) {
+      reset(emptyDraft); // limpia el formulario al éxito (HU-16)
+    }
+    // en error no se toca el formulario: se conservan los datos (HU-16)
   };
 
   return (
@@ -108,12 +116,18 @@ export function EmailForm() {
             )}
           />
 
+          {feedback && (
+            <FeedbackBanner kind={feedback.kind} message={feedback.message} />
+          )}
+
           <div className="flex justify-end">
             <button
               type="submit"
-              className="rounded-md bg-primary px-5 py-2 font-medium text-surface hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              disabled={isSending}
+              aria-busy={isSending}
+              className="rounded-md bg-primary px-5 py-2 font-medium text-surface hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Enviar
+              {isSending ? "Enviando…" : "Enviar"}
             </button>
           </div>
         </form>

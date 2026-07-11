@@ -27,3 +27,15 @@ Pre-flight de apertura (`aisdd open change`). La arquitectura (`docs/arquitectur
   - b) Proxy de Vite (`/api` → 3000), rutas relativas
 - **Decision**: a) `VITE_API_BASE_URL`
 - **Justificación**: encaja con el CORS ya configurado y funciona en nativo y en Docker (web y api en contenedores separados), donde el proxy de Vite no aplica.
+
+## preflight-implementacion-sin-dudas
+
+- **Fecha**: 2026-07-11
+- **Tipo**: confirmacion
+- **Origen**: usuario
+- **Contexto**: pre-flight de `aisdd implement change`. `design.md` y las decisiones del open fijan la cadena `EmailForm → useSendEmail → apiClient`, el payload JSON, la base URL por env y el comportamiento limpieza/conservación; el código base (`EmailForm` con botón inerte, `EmailDraft` en shared, endpoint JSON) está claro.
+- **Pregunta**: No se detectaron dudas bloqueantes durante el pre-flight de implementación.
+- **Opciones evaluadas**:
+  - a) Continuar con la implementación según design.md
+- **Decision**: continuar. Detalles resueltos por defecto: `import.meta.env.VITE_API_BASE_URL` se tipa en `vite-env.d.ts`; los colores de estado del banner usan los CSS vars de la guía por estilo inline (no están mapeados en Tailwind); los tests mockean `fetch` (o `apiClient`) y `react-quill-new`.
+- **Justificación**: alcance y patrón ya cerrados; no procede forzar preguntas.
