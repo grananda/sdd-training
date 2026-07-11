@@ -1,0 +1,3 @@
+schema: spec-driven
+created: 2026-07-11
+goal: Endpoint POST /api/send con Nodemailer sobre SMTP configurable y logging del resultado sin contenido ni secretos (F0, HU-03 y HU-04).
