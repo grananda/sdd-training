@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompts del roadmap — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { 
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+ }
+    }
+    :root[data-theme="dark"] { 
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+ }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    .doc-meta .stamp strong { color: var(--accent); }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+    li.task { list-style: none; margin-left: -20px; }
+    li.task input { accent-color: var(--accent); margin-right: 6px; vertical-align: -.1em; }
+    .theme-toggle { position: fixed; top: 14px; right: 16px; z-index: 10;
+      width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line-strong);
+      background: var(--panel); color: var(--text-soft); font-size: 1rem; cursor: pointer;
+      box-shadow: var(--shadow); line-height: 1; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .diagram.offline::after { content: "Diagrama Mermaid sin renderizar (CDN no disponible; el codigo fuente se muestra arriba)";
+      display: block; margin-top: 10px; font-size: .8rem; color: var(--warn); }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    .kpi-eff { border-left-color: var(--eff-m); } .kpi-eff .kpi-value { color: var(--eff-m); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">&#9681;</button>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#reglas-de-contexto-comunes-a-todas-las-fases">Reglas de contexto comunes a todas las fases</a></li><li><a href="#fase-1-foundation-monorepo-y-docker-foundation-sprint-1">Fase 1 — Foundation: monorepo y Docker (`foundation`) · Sprint 1</a></li><li><a href="#fase-2-backend-de-env-o-smtp-y-logs-api-envio-smtp-sprint-1">Fase 2 — Backend de envío SMTP y logs (`api-envio-smtp`) · Sprint 1</a></li><li><a href="#fase-3-ui-de-composici-n-ui-composicion-sprint-1">Fase 3 — UI de composición (`ui-composicion`) · Sprint 1</a></li><li><a href="#fase-4-env-o-desde-la-ui-y-feedback-ui-envio-feedback-sprint-1">Fase 4 — Envío desde la UI y feedback (`ui-envio-feedback`) · Sprint 1</a></li><li><a href="#fase-5-validaci-n-de-cliente-validacion-cliente-sprint-2">Fase 5 — Validación de cliente (`validacion-cliente`) · Sprint 2</a></li><li><a href="#fase-6-adjunto-nico-con-validaciones-adjunto-sprint-2">Fase 6 — Adjunto único con validaciones (`adjunto`) · Sprint 2</a></li><li><a href="#fase-7-endurecimiento-de-servidor-endurecimiento-servidor-sprint-2">Fase 7 — Endurecimiento de servidor (`endurecimiento-servidor`) · Sprint 2</a></li><li><a href="#despu-s-de-la-fase-7">Después de la fase 7</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="prompts-del-roadmap-servicio-web-de-env-o-de-email-aidd-training">Prompts del roadmap — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Roadmap</span> <span class="badge badge-soft">Fase 3</span> <span class="dot">&middot;</span> <span class="stamp"><strong>Versión 1</strong> · <strong>Generado:</strong> 2026-07-11 · Generado por <code>aisdd roadmap</code> (skill <code>aisdd-specs</code> v1.1.1).</span> <span class="dot">&middot;</span> Vista generada el 2026-07-11 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div></div></header>
+<blockquote>Prompts operativos para ejecutar las 7 fases de <code>docs/roadmap.md</code> con los comandos del skill <code>aisdd-specs</code>. Ejecutar <strong>en orden</strong>; cerrar cada change antes de abrir el siguiente.<br><br>Cada fase sigue el mismo ciclo: <code>aisdd open change</code> → <code>aisdd implement change</code> → <code>aisdd close change</code>. La integración Jira está activa (<code>openspec/config.yaml</code>, sección <code>jira:</code>): <code>open</code> crea la sub-tarea bajo la Story de la HU principal, <code>implement</code> mueve sub-tarea y Story a In Progress, <code>close</code> las pasa a Done. El registro vive en <code>docs/jira-sync.md</code>.</blockquote>
+<section class="doc-section" id="reglas-de-contexto-comunes-a-todas-las-fases">
+<h2><a class="anchor" href="#reglas-de-contexto-comunes-a-todas-las-fases" aria-label="Enlace">#</a>Reglas de contexto comunes a todas las fases</h2>
+<ul><li><strong>Pasar siempre:</strong> la sección de la fase en <code>docs/roadmap.md</code> y las HU correspondientes de <code>docs/detalle-historias-usuario.md</code> (solo esas).</li><li><strong>Pasar según la fase:</strong> las secciones indicadas de <code>docs/arquitectura-base.md</code> y, en fases de UI, <code>docs/guia-estilos.md</code>.</li><li><strong>No pasar nunca:</strong> <code>docs/cliente-requisitos.md</code>, <code>docs/planificacion-proyecto.md</code>, <code>docs/sprint-plan.md</code>, <code>docs/plan-revision-hu.md</code> (capa de entrega: no aportan al diseño del change), ni el detalle de HU de fases futuras.</li><li>El código relevante es siempre el ya archivado por los changes anteriores; no anticipar estructuras de fases posteriores.</li></ul>
+<hr>
+</section>
+<section class="doc-section" id="fase-1-foundation-monorepo-y-docker-foundation-sprint-1">
+<h2><a class="anchor" href="#fase-1-foundation-monorepo-y-docker-foundation-sprint-1" aria-label="Enlace">#</a>Fase 1 — Foundation: monorepo y Docker (<code>foundation</code>) · Sprint 1</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span> (Stories Jira <code>AT-1</code>, <code>AT-2</code>; principal: <span class="chip chip-us">HU-01</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 1); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span>); <code>docs/arquitectura-base.md</code> §3 (árbol de carpetas), §9 (health-check), §10 (Mailpit y variables de entorno).</li><li><strong>Código relevante:</strong> ninguno (repo sin código de aplicación).</li><li><strong>No incluir:</strong> lógica de envío, formulario, validaciones, saneamiento (fases 2–7); detalle de <span class="chip chip-us">HU-03</span> en adelante.</li><li><strong>División:</strong> un solo change; no dividir (scaffolding cohesionado).</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change foundation — Crear el walking skeleton del proyecto según docs/roadmap.md Fase 1 y docs/arquitectura-base.md §3: monorepo Turborepo + pnpm con apps/web (React + Vite + TypeScript + Tailwind), apps/api (Express + TypeScript) y packages/shared; docker-compose.yml con web + api + Mailpit (axllent/mailpit, puertos 1025/8025); .env.example con SMTP_*, MAIL_FROM, MAX_ATTACHMENT_SIZE_MB, PORT, WEB_ORIGIN; endpoint GET /api/health; tokens de diseño base de docs/guia-estilos.md. Cubre HU-01 y HU-02. Sin lógica de negocio.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change foundation — Implementar el change según sus specs. Criterios de cierre: `docker compose up` levanta web + api + Mailpit; GET /api/health responde 200; pnpm dev/build funcionan vía Turborepo. Nota: node/pnpm solo están disponibles vía nvm (exportar el PATH antes de cualquier comando npm/pnpm/turbo).</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change foundation</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-2-backend-de-env-o-smtp-y-logs-api-envio-smtp-sprint-1">
+<h2><a class="anchor" href="#fase-2-backend-de-env-o-smtp-y-logs-api-envio-smtp-sprint-1" aria-label="Enlace">#</a>Fase 2 — Backend de envío SMTP y logs (<code>api-envio-smtp</code>) · Sprint 1</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span> (Stories <code>AT-3</code>, <code>AT-4</code>; principal: <span class="chip chip-us">HU-03</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 2); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span>); <code>docs/arquitectura-base.md</code> §5 (pipeline backend), §9 (contrato de <code>POST /api/send</code>), §10 (SMTP/Mailpit), §11 (observabilidad: qué loguear y qué no).</li><li><strong>Código relevante:</strong> <code>apps/api</code> y <code>docker-compose.yml</code> creados por <code>foundation</code>.</li><li><strong>No incluir:</strong> frontend (<code>apps/web</code>); adjunto, saneamiento y validación autoritativa (fases 6–7); <code>docs/guia-estilos.md</code>.</li><li><strong>División:</strong> un solo change (<span class="chip chip-us">HU-04</span> es XS y vive dentro del pipeline de <span class="chip chip-us">HU-03</span>).</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change api-envio-smtp — Implementar POST /api/send según docs/roadmap.md Fase 2 y docs/arquitectura-base.md §5/§9: Nodemailer con transporter reutilizable y SMTP configurable solo por variables de entorno (config/env.ts validado con Zod), logging con pino del resultado de cada envío (resultado, destinatarios, asunto, timestamp; sin contenido ni secretos), contrato de error uniforme y CORS restringido a WEB_ORIGIN. Cubre HU-03 y HU-04. La validación autoritativa completa y el saneamiento quedan para el change endurecimiento-servidor; el adjunto para el change adjunto.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change api-envio-smtp — Implementar el change según sus specs. Criterios de cierre: un POST /api/send de prueba entrega el correo en Mailpit (UI en :8025); logs correctos sin secretos; tests de integración del endpoint con Supertest en verde.</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change api-envio-smtp</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-3-ui-de-composici-n-ui-composicion-sprint-1">
+<h2><a class="anchor" href="#fase-3-ui-de-composici-n-ui-composicion-sprint-1" aria-label="Enlace">#</a>Fase 3 — UI de composición (<code>ui-composicion</code>) · Sprint 1</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span> (Stories <code>AT-5</code>, <code>AT-6</code>, <code>AT-7</code>, <code>AT-8</code>, <code>AT-9</code>; principal: <span class="chip chip-us">HU-05</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 3); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span>); <code>docs/arquitectura-base.md</code> §5 (capas frontend), §6 (componentes y relaciones), §8 (estado); <code>docs/guia-estilos.md</code> completa (tokens, componentes, accesibilidad).</li><li><strong>Código relevante:</strong> <code>apps/web</code> y <code>packages/shared</code> creados por <code>foundation</code>.</li><li><strong>No incluir:</strong> <code>apps/api</code> (no se toca); envío/feedback (fase 4); reglas de validación (fase 5); adjunto (fase 6).</li><li><strong>División:</strong> por defecto un change. <strong>Si en el pre-flight el alcance resulta excesivo</strong>, dividir en 2–3 changes dentro del Sprint 1, por componente: <code>ui-formulario-base</code> (<span class="chip chip-us">HU-05</span> + <span class="chip chip-us">HU-09</span>), <code>ui-chips-destinatarios</code> (<span class="chip chip-us">HU-06</span> + <span class="chip chip-us">HU-07</span>), <code>ui-editor-cuerpo</code> (<span class="chip chip-us">HU-10</span>) — en ese orden, y reflejar los nuevos slugs en <code>docs/jira-sync.md</code>.</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change ui-composicion — Construir el formulario de composición según docs/roadmap.md Fase 3, docs/arquitectura-base.md §5/§6/§8 y docs/guia-estilos.md: EmailForm con React Hook Form; RecipientChips ×3 (Para/CC/CCO) con chips añadibles y borrables; SubjectField de una línea; BodyEditor con React Quill limitado a negrita, cursiva y listas; SubmitBar y hueco visible de AttachmentField sin lógica; esquema base del email en packages/shared (Zod). UI en español, accesibilidad WCAG 2.1 AA. Cubre HU-05, HU-06, HU-07, HU-09 y HU-10. Sin envío real, sin validación de entradas y sin lógica de adjunto.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change ui-composicion — Implementar el change según sus specs. Criterios de cierre: el formulario renderiza todos los campos; las chips añaden/eliminan direcciones en los tres campos; el editor produce HTML solo con negrita/cursiva/listas; tests de componentes (React Testing Library) en verde.</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change ui-composicion</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-4-env-o-desde-la-ui-y-feedback-ui-envio-feedback-sprint-1">
+<h2><a class="anchor" href="#fase-4-env-o-desde-la-ui-y-feedback-ui-envio-feedback-sprint-1" aria-label="Enlace">#</a>Fase 4 — Envío desde la UI y feedback (<code>ui-envio-feedback</code>) · Sprint 1</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span> (Stories <code>AT-10</code>, <code>AT-11</code>; principal: <span class="chip chip-us">HU-16</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 4); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span>); <code>docs/arquitectura-base.md</code> §7 (flujos de éxito y error), §9 (contrato de respuesta); <code>docs/guia-estilos.md</code> (banner/feedback, <code>aria-live</code>).</li><li><strong>Código relevante:</strong> <code>apps/web/src/components</code> (fase 3) y el contrato real de <code>POST /api/send</code> (fase 2).</li><li><strong>No incluir:</strong> reglas de validación (fase 5); adjunto (fase 6); internals del backend más allá del contrato de respuesta.</li><li><strong>División:</strong> un solo change. Cierra el <strong>hito MVP F1 demoable</strong> (demo vie 14-ago).</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change ui-envio-feedback — Conectar el formulario con el backend según docs/roadmap.md Fase 4 y docs/arquitectura-base.md §7/§9: hook useSendEmail con estado idle|sending|success|error; apiClient que monta FormData y hace POST /api/send; errorMap de código a mensaje en español; FeedbackBanner accesible (aria-live); envío directo al pulsar Enviar sin confirmación ni vista previa; botón deshabilitado durante el envío; limpiar el formulario tras éxito y conservar los datos tras error. Cubre HU-15 y HU-16.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change ui-envio-feedback — Implementar el change según sus specs. Criterios de cierre: happy path completo desde la UI hasta Mailpit con banner de éxito; con SMTP caído se muestra banner de error y los datos se conservan; MVP del Sprint 1 demoable (E1→E2→E6).</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change ui-envio-feedback</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-5-validaci-n-de-cliente-validacion-cliente-sprint-2">
+<h2><a class="anchor" href="#fase-5-validaci-n-de-cliente-validacion-cliente-sprint-2" aria-label="Enlace">#</a>Fase 5 — Validación de cliente (<code>validacion-cliente</code>) · Sprint 2</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span> (Stories <code>AT-12</code>, <code>AT-13</code>; principal: <span class="chip chip-us">HU-14</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 5); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span>); <code>docs/arquitectura-base.md</code> §2 (contrato único compartido) y §5 (resolver Zod en RHF); <code>docs/guia-estilos.md</code> (mensajes de error junto a campos).</li><li><strong>Código relevante:</strong> <code>packages/shared/src/email.schema.ts</code> y <code>apps/web/src/components/EmailForm.tsx</code> (+ campos).</li><li><strong>No incluir:</strong> <code>apps/api</code> (la validación de servidor es fase 7); reglas de adjunto (fase 6).</li><li><strong>División:</strong> un solo change (0,2 d; no fragmentar más).</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change validacion-cliente — Completar la validación de cliente según docs/roadmap.md Fase 5: en packages/shared, emailSchema (Zod) con obligatorios Para/Asunto/Cuerpo y formato de dirección de email para Para/CC/CCO; conectarlo como resolver de React Hook Form; bloquear el envío si hay errores y mostrarlos de forma accesible junto a cada campo, en español. Cubre HU-08 y HU-14. La validación autoritativa en servidor queda para el change endurecimiento-servidor.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change validacion-cliente — Implementar el change según sus specs. Criterios de cierre: no se puede enviar con Para/Asunto/Cuerpo vacíos ni con direcciones inválidas en ninguno de los tres campos; errores visibles junto a los campos; tests unit del esquema en packages/shared y de componentes en verde.</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change validacion-cliente</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-6-adjunto-nico-con-validaciones-adjunto-sprint-2">
+<h2><a class="anchor" href="#fase-6-adjunto-nico-con-validaciones-adjunto-sprint-2" aria-label="Enlace">#</a>Fase 6 — Adjunto único con validaciones (<code>adjunto</code>) · Sprint 2</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span> (Stories <code>AT-14</code>, <code>AT-15</code>, <code>AT-16</code>; principal: <span class="chip chip-us">HU-11</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 6); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span>); <code>docs/arquitectura-base.md</code> §4 (módulo Adjunto), §5 (upload en el pipeline), §11 (límite en Multer).</li><li><strong>Código relevante:</strong> <code>apps/web/src/components/AttachmentField.tsx</code> (hueco de fase 3), <code>packages/shared</code>, <code>apps/api/src/middleware/upload.ts</code> y <code>services/mailer.ts</code>.</li><li><strong>No incluir:</strong> saneamiento HTML (fase 7); <code>docs/guia-estilos.md</code> completa (solo el patrón de campo de fichero y mensajes de error).</li><li><strong>División:</strong> un solo change: cliente y transporte del adjunto van juntos para que la HU sea demostrable extremo a extremo (fichero visible en Mailpit).</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change adjunto — Añadir el adjunto único según docs/roadmap.md Fase 6 y docs/arquitectura-base.md §4/§5: attachment.rules.ts en packages/shared (tipos permitidos JPG, GIF, PDF, Word, Excel, PowerPoint y límite 10 MiB) como fuente única; AttachmentField funcional con validación de tipo y tamaño en cliente y mensajes claros; en el backend, Multer memoryStorage con 1 fichero y límite de 10 MiB, pasando el adjunto a Nodemailer. Cubre HU-11, HU-12 y HU-13. El rechazo autoritativo por MIME real (file-type) queda para el change endurecimiento-servidor.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change adjunto — Implementar el change según sus specs. Criterios de cierre: un correo con adjunto llega a Mailpit con el fichero visible; el cliente rechaza tipos no permitidos y ficheros de más de 10 MiB con aviso claro; tests en verde.</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change adjunto</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="fase-7-endurecimiento-de-servidor-endurecimiento-servidor-sprint-2">
+<h2><a class="anchor" href="#fase-7-endurecimiento-de-servidor-endurecimiento-servidor-sprint-2" aria-label="Enlace">#</a>Fase 7 — Endurecimiento de servidor (<code>endurecimiento-servidor</code>) · Sprint 2</h2>
+<ul><li><strong>HU:</strong> <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span> (Stories <code>AT-17</code>, <code>AT-18</code>; principal: <span class="chip chip-us">HU-18</span>).</li><li><strong>Documentos a pasar:</strong> <code>docs/roadmap.md</code> (Fase 7); <code>docs/detalle-historias-usuario.md</code> (<span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span>); <code>docs/arquitectura-base.md</code> §5 (pipeline completo), §11 (seguridad: whitelist de saneamiento, MIME real, contrato de error).</li><li><strong>Código relevante:</strong> todo <code>apps/api/src</code> (pipeline de fase 2 + upload de fase 6) y <code>packages/shared</code> (esquema completo de fases 5–6).</li><li><strong>No incluir:</strong> <code>apps/web</code> (no se toca; la validación de cliente ya existe y pasa a ser conveniencia); <code>docs/guia-estilos.md</code>.</li><li><strong>División:</strong> un solo change. Si el pre-flight lo aconseja, dividir en <code>saneamiento-html</code> (<span class="chip chip-us">HU-17</span>) y <code>validacion-servidor</code> (<span class="chip chip-us">HU-18</span>), ambos dentro del Sprint 2. Cierra el <strong>hito producto endurecido (21-ago)</strong>.</li></ul>
+<p><strong>Abrir:</strong></p>
+<pre><code>aisdd open change endurecimiento-servidor — Endurecer el backend según docs/roadmap.md Fase 7 y docs/arquitectura-base.md §11: sanitizer.ts con sanitize-html y whitelist estricta (b/strong, i/em, ul, ol, li, p, br; eliminar script, atributos on*, iframes, enlaces e imágenes); middleware validate.ts con el emailSchema de packages/shared como validación autoritativa (obligatorios, formato de email, tamaño de adjunto); attachment.ts con verificación de tipo por MIME real usando file-type; respuestas 4xx { ok:false, code } ante peticiones que burlan el cliente, sin filtrar secretos. Cubre HU-17 y HU-18.</code></pre>
+<p><strong>Implementar:</strong></p>
+<pre><code>aisdd implement change endurecimiento-servidor — Implementar el change según sus specs. Criterios de cierre: una petición directa al endpoint (curl, sin UI) con campos inválidos o adjunto prohibido es rechazada con 4xx y código; un cuerpo con &lt;script&gt; u onclick llega saneado a Mailpit; e2e del recorrido E1–E7 (Playwright, opcional) sobre Mailpit; revisión de seguridad con TI cerrada.</code></pre>
+<p><strong>Cerrar:</strong></p>
+<pre><code>aisdd close change endurecimiento-servidor</code></pre>
+<hr>
+</section>
+<section class="doc-section" id="despu-s-de-la-fase-7">
+<h2><a class="anchor" href="#despu-s-de-la-fase-7" aria-label="Enlace">#</a>Después de la fase 7</h2>
+<p>Con los 7 changes archivados, el producto cumple las 18 HU (F0–F4) y los dos hitos del <code>sprint-plan.md</code>. Pasos manuales que quedan fuera de los changes: demo del MVP (14-ago), demo final (21-ago) y decisión pendiente del proveedor SMTP de producción (<code>arquitectura-base.md</code> §13, no bloqueante).</p>
+</section>
+    </main>
+  </div>
+  <script>
+    // Theme toggle (auto -> claro -> oscuro), persisted per browser. Classic script:
+    // must keep working even without network (the Mermaid CDN import lives apart).
+    (function () {
+      const KEY = 'booster-docs-theme';
+      const btn = document.getElementById('themeToggle');
+      const modes = ['auto', 'light', 'dark'];
+      const icons = { auto: '\u25D1', light: '\u2600', dark: '\u263E' };
+      let mode = localStorage.getItem(KEY);
+      if (!modes.includes(mode)) mode = 'auto';
+      function apply() {
+        if (mode === 'auto') delete document.documentElement.dataset.theme;
+        else document.documentElement.dataset.theme = mode;
+        btn.textContent = icons[mode];
+        btn.title = 'Tema: ' + mode;
+      }
+      btn.addEventListener('click', () => {
+        mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+        localStorage.setItem(KEY, mode);
+        apply();
+      });
+      apply();
+    })();
+
+    // Scroll-spy: highlight the current section in the TOC.
+    (function () {
+      const links = [...document.querySelectorAll('.toc a')];
+      if (!links.length) return;
+      const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            links.forEach(a => a.classList.remove('active'));
+            const a = map.get(e.target.id);
+            if (a) a.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-10% 0px -80% 0px' });
+      document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+    })();
+  </script>
+  <script type="module">
+    // Mermaid via CDN, best-effort: offline the diagrams stay as readable source
+    // with a notice instead of silently breaking the page's other scripts.
+    if (document.querySelector('.mermaid')) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
+        const dark = document.documentElement.dataset.theme === 'dark'
+          || (document.documentElement.dataset.theme !== 'light'
+              && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+      } catch (e) {
+        document.querySelectorAll('.diagram').forEach(d => d.classList.add('offline'));
+      }
+    }
+  </script>
+</body>
+</html>

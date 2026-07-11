@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap de desarrollo — Servicio Web de Envío de Email (aidd-training)</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fa; --panel: #ffffff; --panel-soft: #fbfcfd;
+      --text: #1a2230; --text-soft: #404a5c; --muted: #5b6675;
+      --line: #e1e6ed; --line-strong: #c8d1dc;
+      --accent: #005f73; --accent-soft: #d6eef3;
+      --code-bg: #eef2f6;
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --rf: #0a7d8c; --nfr: #6b5bd6; --us: #0a9396; --must: #c1121f;
+      --block: #b00020; --warn: #b58a25; --essential: #e8590c;
+      --prio-high: #c1121f; --prio-mid: #d98a00; --prio-low: #4a8a4a;
+      --eff-xs: #2f8f6b; --eff-s: #4a8a4a; --eff-m: #d98a00; --eff-l: #c1121f; --eff-xl: #7a0a15;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { 
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+ }
+    }
+    :root[data-theme="dark"] { 
+        --bg: #0f1623; --panel: #161f2f; --panel-soft: #1b2536;
+        --text: #e6ebf4; --text-soft: #c2cad8; --muted: #94a0b3;
+        --line: #28324a; --line-strong: #364260;
+        --accent: #4dd0e1; --accent-soft: #143038; --code-bg: #1f2940;
+        --shadow: 0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+        --rf: #35c4d6; --nfr: #a99bff; --us: #4dd0e1; --must: #ff6b74;
+        --block: #ff7a8a; --warn: #f6d784; --essential: #ff8f4d;
+        --prio-high: #ff6b74; --prio-mid: #ffb340; --prio-low: #7fd07f;
+        --eff-xs: #5fd0a8; --eff-s: #7fd07f; --eff-m: #ffb340; --eff-l: #ff6b74; --eff-xl: #ff9aa2;
+ }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .layout {
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 40px;
+      max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; padding: 24px 18px 56px; gap: 24px; }
+      .toc { position: static !important; max-height: none !important; }
+    }
+    main { min-width: 0; }
+    .doc-header { margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.35rem; line-height: 1.3; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+    h3 { font-size: 1.08rem; margin: 22px 0 10px; }
+    h4 { font-size: .98rem; margin: 18px 0 8px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
+    h2 .anchor { color: var(--line-strong); text-decoration: none; font-weight: 400; opacity: 0; transition: opacity .15s ease, color .15s ease; }
+    h2:hover .anchor { opacity: 1; }
+    h2 .anchor:hover { color: var(--accent); }
+    p { margin: 0 0 14px; color: var(--text-soft); max-width: 74ch; }
+    li { color: var(--text-soft); }
+    ul, ol { padding-left: 24px; margin: 0 0 16px; }
+    ul li, ol li { margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--text); }
+    blockquote {
+      margin: 0 0 16px; padding: 12px 16px; border-left: 3px solid var(--accent);
+      background: var(--panel-soft); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .95rem;
+    }
+    code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+      font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; }
+    pre { background: var(--panel-soft); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px;
+      overflow-x: auto; font-family: "SF Mono","JetBrains Mono","Fira Code",Consolas,Menlo,monospace; font-size: .88em; line-height: 1.55; }
+    pre code { background: transparent; border: 0; padding: 0; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 999px; vertical-align: middle; }
+    .badge-soft { background: transparent; border: 1px solid var(--line-strong); color: var(--muted); }
+    .doc-meta { margin: 0; color: var(--muted); font-size: .92rem; }
+    .doc-meta .dot { margin: 0 6px; color: var(--line-strong); }
+    .doc-meta .sot { font-style: italic; }
+    .doc-meta .stamp strong { color: var(--accent); }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+    li.task { list-style: none; margin-left: -20px; }
+    li.task input { accent-color: var(--accent); margin-right: 6px; vertical-align: -.1em; }
+    .theme-toggle { position: fixed; top: 14px; right: 16px; z-index: 10;
+      width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line-strong);
+      background: var(--panel); color: var(--text-soft); font-size: 1rem; cursor: pointer;
+      box-shadow: var(--shadow); line-height: 1; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .diagram.offline::after { content: "Diagrama Mermaid sin renderizar (CDN no disponible; el codigo fuente se muestra arriba)";
+      display: block; margin-top: 10px; font-size: .8rem; color: var(--warn); }
+    /* KPI dashboard */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; }
+    .kpi { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+      border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-size: 1.9rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+    .kpi-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .kpi-rf { border-left-color: var(--rf); } .kpi-rf .kpi-value { color: var(--rf); }
+    .kpi-nfr { border-left-color: var(--nfr); } .kpi-nfr .kpi-value { color: var(--nfr); }
+    .kpi-us { border-left-color: var(--us); } .kpi-us .kpi-value { color: var(--us); }
+    .kpi-must { border-left-color: var(--must); } .kpi-must .kpi-value { color: var(--must); }
+    .kpi-block { border-left-color: var(--block); } .kpi-block .kpi-value { color: var(--block); }
+    .kpi-essential { border-left-color: var(--essential); } .kpi-essential .kpi-value { color: var(--essential); }
+    .kpi-warn { border-left-color: var(--warn); } .kpi-warn .kpi-value { color: var(--warn); }
+    .kpi-muted { border-left-color: var(--line-strong); } .kpi-muted .kpi-value { color: var(--muted); }
+    .kpi-eff { border-left-color: var(--eff-m); } .kpi-eff .kpi-value { color: var(--eff-m); }
+    /* Chips */
+    .chip { display: inline-block; font-size: .74rem; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+      vertical-align: baseline; letter-spacing: .02em; white-space: nowrap;
+      border: 1px solid color-mix(in srgb, currentColor 35%, transparent); }
+    .chip-rf { color: var(--rf); background: color-mix(in srgb, var(--rf) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-nfr { color: var(--nfr); background: color-mix(in srgb, var(--nfr) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-us { color: var(--us); background: color-mix(in srgb, var(--us) 12%, transparent); font-family: "SF Mono",Menlo,monospace; }
+    .chip-block { color: #fff; background: var(--block); border-color: var(--block); text-transform: uppercase; letter-spacing: .05em; }
+    .chip-essential { color: #fff; background: var(--essential); border-color: var(--essential); text-transform: uppercase; letter-spacing: .05em; }
+    .swatch { display: inline-block; width: .9em; height: .9em; border-radius: 3px; margin-right: .35em;
+      vertical-align: -.12em; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.35) inset; }
+    .chip-must { color: var(--must); background: color-mix(in srgb, var(--must) 14%, transparent); }
+    .chip-should { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-could { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-wont { color: var(--muted); background: color-mix(in srgb, var(--muted) 14%, transparent); }
+    .chip-prio-high { color: var(--prio-high); background: color-mix(in srgb, var(--prio-high) 14%, transparent); }
+    .chip-prio-mid { color: var(--prio-mid); background: color-mix(in srgb, var(--prio-mid) 14%, transparent); }
+    .chip-prio-low { color: var(--prio-low); background: color-mix(in srgb, var(--prio-low) 14%, transparent); }
+    .chip-eff-xs { color: var(--eff-xs); background: color-mix(in srgb, var(--eff-xs) 14%, transparent); }
+    .chip-eff-s { color: var(--eff-s); background: color-mix(in srgb, var(--eff-s) 14%, transparent); }
+    .chip-eff-m { color: var(--eff-m); background: color-mix(in srgb, var(--eff-m) 14%, transparent); }
+    .chip-eff-l { color: var(--eff-l); background: color-mix(in srgb, var(--eff-l) 14%, transparent); }
+    .chip-eff-xl { color: var(--eff-xl); background: color-mix(in srgb, var(--eff-xl) 14%, transparent); }
+    /* Sections */
+    .doc-section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px 26px; margin: 22px 0; box-shadow: var(--shadow); }
+    .doc-section h2 { margin-top: 0; }
+    .doc-section > h2::before { content: ""; display: inline-block; width: 6px; height: 22px; border-radius: 3px;
+      background: var(--accent); transform: translateY(3px); margin-right: 2px; }
+    .section-scope > h2::before { background: var(--must); }
+    .section-scope ul { list-style: none; padding-left: 0; }
+    .section-scope ul li { padding: 6px 12px; margin-bottom: 6px; border-radius: 8px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); font-size: .94rem; }
+    th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; color: var(--text-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) td { background: var(--panel-soft); }
+    th { background: var(--panel-soft); color: var(--text); font-weight: 600; font-size: .82rem;
+      text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--line-strong); }
+    .diagram { margin: 18px 0 4px; padding: 18px; background: var(--panel-soft);
+      border: 1px dashed var(--line-strong); border-radius: 10px; overflow-x: auto; }
+    .diagram .mermaid { text-align: center; background: transparent; border: 0; padding: 0; margin: 0; }
+    .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto;
+      padding: 18px 18px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      box-shadow: var(--shadow); font-size: .9rem; }
+    .toc-title { margin: 0 0 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc ol { list-style: none; counter-reset: toc; padding: 0; margin: 0; }
+    .toc li { counter-increment: toc; margin: 0; }
+    .toc li a { display: block; padding: 6px 10px 6px 12px; color: var(--text-soft); border-radius: 6px; }
+    .toc li a::before { content: counter(toc) "."; color: var(--muted); margin-right: 8px; font-variant-numeric: tabular-nums; }
+    .toc li a:hover, .toc li a.active { background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+    @media print {
+      body { background: #fff; } .layout { display: block; padding: 0; } .toc { display: none; }
+      .doc-section, .kpi { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">&#9681;</button>
+  <div class="layout">
+    <nav class="toc" aria-label="Indice"><p class="toc-title">En esta pagina</p><ol><li><a href="#1-presupuesto-de-contexto-y-complejidad">1. Presupuesto de contexto y complejidad</a></li><li><a href="#2-resumen-de-fases">2. Resumen de fases</a></li><li><a href="#3-detalle-de-fases">3. Detalle de fases</a></li><li><a href="#4-alineaci-n-con-la-capa-de-entrega">4. Alineación con la capa de entrega</a></li><li><a href="#5-conflictos-de-alineaci-n-roadmap-sprint">5. Conflictos de alineación roadmap↔sprint</a></li><li><a href="#6-entregables-de-este-paso">6. Entregables de este paso</a></li></ol></nav>
+    <main>
+<header class="doc-header"><h1 id="roadmap-de-desarrollo-servicio-web-de-env-o-de-email-aidd-training">Roadmap de desarrollo — Servicio Web de Envío de Email (aidd-training)</h1><p class="doc-meta"><span class="badge">Roadmap</span> <span class="badge badge-soft">Fase 3</span> <span class="dot">&middot;</span> <span class="stamp"><strong>Versión 1</strong> · <strong>Generado:</strong> 2026-07-11</span> <span class="dot">&middot;</span> Vista generada el 2026-07-11 <span class="dot">&middot;</span> <span class="sot">El .md es la fuente de verdad</span></p><div class="kpi-grid"><div class="kpi kpi-us"><span class="kpi-value">18</span><span class="kpi-label">Historias de usuario</span></div><div class="kpi kpi-muted"><span class="kpi-value">4</span><span class="kpi-label">Fuera de alcance</span></div><div class="kpi kpi-essential"><span class="kpi-value">7</span><span class="kpi-label">Imprescindibles</span></div></div></header>
+<blockquote>Documento de Fase 3 (AISDD). Generado por <code>aisdd roadmap</code> (skill <code>aisdd-specs</code> v1.1.1).<br>Fuentes: docs/arquitectura-base.md, docs/mapa-historias-usuario.md, docs/detalle-historias-usuario.md, docs/sprint-plan.md, docs/planificacion-proyecto.md, docs/plan-revision-hu.md.<br>Faseado <strong>alineado a la capa de entrega</strong>: <code>docs/sprint-plan.md</code> (aprobado 2026-07-09, volcado a Jira: proyecto <code>AT</code>, board 34).</blockquote>
+<section class="doc-section" id="1-presupuesto-de-contexto-y-complejidad">
+<h2><a class="anchor" href="#1-presupuesto-de-contexto-y-complejidad" aria-label="Enlace">#</a>1. Presupuesto de contexto y complejidad</h2>
+<div class="table-wrap"><table><thead><tr><th>Parámetro</th><th>Valor</th><th>Justificación</th></tr></thead><tbody><tr><td>Presupuesto de contexto</td><td><strong>alto</strong></td><td>Modelo de la sesión: Claude Fable 5 (ventana &gt;200k tokens). El volumen documental es pequeño (~10 documentos cortos en <code>docs/</code>) y no hay código previo que arrastrar.</td></tr><tr><td>Complejidad</td><td><strong>baja-media</strong></td><td>Un solo dominio funcional (componer y enviar un email), una integración externa (SMTP vía Nodemailer), sin persistencia, sin migraciones ni auth. Media puntual en seguridad (saneamiento HTML, validación autoritativa).</td></tr><tr><td>Nº de fases</td><td><strong>7</strong></td><td>Con contexto alto el rango orientativo es 3–6, pero se amplía a 7 deliberadamente: (a) el proyecto es un <strong>workshop</strong> que necesita ciclos cortos y demostrables (decisión registrada en <code>mapa-historias-usuario.md</code> §7); (b) los cortes coinciden con los bloques F0–F4 del mapa de HU y con los gates de revisión del <code>plan-revision-hu.md</code>; (c) ninguna fase mezcla más de un objetivo funcional principal. Cada fase se abre como <strong>un único change OpenSpec</strong> de contexto muy acotado.</td></tr></tbody></table></div>
+<p><strong>Regla de jerarquía aplicada:</strong> el presupuesto de contexto decide el tamaño de cada change; el sprint plan decide el orden, las fronteras y qué HU están comprometidas. Ninguna HU se parte entre fases y ninguna fase cruza una frontera de sprint.</p>
+</section>
+<section class="doc-section" id="2-resumen-de-fases">
+<h2><a class="anchor" href="#2-resumen-de-fases" aria-label="Enlace">#</a>2. Resumen de fases</h2>
+<div class="table-wrap"><table><thead><tr><th>Fase</th><th>Nombre</th><th>change (slug)</th><th>HU</th><th>Sprint</th><th>Real IA</th><th>Bruto</th><th>Riesgo contexto</th></tr></thead><tbody><tr><td>1</td><td>Foundation: monorepo y Docker</td><td><code>foundation</code></td><td><span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span></td><td>Sprint 1</td><td>0,4 d</td><td>3,0 d</td><td>bajo</td></tr><tr><td>2</td><td>Backend de envío SMTP y logs</td><td><code>api-envio-smtp</code></td><td><span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span></td><td>Sprint 1</td><td>0,9 d</td><td>3,5 d</td><td>bajo</td></tr><tr><td>3</td><td>UI de composición</td><td><code>ui-composicion</code></td><td><span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span></td><td>Sprint 1</td><td>1,8 d</td><td>7,0 d</td><td>medio</td></tr><tr><td>4</td><td>Envío desde la UI y feedback</td><td><code>ui-envio-feedback</code></td><td><span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span></td><td>Sprint 1</td><td>0,5 d</td><td>2,0 d</td><td>bajo</td></tr><tr><td>5</td><td>Validación de cliente</td><td><code>validacion-cliente</code></td><td><span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span></td><td>Sprint 2</td><td>0,2 d</td><td>1,0 d</td><td>bajo</td></tr><tr><td>6</td><td>Adjunto único con validaciones</td><td><code>adjunto</code></td><td><span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span></td><td>Sprint 2</td><td>1,0 d</td><td>3,5 d</td><td>bajo</td></tr><tr><td>7</td><td>Endurecimiento de servidor</td><td><code>endurecimiento-servidor</code></td><td><span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span></td><td>Sprint 2</td><td>1,3 d</td><td>4,5 d</td><td>medio</td></tr><tr><td></td><td><strong>Total</strong></td><td></td><td><strong>18 HU</strong></td><td></td><td><strong>6,1 d</strong></td><td><strong>24,5 d</strong></td><td></td></tr></tbody></table></div>
+<p>Esfuerzos por HU tomados de <code>docs/sprint-plan.md</code> §2 (real con IA / bruto humano de referencia).</p>
+</section>
+<section class="doc-section" id="3-detalle-de-fases">
+<h2><a class="anchor" href="#3-detalle-de-fases" aria-label="Enlace">#</a>3. Detalle de fases</h2>
+<h3 id="fase-1-foundation-monorepo-y-docker-foundation">Fase 1 — Foundation: monorepo y Docker (<code>foundation</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 1 (10–14 ago 2026) · <strong>HU:</strong> <span class="chip chip-us">HU-01</span>, <span class="chip chip-us">HU-02</span> · <strong>Esfuerzo:</strong> 0,4 d IA / 3,0 d bruto.</li><li><strong>Objetivo:</strong> dejar el esqueleto ejecutable: monorepo Turborepo + pnpm con <code>apps/web</code> (React + Vite + TS + Tailwind), <code>apps/api</code> (Express + TS) y <code>packages/shared</code>, levantado en local con Docker Compose (web + api + <strong>Mailpit</strong>).</li><li><strong>Alcance:</strong> estructura de carpetas de <code>arquitectura-base.md</code> §3; <code>turbo.json</code>, <code>pnpm-workspace.yaml</code>, Dockerfiles, <code>docker-compose.yml</code>, <code>.env.example</code>, endpoint <code>GET /api/health</code>, tokens de diseño base (<code>tokens.css</code>, <code>tailwind.config.ts</code>).</li><li><strong>Exclusiones:</strong> ninguna lógica de negocio — ni envío, ni formulario funcional. Solo walking skeleton.</li><li><strong>Dependencias:</strong> ninguna (primera fase).</li><li><strong>Entregables OpenSpec:</strong> change <code>foundation</code> (proposal, design, specs, tasks) archivado.</li><li><strong>Criterios de cierre:</strong> <code>docker compose up</code> levanta web + api + Mailpit; <code>GET /api/health</code> responde <code>200</code>; <code>pnpm build</code>/<code>pnpm dev</code> funcionan vía Turborepo; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-01</span> y <span class="chip chip-us">HU-02</span>.</li><li><strong>Riesgo de contexto:</strong> bajo (solo scaffolding, sin dependencias de código previo).</li></ul>
+<h3 id="fase-2-backend-de-env-o-smtp-y-logs-api-envio-smtp">Fase 2 — Backend de envío SMTP y logs (<code>api-envio-smtp</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 1 · <strong>HU:</strong> <span class="chip chip-us">HU-03</span>, <span class="chip chip-us">HU-04</span> · <strong>Esfuerzo:</strong> 0,9 d IA / 3,5 d bruto.</li><li><strong>Objetivo:</strong> endpoint <code>POST /api/send</code> que envía un correo real vía Nodemailer con SMTP configurable por variables de entorno, registrando el resultado en logs (pino) sin persistir contenido.</li><li><strong>Alcance:</strong> <code>send.route</code> → <code>send.controller</code> → <code>mailer.ts</code> (transporter reutilizable); <code>config/env.ts</code> (carga y validación de env con Zod); <code>logger.ts</code>; contrato de error uniforme (<code>errorHandler</code>); CORS a <code>WEB_ORIGIN</code>. Envío verificable contra Mailpit.</li><li><strong>Exclusiones:</strong> adjunto (F3/fase 6), saneamiento y validación autoritativa completa (F4/fase 7) — en esta fase la validación de servidor es mínima (parseo del payload).</li><li><strong>Dependencias:</strong> fase 1 (<code>foundation</code>): Mailpit y esqueleto de <code>apps/api</code>.</li><li><strong>Entregables OpenSpec:</strong> change <code>api-envio-smtp</code> archivado.</li><li><strong>Criterios de cierre:</strong> un <code>POST /api/send</code> de prueba entrega el correo en Mailpit; logs con resultado, destinatarios, asunto y timestamp (sin contenido ni secretos); tests de integración del endpoint (Supertest) en verde; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-03</span> y <span class="chip chip-us">HU-04</span>.</li><li><strong>Riesgo de contexto:</strong> bajo.</li></ul>
+<h3 id="fase-3-ui-de-composici-n-ui-composicion">Fase 3 — UI de composición (<code>ui-composicion</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 1 · <strong>HU:</strong> <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span>, <span class="chip chip-us">HU-10</span> · <strong>Esfuerzo:</strong> 1,8 d IA / 7,0 d bruto.</li><li><strong>Objetivo:</strong> el remitente ve y usa el formulario completo de composición: chips de destinatarios Para/CC/CCO, asunto en una línea y cuerpo enriquecido con React Quill (negrita, cursiva, listas). UI en español, accesible AA.</li><li><strong>Alcance:</strong> <code>EmailForm</code> (React Hook Form) con <code>RecipientChips</code> ×3, <code>SubjectField</code>, <code>BodyEditor</code>, <code>SubmitBar</code> y hueco de <code>AttachmentField</code> (campo visible, sin lógica); esquema base del email en <code>packages/shared</code> (Zod) como contrato compartido; tokens y componentes de <code>guia-estilos.md</code>.</li><li><strong>Exclusiones:</strong> el envío real desde la UI y el feedback (fase 4); la validación de entradas (fase 5); la lógica del adjunto (fase 6).</li><li><strong>Dependencias:</strong> fase 1 (esqueleto de <code>apps/web</code> y <code>packages/shared</code>).</li><li><strong>Entregables OpenSpec:</strong> change <code>ui-composicion</code> archivado.</li><li><strong>Criterios de cierre:</strong> el formulario renderiza todos los campos y las chips añaden/eliminan direcciones en Para/CC/CCO; el editor produce HTML con el whitelist funcional (B/I/listas); tests de componentes (RTL) en verde; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-05</span>, <span class="chip chip-us">HU-06</span>, <span class="chip chip-us">HU-07</span>, <span class="chip chip-us">HU-09</span> y <span class="chip chip-us">HU-10</span>.</li><li><strong>Riesgo de contexto:</strong> medio — es la fase con más HU y más componentes simultáneos; si el change crece, dividir (ver <code>prompts-roadmap-native-ai.md</code>).</li></ul>
+<h3 id="fase-4-env-o-desde-la-ui-y-feedback-ui-envio-feedback">Fase 4 — Envío desde la UI y feedback (<code>ui-envio-feedback</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 1 · <strong>HU:</strong> <span class="chip chip-us">HU-15</span>, <span class="chip chip-us">HU-16</span> · <strong>Esfuerzo:</strong> 0,5 d IA / 2,0 d bruto.</li><li><strong>Objetivo:</strong> cerrar el MVP demoable: al pulsar Enviar se envía directamente (sin confirmación ni vista previa) y la UI muestra feedback claro de éxito o error, conservando los datos en caso de error.</li><li><strong>Alcance:</strong> <code>useSendEmail</code> (estado <code>idle | sending | success | error</code>), <code>apiClient</code> (POST <code>FormData</code> a <code>/api/send</code>), <code>errorMap</code> (código → mensaje en español), <code>FeedbackBanner</code> (<code>aria-live</code>), deshabilitado del botón durante el envío, limpieza del formulario tras éxito.</li><li><strong>Exclusiones:</strong> validación de cliente (fase 5); adjunto (fase 6).</li><li><strong>Dependencias:</strong> fase 2 (endpoint operativo) y fase 3 (formulario).</li><li><strong>Entregables OpenSpec:</strong> change <code>ui-envio-feedback</code> archivado. <strong>Hito: MVP F1 demoable (demo vie 14-ago).</strong></li><li><strong>Criterios de cierre:</strong> happy path completo desde la UI hasta Mailpit con banner de éxito; error SMTP simulado produce banner de error con datos conservados; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-15</span> y <span class="chip chip-us">HU-16</span>; Definition of Done del Sprint 1 (demo E1→E2→E6).</li><li><strong>Riesgo de contexto:</strong> bajo.</li></ul>
+<h3 id="fase-5-validaci-n-de-cliente-validacion-cliente">Fase 5 — Validación de cliente (<code>validacion-cliente</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 2 (17–21 ago 2026) · <strong>HU:</strong> <span class="chip chip-us">HU-08</span>, <span class="chip chip-us">HU-14</span> · <strong>Esfuerzo:</strong> 0,2 d IA / 1,0 d bruto.</li><li><strong>Objetivo:</strong> impedir el envío desde el cliente si faltan Para/Asunto/Cuerpo o si alguna dirección (Para/CC/CCO) tiene formato inválido, con errores claros junto a los campos.</li><li><strong>Alcance:</strong> completar <code>emailSchema</code> en <code>packages/shared</code> (obligatorios + formato de email) y conectarlo como resolver de React Hook Form; mensajes de error accesibles junto a cada campo.</li><li><strong>Exclusiones:</strong> validación del adjunto (fase 6); validación autoritativa en servidor (fase 7).</li><li><strong>Dependencias:</strong> fases 3 y 4 (formulario y flujo de envío operativos).</li><li><strong>Entregables OpenSpec:</strong> change <code>validacion-cliente</code> archivado.</li><li><strong>Criterios de cierre:</strong> no se puede enviar con Para/Asunto/Cuerpo vacíos ni con direcciones inválidas; errores junto a los campos (AA); tests unit del esquema (shared) y de componentes en verde; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-08</span> y <span class="chip chip-us">HU-14</span>.</li><li><strong>Riesgo de contexto:</strong> bajo.</li></ul>
+<h3 id="fase-6-adjunto-nico-con-validaciones-adjunto">Fase 6 — Adjunto único con validaciones (<code>adjunto</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 2 · <strong>HU:</strong> <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span>, <span class="chip chip-us">HU-13</span> · <strong>Esfuerzo:</strong> 1,0 d IA / 3,5 d bruto.</li><li><strong>Objetivo:</strong> adjuntar un único documento (opcional) al correo, validando en cliente tipo (JPG, GIF, PDF, Word, Excel, PowerPoint) y tamaño (máx. 10 MiB), y transportándolo hasta el envío.</li><li><strong>Alcance:</strong> <code>AttachmentField</code> funcional; <code>attachment.rules.ts</code> en <code>packages/shared</code> (tipos permitidos + límite) como fuente única; <code>upload.ts</code> (Multer memoryStorage, 1 fichero, límite 10 MiB) y paso del adjunto a Nodemailer en el backend.</li><li><strong>Exclusiones:</strong> verificación de MIME real con <code>file-type</code> como validación autoritativa de rechazo en servidor (se completa en fase 7 con <span class="chip chip-us">HU-18</span>); antivirus (fuera de alcance).</li><li><strong>Dependencias:</strong> fase 4 (flujo de envío) y fase 2 (endpoint).</li><li><strong>Entregables OpenSpec:</strong> change <code>adjunto</code> archivado.</li><li><strong>Criterios de cierre:</strong> un correo con adjunto llega a Mailpit con el fichero visible; el cliente rechaza tipos no permitidos y &gt;10 MiB con aviso claro; tests en verde; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-11</span>, <span class="chip chip-us">HU-12</span> y <span class="chip chip-us">HU-13</span>.</li><li><strong>Riesgo de contexto:</strong> bajo.</li></ul>
+<h3 id="fase-7-endurecimiento-de-servidor-endurecimiento-servidor">Fase 7 — Endurecimiento de servidor (<code>endurecimiento-servidor</code>)</h3>
+<ul><li><strong>Sprint:</strong> Sprint 2 · <strong>HU:</strong> <span class="chip chip-us">HU-17</span>, <span class="chip chip-us">HU-18</span> · <strong>Esfuerzo:</strong> 1,3 d IA / 4,5 d bruto.</li><li><strong>Objetivo:</strong> el backend queda como autoridad: sanea el HTML del cuerpo (whitelist <code>b/strong, i/em, ul, ol, li, p, br</code>; fuera <code>&lt;script&gt;</code>, <code>on*</code>, iframes, enlaces, imágenes) y valida en servidor todo lo que valida el cliente (obligatorios, formato de email, tipo por MIME real con <code>file-type</code>, tamaño).</li><li><strong>Alcance:</strong> <code>sanitizer.ts</code> (sanitize-html), <code>attachment.ts</code> (MIME real), <code>validate.ts</code> (middleware Zod con el esquema de <code>shared</code>); respuestas <code>4xx { ok:false, code }</code> ante peticiones que burlan el cliente, sin filtrar secretos.</li><li><strong>Exclusiones:</strong> auth, anti-abuso, antivirus (Won&#x27;t, <code>requisitos.md</code> §6).</li><li><strong>Dependencias:</strong> fases 2, 5 y 6 (endpoint, esquema compartido completo y adjunto).</li><li><strong>Entregables OpenSpec:</strong> change <code>endurecimiento-servidor</code> archivado. <strong>Hito: producto endurecido (21-ago), recorrido E1–E7 completo.</strong></li><li><strong>Criterios de cierre:</strong> una petición maliciosa directa al endpoint (sin pasar por la UI) es rechazada o saneada; payload con <code>&lt;script&gt;</code>/<code>onclick</code> llega limpio a Mailpit; validación de seguridad con TI (revisión del 17–18 ago); e2e E1–E7 (Playwright, opcional) sobre Mailpit; accesibilidad AA verificada; criterios <code><span class="chip chip-essential">IMPRESCINDIBLE</span></code> de <span class="chip chip-us">HU-17</span> y <span class="chip chip-us">HU-18</span>; Definition of Done del Sprint 2.</li><li><strong>Riesgo de contexto:</strong> medio — toca todo el pipeline del backend y el contrato compartido; requiere revisión cuidadosa de seguridad.</li></ul>
+</section>
+<section class="doc-section" id="4-alineaci-n-con-la-capa-de-entrega">
+<h2><a class="anchor" href="#4-alineaci-n-con-la-capa-de-entrega" aria-label="Enlace">#</a>4. Alineación con la capa de entrega</h2>
+<ul><li><strong>Orden y fronteras:</strong> las fases 1–4 componen el <strong>Sprint 1 — Núcleo (F0+F1)</strong> y las fases 5–7 el <strong>Sprint 2 — Endurecimiento (F2+F3+F4)</strong>, en el mismo orden que el <code>sprint-plan.md</code> §4 y respetando su cadena de dependencias (§3). El corte fase 4 → fase 5 coincide con la frontera de sprint y con el <strong>gate del MVP</strong>.</li><li><strong>Gates de revisión:</strong> cada fase se construye después de la revisión entrelazada de sus HU (lun/mar de su sprint, <code>plan-revision-hu.md</code>). Ninguna HU está bloqueada ni en revisión con dudas a fecha de este roadmap (18/18 <em>Pendiente</em> de revisión just-in-time, 0 bloqueadas).</li><li><strong>Esfuerzo:</strong> Sprint 1 = fases 1–4 = <strong>3,6 d IA</strong> (13,5 d bruto); Sprint 2 = fases 5–7 = <strong>2,5 d IA</strong> (11,0 d bruto). Coincide con las cargas del <code>sprint-plan.md</code>.</li></ul>
+</section>
+<section class="doc-section" id="5-conflictos-de-alineaci-n-roadmap-sprint">
+<h2><a class="anchor" href="#5-conflictos-de-alineaci-n-roadmap-sprint" aria-label="Enlace">#</a>5. Conflictos de alineación roadmap↔sprint</h2>
+<p><strong>Sin conflictos.</strong> El presupuesto de contexto (alto) no obligó a partir ninguna HU en changes que desborden su sprint, ni a cortar a mitad de un bloque F0–F4: cada HU cabe entera en una fase, cada fase cabe entera en su sprint y los cortes de fase coinciden con los bloques del mapa de HU. <strong>No es necesario re-ejecutar <code>aidd sprint-planning</code></strong>: el aviso de &quot;modo degradado&quot; del <code>sprint-plan.md</code> §6 queda resuelto sin desviaciones que reconciliar (las unidades HU→Story se mantienen; este roadmap solo añade la granularidad de changes por debajo).</p>
+<p>Única observación (no conflicto): la fase 3 agrupa 5 HU en un change; si durante <code>aisdd open change ui-composicion</code> el alcance resultara excesivo, se dividiría en 2–3 changes <strong>dentro de la misma ventana del Sprint 1</strong> (ver criterios en <code>prompts-roadmap-native-ai.md</code>), sin afectar al plan.</p>
+</section>
+<section class="doc-section" id="6-entregables-de-este-paso">
+<h2><a class="anchor" href="#6-entregables-de-este-paso" aria-label="Enlace">#</a>6. Entregables de este paso</h2>
+<ul><li><code>docs/roadmap.md</code> (este documento).</li><li><code>docs/prompts-roadmap-native-ai.md</code> — prompts operativos por fase (<code>aisdd open|implement|close change</code>).</li><li><code>openspec/config.yaml</code> — sección <code>roadmap</code> con el índice de fases (clave de unión roadmap↔sprint↔Jira vía <code>change_hint</code>).</li></ul>
+</section>
+    </main>
+  </div>
+  <script>
+    // Theme toggle (auto -> claro -> oscuro), persisted per browser. Classic script:
+    // must keep working even without network (the Mermaid CDN import lives apart).
+    (function () {
+      const KEY = 'booster-docs-theme';
+      const btn = document.getElementById('themeToggle');
+      const modes = ['auto', 'light', 'dark'];
+      const icons = { auto: '\u25D1', light: '\u2600', dark: '\u263E' };
+      let mode = localStorage.getItem(KEY);
+      if (!modes.includes(mode)) mode = 'auto';
+      function apply() {
+        if (mode === 'auto') delete document.documentElement.dataset.theme;
+        else document.documentElement.dataset.theme = mode;
+        btn.textContent = icons[mode];
+        btn.title = 'Tema: ' + mode;
+      }
+      btn.addEventListener('click', () => {
+        mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+        localStorage.setItem(KEY, mode);
+        apply();
+      });
+      apply();
+    })();
+
+    // Scroll-spy: highlight the current section in the TOC.
+    (function () {
+      const links = [...document.querySelectorAll('.toc a')];
+      if (!links.length) return;
+      const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            links.forEach(a => a.classList.remove('active'));
+            const a = map.get(e.target.id);
+            if (a) a.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-10% 0px -80% 0px' });
+      document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+    })();
+  </script>
+  <script type="module">
+    // Mermaid via CDN, best-effort: offline the diagrams stay as readable source
+    // with a notice instead of silently breaking the page's other scripts.
+    if (document.querySelector('.mermaid')) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
+        const dark = document.documentElement.dataset.theme === 'dark'
+          || (document.documentElement.dataset.theme !== 'light'
+              && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        mermaid.initialize({ startOnLoad: true, securityLevel: 'strict', theme: dark ? 'dark' : 'default' });
+      } catch (e) {
+        document.querySelectorAll('.diagram').forEach(d => d.classList.add('offline'));
+      }
+    }
+  </script>
+</body>
+</html>

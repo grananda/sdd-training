@@ -53,7 +53,7 @@ Documentos y estado. **Todos aprobados a 2026-07-09**; la planificación está c
 
 Ficheros complementarios, **no editar a mano**: `docs/html/*.html` (vistas de `booster-docs`), `docs/xlsx/plan-revision-hu.xlsx`, `docs/plan-revision-hu.json` (datos del plan de revisión) y `docs/.aidd-doc-meta.json` (versionado interno de los skills).
 
-**No existe `docs/roadmap.md`.** El sprint plan se generó en *modo degradado*: sin el faseado por contexto que produce el AI Lead con `native-ai roadmap` (Fase 3). Si algún día se genera el roadmap, hay que reconciliar el sprint plan con sus cortes de change.
+**`docs/roadmap.md` generado (2026-07-11)** con `aisdd roadmap`: 7 fases (una por change OpenSpec) alineadas a los 2 sprints, **sin conflictos** con el sprint plan — el aviso de *modo degradado* del `sprint-plan.md` queda resuelto sin necesidad de re-ejecutar `aidd sprint-planning`. Los prompts operativos por fase están en `docs/prompts-roadmap-native-ai.md` y el índice de fases en `openspec/config.yaml` (sección `roadmap`, clave `change_hint`).
 
 Convenciones de los documentos:
 - IDs trazables y estables: `RF-XX` (funcionales), `NFR-XX` (no funcionales), `HU-XX`/`US-XX` (historias). No reutilizar un ID para otro requisito.
