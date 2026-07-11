@@ -41,3 +41,15 @@ Pre-flight de apertura (`aisdd open change`). La arquitectura (`docs/arquitectur
   - b) Integración real contra Mailpit
 - **Decision**: a) Transporter mockeado en unit + integración de ruta (Supertest)
 - **Justificación**: tests deterministas y sin dependencia de infra; la verificación contra Mailpit queda como prueba manual en los criterios de cierre.
+
+## preflight-implementacion-sin-dudas
+
+- **Fecha**: 2026-07-11
+- **Tipo**: confirmacion
+- **Origen**: usuario
+- **Contexto**: pre-flight de `aisdd implement change`. `design.md` y las decisiones del open ya fijan contrato, fronteras, logging y estrategia de test; el código base de `foundation` (`app.ts`, `config/env.ts`, `logger.ts`, patrón de routers y Vitest+Supertest) está claro.
+- **Pregunta**: No se detectaron dudas bloqueantes durante el pre-flight de implementación.
+- **Opciones evaluadas**:
+  - a) Continuar con la implementación según design.md
+- **Decision**: continuar. Detalles menores resueltos por defecto: el tipo `SendEmailRequest` se define **local** en `apps/api` (se promueve a `packages/shared` en la fase de UI); código de error `SEND_FAILED`; el mailer se hace mockeable con `vi.mock("nodemailer")`.
+- **Justificación**: alcance y patrón ya cerrados; no procede forzar preguntas.
