@@ -4,7 +4,7 @@ Repositorio de **formación en SDD** (Spec Driven Development) que arranca desde
 
 El producto de ejemplo es un **servicio web para componer y enviar un email**: destinatarios Para/CC/CCO, asunto, cuerpo con formato enriquecido y un adjunto único. El backend envía de verdad vía SMTP. No es un producto de producción.
 
-> **Estado:** planificación cerrada, sin código de aplicación todavía. El siguiente paso es arrancar SDD.
+> **Estado:** planificación cerrada y SDD en marcha. El **walking skeleton** (fase `foundation`) ya está en el repo: monorepo Turborepo + pnpm con `apps/web`, `apps/api` y `packages/shared`, `GET /api/health`, tooling y Docker. Aún sin lógica de negocio (composición y envío llegan en fases posteriores). Ver **Arranque local** más abajo.
 
 ## Punto de partida (lo que ya existe)
 
@@ -19,7 +19,7 @@ Toda la fase de definición y diseño está hecha y **aprobada**. El Markdown de
 
 Detalle completo del estado y las convenciones en [CLAUDE.md](CLAUDE.md).
 
-**Falta `docs/roadmap.md`.** El plan de sprints se generó en modo degradado, sin el faseado por contexto que produce el roadmap. Generarlo es el primer paso real de SDD, y puede obligar a reconciliar el sprint plan si los cortes difieren.
+El faseado por contexto está en [docs/roadmap.md](docs/roadmap.md) (7 fases alineadas a los 2 sprints, sin conflictos con el plan). Los prompts operativos por fase, en [docs/prompts-roadmap-native-ai.md](docs/prompts-roadmap-native-ai.md).
 
 ## Flujo SDD
 
@@ -56,7 +56,44 @@ Los pasos 3–5 se repiten por cada change hasta terminar el desarrollo. `docs/p
 
 React + TypeScript + Tailwind (con React Quill para el cuerpo) · Node.js + Express + TypeScript (con Nodemailer) · monorepo Turborepo + pnpm · Docker Compose en local, con Mailpit como SMTP de desarrollo. Sin base de datos.
 
-`apps/` y `packages/` aún no existen: los crea la primera historia (HU-01).
+## Arranque local
+
+Requisitos: **Node ≥ 22** y **pnpm** (en este entorno solo vía `nvm`: exporta el PATH antes de cualquier `pnpm`/`turbo`), y **Docker** + **Docker Compose**.
+
+```bash
+export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"   # si usas nvm
+corepack enable                                     # habilita el pnpm fijado
+pnpm install
+```
+
+**Regla de ejecución:** el **despliegue** es solo Docker (NFR-08). La app puede iterarse de forma nativa en desarrollo, pero **la infraestructura (Mailpit y cualquier dependencia futura) siempre corre en Docker**.
+
+### Modo nativo (recomendado para iterar)
+
+```bash
+docker compose up -d mailpit     # solo la infra: SMTP :1025, UI http://localhost:8025
+cp .env.example .env             # una vez; los valores por defecto ya sirven para el modo nativo
+pnpm dev                         # web http://localhost:5173 + api http://localhost:3000 (en paralelo)
+```
+
+Verificación: `curl http://localhost:3000/api/health` → `{"status":"ok"}`.
+
+### Modo full Docker (verificación / despliegue local)
+
+```bash
+docker compose up                # web + api + mailpit
+```
+
+El servicio `api` sobreescribe `SMTP_HOST=mailpit` para resolver Mailpit por la red de Docker.
+
+### Scripts
+
+| Comando | Qué hace |
+|---------|----------|
+| `pnpm dev` | Arranca `web` + `api` en desarrollo (Turborepo, en paralelo). |
+| `pnpm build` | Construye todos los workspaces. |
+| `pnpm test` | Ejecuta las suites (Vitest: RTL en web, Supertest en api). |
+| `pnpm lint` / `pnpm typecheck` | Linter / chequeo de tipos. |
 
 ## Seguridad
 

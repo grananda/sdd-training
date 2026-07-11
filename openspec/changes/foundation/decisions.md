@@ -60,3 +60,13 @@ Decisiones del pre-flight de apertura (`aisdd open change`). El resto del alcanc
   - Inner-loop nativo: `docker compose up -d mailpit` (solo la infra) + `pnpm dev` (turbo `dev` de web+api en paralelo). **No** se ponen `web`/`api` tras un profile (romperían HU-02); se arranca solo el servicio de infra nombrándolo.
   - `apps/api/config/env.ts` carga `dotenv` antes de validar con Zod; dotenv **no pisa** variables ya presentes en el entorno, así que es seguro también en Docker.
   - `.env.example` trae por defecto valores del modo nativo (`SMTP_HOST=localhost`, `SMTP_PORT=1025`, `WEB_ORIGIN=http://localhost:5173`); el servicio `api` del compose full sobreescribe `SMTP_HOST=mailpit` vía `environment:`.
+
+## preflight-implement-sin-dudas
+
+- **Fecha**: 2026-07-11
+- **Tipo**: confirmacion
+- **Origen**: auto-default
+- **Contexto**: pre-flight de `aisdd implement change foundation`; artefactos (proposal/design/specs/tasks/decisions) completos y validados `--strict`.
+- **Pregunta**: No se detectaron dudas bloqueantes durante el pre-flight de implementación.
+- **Decision**: continuar
+- **Justificación**: las decisiones restantes son de implementación, reversibles y ya implícitas en el stack decidido. Se registran como auto-default: **ESM** (`"type": "module"`) en los tres workspaces (coherente con Vite); **`tsx`** para el arranque en desarrollo de `apps/api` y **`tsc`** para el build; **pnpm** fijado con `packageManager` (corepack); Vitest con entorno `node` en api y `jsdom` en web.

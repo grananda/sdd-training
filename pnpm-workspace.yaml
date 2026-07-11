@@ -1,0 +1,9 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# esbuild (usado por Vite y Vitest) necesita ejecutar su script de postinstall
+# para colocar el binario de la plataforma. Sin esto, pnpm lo marca como "ignored
+# build" y falla en entornos no interactivos (p. ej. el build de Docker).
+allowBuilds:
+  esbuild: true

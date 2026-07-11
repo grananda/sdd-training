@@ -1,0 +1,48 @@
+# Orquestación local.
+#   Full:   docker compose up            -> web + api + mailpit (verificación de HU-02)
+#   Nativo: docker compose up -d mailpit  -> solo la infra; la app se arranca con `pnpm dev`
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: aidd-mailpit
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # UI web
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: aidd-api
+    depends_on:
+      - mailpit
+    environment:
+      # En full Docker, Mailpit se resuelve por el nombre del servicio (override del .env de dev).
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      SMTP_SECURE: "false"
+      MAIL_FROM: "aidd-training <no-reply@example.com>"
+      MAX_ATTACHMENT_SIZE_MB: "10"
+      PORT: "3000"
+      WEB_ORIGIN: "http://localhost:8080"
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: aidd-web
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
