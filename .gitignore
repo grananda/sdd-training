@@ -35,3 +35,7 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Workshop: tooling local y auditoría (no forman parte del material del workshop)
+.claude/
+openspec/audit/

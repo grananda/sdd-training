@@ -1,0 +1,40 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  aidd-training: servicio web para componer y enviar un email (Para/CC/CCO,
+  asunto, cuerpo enriquecido con React Quill, adjunto unico <=10 MB) con envio
+  real via SMTP (Nodemailer). Proyecto de formacion AIDD; sin persistencia.
+  Stack: React + TypeScript + Tailwind (front), Node.js + Express + TypeScript
+  (back), monorepo Turborepo + pnpm, despliegue local con Docker Compose.
+  UI en espanol. Validacion y saneamiento de HTML siempre tambien en backend.
+  Credenciales SMTP solo por variables de entorno.
+  La fuente de verdad documental es docs/ (Markdown); docs/html/ son vistas
+  generadas.
+
+project_context:
+  design_docs:            # diseno y definicion
+    - docs/cliente-requisitos.md
+    - docs/requisitos.md
+    - docs/mapa-historias-usuario.md
+    - docs/detalle-historias-usuario.md
+    - docs/arquitectura-base-prototipo.md
+    - docs/guia-estilos.md
+    - docs/propuesta-arquitectura-base.md
+    - docs/arquitectura-base.md
+  delivery_docs:          # capa de entrega AIDD (solo las que existen)
+    - docs/planificacion-proyecto.md
+    - docs/sprint-plan.md
+    - docs/plan-revision-hu.md
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
