@@ -40,3 +40,15 @@ Pre-flight de apertura (`aisdd open change`). La arquitectura (`docs/arquitectur
   - b) Cablear un submit mínimo ya
 - **Decision**: a) Presente pero inerte
 - **Justificación**: la UI queda visualmente completa (HU-05) sin solapar con la fase 4 de envío/feedback.
+
+## preflight-implementacion-sin-dudas
+
+- **Fecha**: 2026-07-11
+- **Tipo**: confirmacion
+- **Origen**: usuario
+- **Contexto**: pre-flight de `aisdd implement change`. `design.md` y las decisiones del open fijan componentes, estado (RHF local), librería del editor y fronteras; el skeleton de `apps/web` (tokens NTT DATA, Tailwind, Vitest+RTL) está claro.
+- **Pregunta**: No se detectaron dudas bloqueantes durante el pre-flight de implementación.
+- **Opciones evaluadas**:
+  - a) Continuar con la implementación según design.md
+- **Decision**: continuar. Detalles resueltos por defecto: los tests que renderizan el editor **mockean `react-quill-new`** (Quill no rinde bien en jsdom) y el toolbar acotado se verifica por su config exportada; `SHARED_PLACEHOLDER` se reemplaza por `EmailDraft` + `SHARED_PACKAGE` (se actualiza `server.ts`).
+- **Justificación**: alcance y patrón ya cerrados; no procede forzar preguntas.

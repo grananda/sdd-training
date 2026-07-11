@@ -1,11 +1,25 @@
 /**
  * Contrato compartido entre `apps/web` y `apps/api`.
  *
- * En la fase `foundation` es solo un placeholder que prueba la resolución del
- * workspace desde ambas apps. El esquema real del email (campos, reglas, límites
- * con Zod) se añade en fases posteriores del roadmap (validación / adjunto).
+ * Define la forma del borrador de email que compone la UI. En esta fase
+ * (`ui-composicion`) es **solo el tipo**: la validación con Zod (obligatorios,
+ * formato de direcciones, límites) se añade en la fase de validación de cliente
+ * (`validacion-cliente`, HU-08/HU-14).
  */
-export const SHARED_PACKAGE = "@aidd/shared" as const;
 
-/** Marcador temporal; se reemplazará por el contrato del email. */
-export const SHARED_PLACEHOLDER = "aidd-shared:foundation" as const;
+/** Borrador de email compuesto en el formulario. `body` es HTML. */
+export interface EmailDraft {
+  /** Destinatarios principales (To). */
+  to: string[];
+  /** Copia (CC). */
+  cc: string[];
+  /** Copia oculta (CCO/BCC). */
+  bcc: string[];
+  /** Asunto (una sola línea). */
+  subject: string;
+  /** Cuerpo en HTML (se sanea en el backend, HU-17). */
+  body: string;
+}
+
+/** Identificador del paquete compartido; útil para verificar la resolución del workspace. */
+export const SHARED_PACKAGE = "@aidd/shared" as const;

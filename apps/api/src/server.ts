@@ -1,4 +1,4 @@
-import { SHARED_PLACEHOLDER } from "@aidd/shared";
+import { SHARED_PACKAGE } from "@aidd/shared";
 import { createApp } from "./app.js";
 import { env } from "./config/env.js";
 import { logger } from "./logger.js";
@@ -12,7 +12,7 @@ const app = createApp();
 
 app.listen(env.PORT, () => {
   logger.info(
-    { port: env.PORT, webOrigin: env.WEB_ORIGIN, shared: SHARED_PLACEHOLDER },
+    { port: env.PORT, webOrigin: env.WEB_ORIGIN, shared: SHARED_PACKAGE },
     "aidd-api escuchando",
   );
 });

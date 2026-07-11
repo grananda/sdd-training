@@ -14,7 +14,9 @@
   "dependencies": {
     "@aidd/shared": "workspace:*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.81.0",
+    "react-quill-new": "^3.8.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.5.0",
