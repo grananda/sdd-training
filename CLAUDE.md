@@ -6,7 +6,7 @@ Guía para agentes IA (Claude Code) que trabajen en este repositorio.
 
 **aidd-training** — Servicio web con UI para **componer y enviar un email** desde un formulario: destinatarios Para/CC/CCO, asunto, cuerpo con formato enriquecido y un adjunto único. El backend realiza el **envío real vía SMTP**. Es un **proyecto de formación** para ejercitar el flujo AIDD de extremo a extremo; no es un producto de producción.
 
-Estado actual: **planificación AIDD completa y aprobada**. Aún no hay código de aplicación; solo documentación en `docs/`. El backlog está volcado en Jira (ver abajo) y el siguiente paso es empezar a construir por el Sprint 1.
+Estado actual (rama `workshop`): planificación AIDD aprobada **y construcción en curso vía AISDD/OpenSpec**. Ya hay código: **fases 1–4 del roadmap completas** (foundation, api-envio-smtp, ui-composicion, ui-envio-feedback) → **hito MVP F1 alcanzado** (componer y enviar un correo de extremo a extremo, verificado contra Mailpit). Pendientes: **fase 5 `validacion-cliente`** (HU-08/HU-14), **fase 6 `adjunto`** (HU-11–13), **fase 7 `endurecimiento-servidor`** (HU-17/HU-18). Ver la sección "Workshop en vivo (AISDD)" más abajo.
 
 ## Stack (decidido)
 
@@ -29,7 +29,7 @@ docs/prototipo/ # Prototipo mockeado para validación con cliente (booster-ux)
 docs/xlsx/      # Vistas Excel complementarias (generadas por aidd hu-review-plan)
 ```
 
-`apps/` y `packages/` aún no existen: los crea HU-01 (monorepo Turborepo + pnpm).
+`apps/web`, `apps/api` y `packages/shared` **ya existen** (los creó la fase `foundation`).
 
 ## Metodología AIDD
 
@@ -82,13 +82,41 @@ python3 "<ruta-plugin>/skills/booster-docs/scripts/render_docs_html.py" \
 
 El script auto-detecta el tipo de documento y añade KPIs y chips de color. No modifica el `.md`.
 
-## Convenciones de código (cuando exista)
+## Workshop en vivo (AISDD/OpenSpec)
 
-- **TypeScript** en frontend y backend.
-- Validación crítica (campos obligatorios, formato de email, tipo/tamaño de adjunto) **también en el backend**: el frontend no es de fiar.
-- **Sanear el HTML del cuerpo en el backend** antes de enviar (evitar XSS/inyección).
-- **Nunca** hardcodear credenciales SMTP: solo por variables de entorno (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`…). No commitear secretos; usar `.env.example`.
-- Adjunto: uno solo, tipos comunes, máx. **10 MB**.
+La construcción se hace por **changes de OpenSpec** con el skill `aisdd` (una fase del roadmap = un change). En el workshop se hace `foundation` con los alumnos y se sigue con los changes restantes en vivo.
+
+**Entorno**
+- **Node/pnpm solo vía nvm**: exporta el PATH antes de cualquier `openspec`/`pnpm`/`turbo`/`node`:
+  `export PATH="/home/jfernandez/.nvm/versions/node/v24.16.0/bin:$PATH"`. `openspec` (v1.5.0) solo es visible con ese PATH.
+- Verificación e2e con Mailpit: `docker compose up -d mailpit` (SMTP `1025`, UI `8025`).
+
+**Bucle por change (`aisdd open → implement → close`)**
+1. `aisdd open change <slug>`: pre-flight de dudas (máx. 7), `openspec new change <slug>`, se rellenan `proposal.md`/`design.md`/`specs/**/spec.md` (deltas `## ADDED Requirements`, `#### Scenario` con 4 `#`)/`tasks.md`/`decisions.md`; `openspec validate <slug> --strict`; UML con `booster-uml` si lo amerita.
+2. `aisdd implement change <slug>`: pre-flight; se escribe el código y los tests; se verifica de verdad (`pnpm build` + `pnpm test` + e2e contra Mailpit), no solo tests.
+3. `aisdd close change <slug>`: `openspec archive <slug> --yes` (consolida specs en `openspec/specs/`).
+- Cada paso deja **una entrada de auditoría** en `openspec/audit/YYYY-MM.jsonl` y **un commit + un tag** numerado.
+- **Marca cada frontera** de fase en proposal/design (qué se aplaza a fases posteriores) y respétala.
+
+**Ramas y tags** (Jira-free por diseño en `workshop`)
+- `main`: base intacta. `workshop`: rama de **referencia/solución**, con **un tag por comando**, numerados: `01-init`, `02-roadmap`, luego `NN-<slug>-open/implement/close` (foundation=03–05, y **cada fase +3**: api-envio-smtp=06–08, ui-composicion=09–11, ui-envio-feedback=12–14; la siguiente, `validacion-cliente`=15–17). Ramas de trabajo (alumnos) salen de `main` o de un tag; **no se trabaja sobre `workshop`**.
+- Remoto: `git@github.com:grananda/sdd-training.git` (ojo, se llama `sdd-training`). `.claude/` y `openspec/audit/` van en `.gitignore` de `workshop`.
+
+**Sincronización con Jira (manual en `workshop`)**
+- `workshop` **no tiene sección `jira:`** en `openspec/config.yaml`, así que los comandos `aisdd` **no tocan Jira**: hay que sincronizar el board **a mano** por cada change (modelo Story directa: `implement`→In Progress, `close`→Done; asignar al usuario del MCP). Site `grananda.atlassian.net`, proyecto `AT`, board 34; transiciones In Progress=21, Done=51.
+- Mapeo HU↔Story: HU-01→AT-1 … HU-07→AT-7, **HU-09→AT-8, HU-10→AT-9, HU-15→AT-10, HU-16→AT-11**, HU-08→AT-12, HU-14→AT-13, HU-11→AT-14, HU-12→AT-15, HU-13→AT-16, HU-17→AT-17, HU-18→AT-18.
+
+## Convenciones de código (ya establecidas)
+
+- **TypeScript** en todo el monorepo. `apps/api`: ESM con **imports `.js`** (moduleResolution NodeNext). `apps/web`: **sin extensión** (moduleResolution Bundler, Vite). Contrato compartido en `packages/shared` (`EmailDraft`).
+- **Identidad NTT DATA**: design tokens en `apps/web/src/styles/tokens.css`, expuestos a Tailwind en `tailwind.config.ts` (solo colores/fuente/radios mapeados; para tamaños/estado usa utilidades por defecto o estilo inline con las CSS vars).
+- **Tests**: Vitest + Supertest (api) y Vitest + React Testing Library (web). En web se **mockea `react-quill-new`** (Quill no rinde en jsdom) y el toolbar se valida por su config exportada; en api se **mockea el transporter de Nodemailer**. Sin `@testing-library/user-event`: usar `fireEvent`.
+- **Editor de cuerpo**: paquete **`react-quill-new`** (React 18, sin `findDOMNode`), toolbar acotado a negrita/cursiva/listas, salida HTML.
+- **Front→back**: `apiClient` llama a `VITE_API_BASE_URL` (default `http://localhost:3000`), cross-origin; la api ya tiene CORS para `WEB_ORIGIN`.
+- Validación crítica (obligatorios, formato de email, tipo/tamaño de adjunto) **también en el backend** (fase 5+): el frontend no es de fiar.
+- **Sanear el HTML del cuerpo en el backend** antes de enviar (fase 7, HU-17).
+- **Nunca** hardcodear credenciales SMTP: solo por variables de entorno (`SMTP_*`, `MAIL_FROM`…). No commitear secretos; usar `.env.example`.
+- Adjunto (fase 6): uno solo, tipos comunes, máx. **10 MB**.
 
 ## Reglas para agentes
 
