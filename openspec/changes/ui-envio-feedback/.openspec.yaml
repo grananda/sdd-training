@@ -1,0 +1,3 @@
+schema: spec-driven
+created: 2026-07-11
+goal: Cablear el envío desde la UI (useSendEmail + apiClient JSON a POST /api/send) y el feedback de éxito/error, con limpieza del formulario al éxito y conservación al error (F1, HU-15/HU-16). Hito MVP F1.
